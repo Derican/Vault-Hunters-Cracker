@@ -53,7 +53,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork
 {
-    private static final String NETWORK_VERSION = "0.24.0";
+    private static final String NETWORK_VERSION = "0.25.0";
     public static final SimpleChannel CHANNEL;
     private static int ID;
     
@@ -106,7 +106,7 @@ public class ModNetwork
     }
     
     static {
-        CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("the_vault", "network"), () -> "0.24.0", version -> version.equals("0.24.0"), version -> version.equals("0.24.0"));
+        CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("the_vault", "network"), () -> "0.25.0", version -> version.equals("0.25.0"), version -> version.equals("0.25.0"));
         ModNetwork.ID = 0;
     }
 }

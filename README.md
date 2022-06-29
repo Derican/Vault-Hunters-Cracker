@@ -11,3 +11,11 @@ This project is to decompile [iskallia's Vault Hunters](https://github.com/Iskal
 ### Deobfuscation Source Code
 
 `python deobf.py`
+
+### Replace mod blocks with vanilla blocks
+
+```python
+python loot_table_del.py
+python worldgen_del.py
+python nbt_del.py
+```
