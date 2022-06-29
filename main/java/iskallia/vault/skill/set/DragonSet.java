@@ -1,0 +1,24 @@
+
+package iskallia.vault.skill.set;
+
+import iskallia.vault.item.gear.VaultGear;
+import com.google.gson.annotations.Expose;
+
+public class DragonSet extends PlayerSet {
+    public static int MULTIPLIER_ID;
+    @Expose
+    private float damageMultiplier;
+
+    public DragonSet(final float damageMultiplier) {
+        super(VaultGear.Set.DRAGON);
+        this.damageMultiplier = damageMultiplier;
+    }
+
+    public float getDamageMultiplier() {
+        return this.damageMultiplier;
+    }
+
+    static {
+        DragonSet.MULTIPLIER_ID = -1;
+    }
+}

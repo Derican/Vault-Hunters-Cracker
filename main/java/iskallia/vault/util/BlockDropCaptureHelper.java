@@ -1,0 +1,46 @@
+
+package iskallia.vault.util;
+
+import java.util.ArrayList;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraft.entity.item.ItemEntity;
+import java.util.List;
+import java.util.Stack;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber
+public class BlockDropCaptureHelper {
+    private static final Stack<List<ItemEntity>> capturing;
+
+    private BlockDropCaptureHelper() {
+    }
+
+    @SubscribeEvent
+    public static void onDrop(final EntityJoinWorldEvent event) {
+        if (event.getWorld() instanceof ServerWorld && event.getEntity() instanceof ItemEntity) {
+            final ItemStack itemStack = ((ItemEntity) event.getEntity()).getItem();
+            if (!BlockDropCaptureHelper.capturing.isEmpty()) {
+                event.setCanceled(true);
+                if (!itemStack.isEmpty() && !BlockDropCaptureHelper.capturing.isEmpty()) {
+                    BlockDropCaptureHelper.capturing.peek().add((ItemEntity) event.getEntity());
+                }
+                event.getEntity().remove();
+            }
+        }
+    }
+
+    public static void startCapturing() {
+        BlockDropCaptureHelper.capturing.push(new ArrayList<ItemEntity>());
+    }
+
+    public static List<ItemEntity> getCapturedStacksAndStop() {
+        return BlockDropCaptureHelper.capturing.pop();
+    }
+
+    static {
+        capturing = new Stack<List<ItemEntity>>();
+    }
+}

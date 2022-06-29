@@ -1,0 +1,25 @@
+
+package iskallia.vault.item;
+
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IItemProvider;
+import iskallia.vault.init.ModItems;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Item;
+
+public class RelicItem extends Item {
+    public RelicItem(final ItemGroup group, final ResourceLocation id) {
+        super(new Item.Properties().tab(group).stacksTo(64));
+        this.setRegistryName(id);
+    }
+
+    public static ItemStack withCustomModelData(final int customModelData) {
+        final ItemStack itemStack = new ItemStack((IItemProvider) ModItems.VAULT_RELIC);
+        final CompoundNBT nbt = new CompoundNBT();
+        nbt.putInt("CustomModelData", customModelData);
+        itemStack.setTag(nbt);
+        return itemStack;
+    }
+}

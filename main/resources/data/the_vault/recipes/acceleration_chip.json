@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "beb",
+    "ede",
+    "beb"
+  ],
+  "key": {
+    "d": {
+      "item": "the_vault:vault_diamond_block"
+    },
+    "b": {
+      "item": "the_vault:perfect_benitoite"
+    },
+    "e": {
+      "item": "the_vault:gem_echo"
+    }
+  },
+  "result": {
+    "item": "the_vault:acceleration_chip",
+    "count": 1
+  }
+}

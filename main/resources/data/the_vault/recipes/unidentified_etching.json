@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XPX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "the_vault:etching_fragment"
+    },
+    "P": {
+      "item": "the_vault:gem_pog"
+    }
+  },
+  "result": {
+    "item": "the_vault:etching"
+  }
+}

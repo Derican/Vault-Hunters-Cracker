@@ -1,0 +1,15 @@
+
+package iskallia.vault.container.slot;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.IInventory;
+
+public class InfiniteSellSlot extends SellSlot {
+    public InfiniteSellSlot(final IInventory inventoryIn, final int index, final int xPosition, final int yPosition) {
+        super(inventoryIn, index, xPosition, yPosition);
+    }
+
+    public ItemStack remove(final int amount) {
+        return this.getItem().copy();
+    }
+}

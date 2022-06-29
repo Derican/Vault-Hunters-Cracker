@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "a#a",
+    "#n#",
+    "a#a"
+  ],
+  "key": {
+    "#": {
+      "item": "the_vault:gem_wutodie"
+    },
+    "n": {
+      "item": "the_vault:perfect_black_opal"
+    },
+    "a": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "item": "the_vault:cluster_netherite",
+    "count": 1
+  }
+}
