@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -11,12 +14,13 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ SlotItemHandler.class })
-public class MixinSlotItemHandler {
+public class MixinSlotItemHandler
+{
     @Inject(method = { "isItemValid" }, at = { @At("HEAD") }, cancellable = true)
     public void itemValid(final ItemStack stack, final CallbackInfoReturnable<Boolean> cir) {
-        final SlotItemHandler itemHandler = (SlotItemHandler) this;
+        final SlotItemHandler itemHandler = (SlotItemHandler)this;
         if (itemHandler instanceof DankSlot && stack.getItem() instanceof DankItem) {
-            cir.setReturnValue((Object) false);
+            cir.setReturnValue((Object)false);
         }
     }
 }

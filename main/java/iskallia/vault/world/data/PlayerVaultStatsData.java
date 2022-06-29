@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.data;
 
@@ -41,105 +44,102 @@ import java.util.UUID;
 import java.util.Map;
 import net.minecraft.world.storage.WorldSavedData;
 
-public class PlayerVaultStatsData extends WorldSavedData {
+public class PlayerVaultStatsData extends WorldSavedData
+{
     protected static final String DATA_NAME = "the_vault_PlayerVaultLevels";
     private final Map<UUID, PlayerVaultStats> playerMap;
     private final Map<WeekKey, List<PlayerRecordEntry>> weeklyVaultRecords;
     private final Set<WeekKey> grantedRewards;
-
+    
     public PlayerVaultStatsData() {
         super("the_vault_PlayerVaultLevels");
         this.playerMap = new HashMap<UUID, PlayerVaultStats>();
         this.weeklyVaultRecords = new HashMap<WeekKey, List<PlayerRecordEntry>>();
         this.grantedRewards = new HashSet<WeekKey>();
     }
-
+    
     public PlayerVaultStatsData(final String name) {
         super(name);
         this.playerMap = new HashMap<UUID, PlayerVaultStats>();
         this.weeklyVaultRecords = new HashMap<WeekKey, List<PlayerRecordEntry>>();
         this.grantedRewards = new HashSet<WeekKey>();
     }
-
+    
     public PlayerVaultStats getVaultStats(final PlayerEntity player) {
         return this.getVaultStats(player.getUUID());
     }
-
+    
     public PlayerVaultStats getVaultStats(final UUID uuid) {
         return this.playerMap.computeIfAbsent(uuid, PlayerVaultStats::new);
     }
-
+    
     public PlayerVaultStatsData setVaultLevel(final ServerPlayerEntity player, final int level) {
-        this.getVaultStats((PlayerEntity) player).setVaultLevel(player.getServer(), level);
+        this.getVaultStats((PlayerEntity)player).setVaultLevel(player.getServer(), level);
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData addVaultExp(final ServerPlayerEntity player, final int exp) {
-        this.getVaultStats((PlayerEntity) player).addVaultExp(player.getServer(), exp);
+        this.getVaultStats((PlayerEntity)player).addVaultExp(player.getServer(), exp);
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData spendSkillPts(final ServerPlayerEntity player, final int amount) {
-        this.getVaultStats((PlayerEntity) player).spendSkillPoints(player.getServer(), amount);
+        this.getVaultStats((PlayerEntity)player).spendSkillPoints(player.getServer(), amount);
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData spendKnowledgePts(final ServerPlayerEntity player, final int amount) {
-        this.getVaultStats((PlayerEntity) player).spendKnowledgePoints(player.getServer(), amount);
+        this.getVaultStats((PlayerEntity)player).spendKnowledgePoints(player.getServer(), amount);
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData addSkillPoint(final ServerPlayerEntity player, final int amount) {
-        this.getVaultStats((PlayerEntity) player).addSkillPoints(amount).sync(player.getLevel().getServer());
+        this.getVaultStats((PlayerEntity)player).addSkillPoints(amount).sync(player.getLevel().getServer());
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData addSkillPointNoSync(final UUID playerId, final int amount) {
         this.getVaultStats(playerId).addSkillPoints(amount);
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData addKnowledgePoints(final ServerPlayerEntity player, final int amount) {
-        this.getVaultStats((PlayerEntity) player).addKnowledgePoints(amount).sync(player.getLevel().getServer());
+        this.getVaultStats((PlayerEntity)player).addKnowledgePoints(amount).sync(player.getLevel().getServer());
         this.setDirty();
         return this;
     }
-
+    
     public PlayerVaultStatsData reset(final ServerPlayerEntity player) {
-        this.getVaultStats((PlayerEntity) player).reset(player.getServer());
+        this.getVaultStats((PlayerEntity)player).reset(player.getServer());
         this.setDirty();
         return this;
     }
-
+    
     @Nonnull
     public PlayerRecordEntry getFastestVaultTime() {
         return this.getFastestVaultTime(WeekKey.current());
     }
-
+    
     @Nonnull
     public PlayerRecordEntry getFastestVaultTime(final WeekKey week) {
-        return this.weeklyVaultRecords.computeIfAbsent(week, key -> new ArrayList()).stream()
-                .min(Comparator.comparing(
-                        (Function<? super PlayerRecordEntry, ? extends Comparable>) PlayerRecordEntry::getTickCount))
-                .orElse(PlayerRecordEntry.DEFAULT);
+        return this.weeklyVaultRecords.computeIfAbsent(week, key -> new ArrayList()).stream().min(Comparator.comparing((Function<? super PlayerRecordEntry, ? extends Comparable>)PlayerRecordEntry::getTickCount)).orElse(PlayerRecordEntry.DEFAULT);
     }
-
+    
     public void updateFastestVaultTime(final PlayerEntity player, final int timeTicks) {
-        this.updateFastestVaultTime(
-                new PlayerRecordEntry(player.getUUID(), player.getName().getString(), timeTicks));
+        this.updateFastestVaultTime(new PlayerRecordEntry(player.getUUID(), player.getName().getString(), timeTicks));
     }
-
+    
     private void updateFastestVaultTime(final PlayerRecordEntry entry) {
         this.weeklyVaultRecords.computeIfAbsent(WeekKey.current(), key -> new ArrayList()).add(entry);
         this.setDirty();
     }
-
+    
     public boolean setRewardGranted(final WeekKey weekKey) {
         if (this.grantedRewards.add(weekKey)) {
             this.setDirty();
@@ -147,11 +147,11 @@ public class PlayerVaultStatsData extends WorldSavedData {
         }
         return false;
     }
-
+    
     public boolean hasGeneratedReward(final WeekKey weekKey) {
         return this.grantedRewards.contains(weekKey);
     }
-
+    
     public void generateRecordRewards(final ServerWorld overWorld) {
         final WeekKey week = WeekKey.previous();
         if (this.hasGeneratedReward(week)) {
@@ -164,47 +164,44 @@ public class PlayerVaultStatsData extends WorldSavedData {
         final PlayerVaultStats stats = this.getVaultStats(previousRecord.getPlayerUUID());
         final int vLevel = stats.getVaultLevel();
         final NonNullList<ItemStack> loot = generateTrophyBox(overWorld, vLevel);
-        loot.set(4, (Object) TrophyStatueBlockItem.getTrophy(overWorld, week));
-        loot.set(13, (Object) new ItemStack((IItemProvider) ModItems.UNIDENTIFIED_ARTIFACT));
-        loot.set(22, (Object) ChallengeCrystalArchive.getRandom());
-        final ItemStack box = new ItemStack((IItemProvider) Items.WHITE_SHULKER_BOX);
-        box.getOrCreateTag().put("BlockEntityTag", (INBT) new CompoundNBT());
-        ItemStackHelper.saveAllItems(box.getOrCreateTag().getCompound("BlockEntityTag"), (NonNullList) loot);
+        loot.set(4, (Object)TrophyStatueBlockItem.getTrophy(overWorld, week));
+        loot.set(13, (Object)new ItemStack((IItemProvider)ModItems.UNIDENTIFIED_ARTIFACT));
+        loot.set(22, (Object)ChallengeCrystalArchive.getRandom());
+        final ItemStack box = new ItemStack((IItemProvider)Items.WHITE_SHULKER_BOX);
+        box.getOrCreateTag().put("BlockEntityTag", (INBT)new CompoundNBT());
+        ItemStackHelper.saveAllItems(box.getOrCreateTag().getCompound("BlockEntityTag"), (NonNullList)loot);
         ScheduledItemDropData.get(overWorld).addDrop(previousRecord.getPlayerUUID(), box);
         this.grantedRewards.add(week);
         this.setDirty();
     }
-
+    
     private static NonNullList<ItemStack> generateTrophyBox(final ServerWorld overWorld, final int vaultLevel) {
         final LootTablesConfig.Level config = ModConfigs.LOOT_TABLES.getForLevel(vaultLevel);
-        final LootTable bossBonusTbl = overWorld.getServer().getLootTables()
-                .get(config.getScavengerCrate());
-        final NonNullList<ItemStack> recordLoot = (NonNullList<ItemStack>) NonNullList.create();
+        final LootTable bossBonusTbl = overWorld.getServer().getLootTables().get(config.getScavengerCrate());
+        final NonNullList<ItemStack> recordLoot = (NonNullList<ItemStack>)NonNullList.create();
         final LootContext.Builder builder = new LootContext.Builder(overWorld).withRandom(overWorld.random);
         while (recordLoot.size() < 27) {
-            recordLoot.addAll(
-                    (Collection) bossBonusTbl.getRandomItems(builder.create(LootParameterSets.EMPTY)));
+            recordLoot.addAll((Collection)bossBonusTbl.getRandomItems(builder.create(LootParameterSets.EMPTY)));
         }
-        Collections.shuffle((List<?>) recordLoot);
+        Collections.shuffle((List<?>)recordLoot);
         while (recordLoot.size() > 27) {
             recordLoot.remove(recordLoot.size() - 1);
         }
         return recordLoot;
     }
-
+    
     public static void onStartup(final FMLServerStartedEvent event) {
         get(event.getServer()).generateRecordRewards(event.getServer().overworld());
     }
-
+    
     public static PlayerVaultStatsData get(final ServerWorld world) {
         return get(world.getServer());
     }
-
+    
     public static PlayerVaultStatsData get(final MinecraftServer srv) {
-        return (PlayerVaultStatsData) srv.overworld().getDataStorage()
-                .computeIfAbsent((Supplier) PlayerVaultStatsData::new, "the_vault_PlayerVaultLevels");
+        return (PlayerVaultStatsData)srv.overworld().getDataStorage().computeIfAbsent((Supplier)PlayerVaultStatsData::new, "the_vault_PlayerVaultLevels");
     }
-
+    
     public void load(final CompoundNBT nbt) {
         final ListNBT playerList = nbt.getList("PlayerEntries", 8);
         final ListNBT statEntries = nbt.getList("StatEntries", 10);
@@ -238,58 +235,59 @@ public class PlayerVaultStatsData extends WorldSavedData {
             }
         }
     }
-
+    
     public CompoundNBT save(final CompoundNBT nbt) {
         final ListNBT playerList = new ListNBT();
         final ListNBT statsList = new ListNBT();
         final ListNBT recordWeekList = new ListNBT();
         final ListNBT rewardsWeekly = new ListNBT();
         this.playerMap.forEach((uuid, stats) -> {
-            playerList.add((Object) StringNBT.valueOf(uuid.toString()));
-            statsList.add((Object) stats.serializeNBT());
+            playerList.add((Object)StringNBT.valueOf(uuid.toString()));
+            statsList.add((Object)stats.serializeNBT());
             return;
         });
-        nbt.put("PlayerEntries", (INBT) playerList);
-        nbt.put("StatEntries", (INBT) statsList);
+        nbt.put("PlayerEntries", (INBT)playerList);
+        nbt.put("StatEntries", (INBT)statsList);
         this.weeklyVaultRecords.forEach((weekKey, entries) -> {
             final CompoundNBT tag = new CompoundNBT();
-            tag.put("weekKey", (INBT) weekKey.serialize());
+            tag.put("weekKey", (INBT)weekKey.serialize());
             final ListNBT recordEntries = new ListNBT();
-            entries.forEach(entry -> recordEntries.add((Object) entry.serialize()));
-            tag.put("entries", (INBT) recordEntries);
-            recordWeekList.add((Object) tag);
+            entries.forEach(entry -> recordEntries.add((Object)entry.serialize()));
+            tag.put("entries", (INBT)recordEntries);
+            recordWeekList.add((Object)tag);
             return;
         });
-        nbt.put("WeeklyRecords", (INBT) recordWeekList);
-        this.grantedRewards.forEach(week -> rewardsWeekly.add((Object) week.serialize()));
-        nbt.put("WeeklyRewards", (INBT) rewardsWeekly);
+        nbt.put("WeeklyRecords", (INBT)recordWeekList);
+        this.grantedRewards.forEach(week -> rewardsWeekly.add((Object)week.serialize()));
+        nbt.put("WeeklyRewards", (INBT)rewardsWeekly);
         return nbt;
     }
-
-    public static class PlayerRecordEntry {
+    
+    public static class PlayerRecordEntry
+    {
         private static final PlayerRecordEntry DEFAULT;
         private final UUID playerUUID;
         private final String playerName;
         private final int tickCount;
-
+        
         public PlayerRecordEntry(final UUID playerUUID, final String playerName, final int tickCount) {
             this.playerUUID = playerUUID;
             this.playerName = playerName;
             this.tickCount = tickCount;
         }
-
+        
         public UUID getPlayerUUID() {
             return this.playerUUID;
         }
-
+        
         public String getPlayerName() {
             return this.playerName;
         }
-
+        
         public int getTickCount() {
             return this.tickCount;
         }
-
+        
         public CompoundNBT serialize() {
             final CompoundNBT tag = new CompoundNBT();
             tag.putUUID("playerUUID", this.playerUUID);
@@ -297,12 +295,11 @@ public class PlayerVaultStatsData extends WorldSavedData {
             tag.putInt("tickCount", this.tickCount);
             return tag;
         }
-
+        
         public static PlayerRecordEntry deserialize(final CompoundNBT tag) {
-            return new PlayerRecordEntry(tag.getUUID("playerUUID"), tag.getString("playerName"),
-                    tag.getInt("tickCount"));
+            return new PlayerRecordEntry(tag.getUUID("playerUUID"), tag.getString("playerName"), tag.getInt("tickCount"));
         }
-
+        
         static {
             DEFAULT = new PlayerRecordEntry(Util.NIL_UUID, "", 6000);
         }

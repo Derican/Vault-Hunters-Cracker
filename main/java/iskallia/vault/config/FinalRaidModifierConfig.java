@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -27,7 +30,8 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.world.vault.logic.objective.raid.modifier.DamageTakenModifier;
 import java.util.List;
 
-public class FinalRaidModifierConfig extends Config {
+public class FinalRaidModifierConfig extends Config
+{
     @Expose
     private List<DamageTakenModifier> DAMAGE_TAKEN_MODIFIERS;
     @Expose
@@ -50,7 +54,7 @@ public class FinalRaidModifierConfig extends Config {
     private List<ModifierDoublingModifier> MODIFIER_DOUBLING_MODIFIERS;
     @Expose
     private List<Level> levels;
-
+    
     public FinalRaidModifierConfig() {
         this.DAMAGE_TAKEN_MODIFIERS = new ArrayList<DamageTakenModifier>();
         this.MONSTER_AMOUNT_MODIFIERS = new ArrayList<MonsterAmountModifier>();
@@ -64,22 +68,16 @@ public class FinalRaidModifierConfig extends Config {
         this.MODIFIER_DOUBLING_MODIFIERS = new ArrayList<ModifierDoublingModifier>();
         this.levels = new ArrayList<Level>();
     }
-
+    
     public List<RaidModifier> getAll() {
-        return Stream
-                .of((List[]) new List[] { this.DAMAGE_TAKEN_MODIFIERS, this.MONSTER_AMOUNT_MODIFIERS,
-                        this.MONSTER_DAMAGE_MODIFIERS, this.MONSTER_HEALTH_MODIFIERS, this.MONSTER_LEVEL_MODIFIERS,
-                        this.BLOCK_PLACEMENT_MODIFIERS, this.MONSTER_SPEED_MODIFIERS, this.ITEM_PLACEMENT_MODIFIERS,
-                        this.ARTIFACT_FRAGMENT_MODIFIERS, this.MODIFIER_DOUBLING_MODIFIERS })
-                .flatMap((Function<? super List, ? extends Stream<?>>) Collection::stream)
-                .collect((Collector<? super Object, ?, List<RaidModifier>>) Collectors.toList());
+        return Stream.of((List[])new List[] { this.DAMAGE_TAKEN_MODIFIERS, this.MONSTER_AMOUNT_MODIFIERS, this.MONSTER_DAMAGE_MODIFIERS, this.MONSTER_HEALTH_MODIFIERS, this.MONSTER_LEVEL_MODIFIERS, this.BLOCK_PLACEMENT_MODIFIERS, this.MONSTER_SPEED_MODIFIERS, this.ITEM_PLACEMENT_MODIFIERS, this.ARTIFACT_FRAGMENT_MODIFIERS, this.MODIFIER_DOUBLING_MODIFIERS }).flatMap((Function<? super List, ? extends Stream<?>>)Collection::stream).collect((Collector<? super Object, ?, List<RaidModifier>>)Collectors.toList());
     }
-
+    
     @Nullable
     public RaidModifier getByName(final String name) {
         return this.getAll().stream().filter(modifier -> modifier.getName().equals(name)).findFirst().orElse(null);
     }
-
+    
     public Optional<RollableModifier> getRandomModifier(final int level, final boolean preventArtifacts) {
         return this.getForLevel(this.levels, level).map(modifierLevel -> {
             WeightedList<RollableModifier> modifierList = modifierLevel.modifiers;
@@ -89,43 +87,30 @@ public class FinalRaidModifierConfig extends Config {
                     return !(modifier instanceof ArtifactFragmentModifier);
                 });
             }
-            return (RollableModifier) modifierList.getRandom(FinalRaidModifierConfig.rand);
+            return (RollableModifier)modifierList.getRandom(FinalRaidModifierConfig.rand);
         });
     }
-
+    
     @Override
     public String getName() {
         return "final_raid_modifiers";
     }
-
+    
     @Override
     protected void reset() {
-        (this.DAMAGE_TAKEN_MODIFIERS = new ArrayList<DamageTakenModifier>())
-                .add(new DamageTakenModifier("damageTaken"));
-        (this.MONSTER_AMOUNT_MODIFIERS = new ArrayList<MonsterAmountModifier>())
-                .add(new MonsterAmountModifier("monsterAmount"));
-        (this.MONSTER_DAMAGE_MODIFIERS = new ArrayList<MonsterDamageModifier>())
-                .add(new MonsterDamageModifier("monsterDamage"));
-        (this.MONSTER_HEALTH_MODIFIERS = new ArrayList<MonsterHealthModifier>())
-                .add(new MonsterHealthModifier("monsterHealth"));
-        (this.MONSTER_SPEED_MODIFIERS = new ArrayList<MonsterSpeedModifier>())
-                .add(new MonsterSpeedModifier("monsterSpeed"));
-        (this.MONSTER_LEVEL_MODIFIERS = new ArrayList<MonsterLevelModifier>())
-                .add(new MonsterLevelModifier("monsterLevel"));
-        (this.BLOCK_PLACEMENT_MODIFIERS = new ArrayList<BlockPlacementModifier>())
-                .add(new BlockPlacementModifier("gildedChests", ModBlocks.VAULT_BONUS_CHEST, 5, "Gilded Chests"));
-        (this.ITEM_PLACEMENT_MODIFIERS = new ArrayList<FloatingItemModifier>())
-                .add(new FloatingItemModifier("vaultGems", 10, FloatingItemModifier.defaultGemList(), "Vault Gems"));
-        (this.ARTIFACT_FRAGMENT_MODIFIERS = new ArrayList<ArtifactFragmentModifier>())
-                .add(new ArtifactFragmentModifier("artifactFragment"));
-        (this.MODIFIER_DOUBLING_MODIFIERS = new ArrayList<ModifierDoublingModifier>())
-                .add(new ModifierDoublingModifier("modifierDoubling"));
-        (this.levels = new ArrayList<Level>()).add(new Level(0,
-                new WeightedList<RollableModifier>().add(new RollableModifier("gildedChests", 1.0f, 1.0f), 1)
-                        .add(new RollableModifier("vaultGems", 1.0f, 1.0f), 1)
-                        .add(new RollableModifier("artifactFragment", 0.01f, 0.05f), 1)));
+        (this.DAMAGE_TAKEN_MODIFIERS = new ArrayList<DamageTakenModifier>()).add(new DamageTakenModifier("damageTaken"));
+        (this.MONSTER_AMOUNT_MODIFIERS = new ArrayList<MonsterAmountModifier>()).add(new MonsterAmountModifier("monsterAmount"));
+        (this.MONSTER_DAMAGE_MODIFIERS = new ArrayList<MonsterDamageModifier>()).add(new MonsterDamageModifier("monsterDamage"));
+        (this.MONSTER_HEALTH_MODIFIERS = new ArrayList<MonsterHealthModifier>()).add(new MonsterHealthModifier("monsterHealth"));
+        (this.MONSTER_SPEED_MODIFIERS = new ArrayList<MonsterSpeedModifier>()).add(new MonsterSpeedModifier("monsterSpeed"));
+        (this.MONSTER_LEVEL_MODIFIERS = new ArrayList<MonsterLevelModifier>()).add(new MonsterLevelModifier("monsterLevel"));
+        (this.BLOCK_PLACEMENT_MODIFIERS = new ArrayList<BlockPlacementModifier>()).add(new BlockPlacementModifier("gildedChests", ModBlocks.VAULT_BONUS_CHEST, 5, "Gilded Chests"));
+        (this.ITEM_PLACEMENT_MODIFIERS = new ArrayList<FloatingItemModifier>()).add(new FloatingItemModifier("vaultGems", 10, FloatingItemModifier.defaultGemList(), "Vault Gems"));
+        (this.ARTIFACT_FRAGMENT_MODIFIERS = new ArrayList<ArtifactFragmentModifier>()).add(new ArtifactFragmentModifier("artifactFragment"));
+        (this.MODIFIER_DOUBLING_MODIFIERS = new ArrayList<ModifierDoublingModifier>()).add(new ModifierDoublingModifier("modifierDoubling"));
+        (this.levels = new ArrayList<Level>()).add(new Level(0, new WeightedList<RollableModifier>().add(new RollableModifier("gildedChests", 1.0f, 1.0f), 1).add(new RollableModifier("vaultGems", 1.0f, 1.0f), 1).add(new RollableModifier("artifactFragment", 0.01f, 0.05f), 1)));
     }
-
+    
     private Optional<Level> getForLevel(final List<Level> levels, final int level) {
         int i = 0;
         while (i < levels.size()) {
@@ -134,7 +119,8 @@ public class FinalRaidModifierConfig extends Config {
                     break;
                 }
                 return Optional.of(levels.get(i - 1));
-            } else {
+            }
+            else {
                 if (i == levels.size() - 1) {
                     return Optional.of(levels.get(i));
                 }
@@ -143,38 +129,40 @@ public class FinalRaidModifierConfig extends Config {
         }
         return Optional.empty();
     }
-
-    public static class Level {
+    
+    public static class Level
+    {
         @Expose
         private final int level;
         @Expose
         private final WeightedList<RollableModifier> modifiers;
-
+        
         public Level(final int level, final WeightedList<RollableModifier> modifiers) {
             this.level = level;
             this.modifiers = modifiers;
         }
     }
-
-    public static class RollableModifier {
+    
+    public static class RollableModifier
+    {
         @Expose
         private String modifier;
         @Expose
         private float minValue;
         @Expose
         private float maxValue;
-
+        
         public RollableModifier(final String modifier, final float minValue, final float maxValue) {
             this.modifier = modifier;
             this.minValue = minValue;
             this.maxValue = maxValue;
         }
-
+        
         @Nullable
         public RaidModifier getModifier() {
             return ModConfigs.RAID_MODIFIER_CONFIG.getByName(this.modifier);
         }
-
+        
         public float getRandomValue() {
             final RaidModifier modifier = this.getModifier();
             if (modifier == null) {
@@ -184,7 +172,7 @@ public class FinalRaidModifierConfig extends Config {
             if (modifier.isPercentage()) {
                 return Math.round(value * 100.0f) / 100.0f;
             }
-            return (float) Math.round(value);
+            return (float)Math.round(value);
         }
     }
 }

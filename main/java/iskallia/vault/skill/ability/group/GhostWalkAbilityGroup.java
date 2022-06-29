@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -12,21 +15,22 @@ import iskallia.vault.skill.ability.effect.GhostWalkAbility;
 import iskallia.vault.skill.ability.config.GhostWalkConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class GhostWalkAbilityGroup extends AbilityGroup<GhostWalkConfig, GhostWalkAbility<GhostWalkConfig>> {
+public class GhostWalkAbilityGroup extends AbilityGroup<GhostWalkConfig, GhostWalkAbility<GhostWalkConfig>>
+{
     @Expose
     private final List<GhostWalkDamageConfig> damageLevelConfiguration;
     @Expose
     private final List<GhostWalkParryConfig> parryLevelConfiguration;
     @Expose
     private final List<GhostWalkRegenerationConfig> regenerationLevelConfiguration;
-
+    
     private GhostWalkAbilityGroup() {
         super("Ghost Walk");
         this.damageLevelConfiguration = new ArrayList<GhostWalkDamageConfig>();
         this.parryLevelConfiguration = new ArrayList<GhostWalkParryConfig>();
         this.regenerationLevelConfiguration = new ArrayList<GhostWalkRegenerationConfig>();
     }
-
+    
     @Override
     protected GhostWalkConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -44,7 +48,7 @@ public class GhostWalkAbilityGroup extends AbilityGroup<GhostWalkConfig, GhostWa
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -62,15 +66,15 @@ public class GhostWalkAbilityGroup extends AbilityGroup<GhostWalkConfig, GhostWa
             }
         }
     }
-
+    
     public static GhostWalkAbilityGroup defaultConfig() {
         final GhostWalkAbilityGroup group = new GhostWalkAbilityGroup();
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(1, 0, 100));
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(2, 1, 140));
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(3, 2, 180));
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(4, 3, 220));
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(5, 4, 260));
-        ((AbilityGroup<GhostWalkConfig, E>) group).addLevel(new GhostWalkConfig(6, 5, 300));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(1, 0, 100));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(2, 1, 140));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(3, 2, 180));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(4, 3, 220));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(5, 4, 260));
+        ((AbilityGroup<GhostWalkConfig, E>)group).addLevel(new GhostWalkConfig(6, 5, 300));
         group.damageLevelConfiguration.add(new GhostWalkDamageConfig(1, 0, 100, 1.0f));
         group.damageLevelConfiguration.add(new GhostWalkDamageConfig(2, 1, 140, 1.1f));
         group.damageLevelConfiguration.add(new GhostWalkDamageConfig(3, 2, 180, 1.1f));

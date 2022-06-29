@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.chest;
 
@@ -26,33 +29,29 @@ import net.minecraft.potion.Potion;
 import com.google.gson.annotations.Expose;
 import java.util.List;
 
-public class PotionCloudEffect extends VaultChestEffect {
+public class PotionCloudEffect extends VaultChestEffect
+{
     @Expose
     public List<String> potions;
-
+    
     public PotionCloudEffect(final String name, final Potion... potions) {
         super(name);
-        this.potions = Arrays.stream(potions).map((Function<? super Potion, ?>) ForgeRegistryEntry::getRegistryName)
-                .filter(Objects::nonNull).map((Function<? super Object, ?>) ResourceLocation::toString)
-                .collect((Collector<? super Object, ?, List<String>>) Collectors.toList());
+        this.potions = Arrays.stream(potions).map((Function<? super Potion, ?>)ForgeRegistryEntry::getRegistryName).filter(Objects::nonNull).map((Function<? super Object, ?>)ResourceLocation::toString).collect((Collector<? super Object, ?, List<String>>)Collectors.toList());
     }
-
+    
     public List<Potion> getPotions() {
-        return this.potions.stream()
-                .map(s -> Registry.POTION.getOptional(new ResourceLocation(s)).orElse(null))
-                .filter(Objects::nonNull).collect((Collector<? super Object, ?, List<Potion>>) Collectors.toList());
+        return this.potions.stream().map(s -> Registry.POTION.getOptional(new ResourceLocation(s)).orElse(null)).filter(Objects::nonNull).collect((Collector<? super Object, ?, List<Potion>>)Collectors.toList());
     }
-
+    
     @Override
     public void apply(final VaultRaid vault, final VaultPlayer player, final ServerWorld world) {
         player.runIfPresent(world.getServer(), playerEntity -> {
-            final PotionEntity entity = new PotionEntity((World) world, (LivingEntity) playerEntity);
-            final ItemStack stack = new ItemStack((IItemProvider) Items.LINGERING_POTION);
+            final PotionEntity entity = new PotionEntity((World)world, (LivingEntity)playerEntity);
+            final ItemStack stack = new ItemStack((IItemProvider)Items.LINGERING_POTION);
             this.getPotions().forEach(potion -> PotionUtils.setPotion(stack, potion));
             entity.setItem(stack);
-            entity.shootFromRotation((Entity) playerEntity, playerEntity.xRot, playerEntity.yRot, -20.0f,
-                    0.5f, 1.0f);
-            world.addFreshEntity((Entity) entity);
+            entity.shootFromRotation((Entity)playerEntity, playerEntity.xRot, playerEntity.yRot, -20.0f, 0.5f, 1.0f);
+            world.addFreshEntity((Entity)entity);
         });
     }
 }

@@ -1,7 +1,7 @@
 import os, re
 import pandas as pd
 
-SRC_DIR = "decompile-out"
+SRC_DIR = "out"
 OUT_DIR = "main/java/"
 
 fields_map = pd.read_csv("fields.csv")

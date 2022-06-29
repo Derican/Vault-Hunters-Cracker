@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -20,42 +23,39 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraft.potion.PotionBrewing;
 
-public class ModRecipes {
+public class ModRecipes
+{
     public static void initialize() {
         PotionBrewing.CONTAINER_MIXES.removeIf(o -> {
-            final Field f = ObfuscationReflectionHelper.findField((Class) o.getClass(), "ingredient");
+            final Field f = ObfuscationReflectionHelper.findField((Class)o.getClass(), "ingredient");
             try {
-                final Ingredient i = (Ingredient) f.get(o);
-                if (i.test(new ItemStack((IItemProvider) Items.DRAGON_BREATH))) {
+                final Ingredient i = (Ingredient)f.get(o);
+                if (i.test(new ItemStack((IItemProvider)Items.DRAGON_BREATH))) {
                     return true;
                 }
-            } catch (final Exception ex) {
             }
+            catch (final Exception ex) {}
             return false;
         });
     }
-
-    public static class Serializer {
+    
+    public static class Serializer
+    {
         public static SpecialRecipeSerializer<RelicSetRecipe> CRAFTING_SPECIAL_RELIC_SET;
         public static NonRaffleCrystalShapedRecipe.Serializer NON_RAFFLE_CRYSTAL_SHAPED;
         public static ShapelessCopyNbtRecipe.Serializer COPY_NBT_SHAPELESS;
         public static SpecialRecipeSerializer<MysteryEggRecipe> MYSTERY_EGG_RECIPE;
-
+        
         public static void register(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-            Serializer.CRAFTING_SPECIAL_RELIC_SET = (SpecialRecipeSerializer<RelicSetRecipe>) register(event,
-                    "crafting_special_relic_set", new SpecialRecipeSerializer((Function) RelicSetRecipe::new));
-            Serializer.NON_RAFFLE_CRYSTAL_SHAPED = register(event, "non_raffle_crystal_shaped",
-                    new NonRaffleCrystalShapedRecipe.Serializer());
-            Serializer.COPY_NBT_SHAPELESS = register(event, "crafting_shapeless_copy_nbt",
-                    new ShapelessCopyNbtRecipe.Serializer());
-            Serializer.MYSTERY_EGG_RECIPE = (SpecialRecipeSerializer<MysteryEggRecipe>) register(event, "mystery_egg",
-                    new SpecialRecipeSerializer((Function) MysteryEggRecipe::new));
+            Serializer.CRAFTING_SPECIAL_RELIC_SET = (SpecialRecipeSerializer<RelicSetRecipe>)register(event, "crafting_special_relic_set", new SpecialRecipeSerializer((Function)RelicSetRecipe::new));
+            Serializer.NON_RAFFLE_CRYSTAL_SHAPED = register(event, "non_raffle_crystal_shaped", new NonRaffleCrystalShapedRecipe.Serializer());
+            Serializer.COPY_NBT_SHAPELESS = register(event, "crafting_shapeless_copy_nbt", new ShapelessCopyNbtRecipe.Serializer());
+            Serializer.MYSTERY_EGG_RECIPE = (SpecialRecipeSerializer<MysteryEggRecipe>)register(event, "mystery_egg", new SpecialRecipeSerializer((Function)MysteryEggRecipe::new));
         }
-
-        private static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S register(
-                final RegistryEvent.Register<IRecipeSerializer<?>> event, final String name, final S serializer) {
+        
+        private static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S register(final RegistryEvent.Register<IRecipeSerializer<?>> event, final String name, final S serializer) {
             serializer.setRegistryName(Vault.id(name));
-            event.getRegistry().register((IForgeRegistryEntry) serializer);
+            event.getRegistry().register((IForgeRegistryEntry)serializer);
             return serializer;
         }
     }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client;
 
@@ -11,14 +14,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Deque;
 
-public class ClientSandEventData {
+public class ClientSandEventData
+{
     private static final ClientSandEventData INSTANCE;
     private final Deque<ContributorDisplay> contributors;
     private float filledPercentage;
     private int collectedSand;
     private int totalSand;
     private int timeout;
-
+    
     private ClientSandEventData() {
         this.contributors = new LinkedList<ContributorDisplay>();
         this.filledPercentage = 0.0f;
@@ -26,37 +30,37 @@ public class ClientSandEventData {
         this.totalSand = 0;
         this.timeout = 0;
     }
-
+    
     public static ClientSandEventData getInstance() {
         return ClientSandEventData.INSTANCE;
     }
-
+    
     public float getFilledPercentage() {
         return this.filledPercentage;
     }
-
+    
     public int getCollectedSand() {
         return this.collectedSand;
     }
-
+    
     public int getTotalSand() {
         return this.totalSand;
     }
-
+    
     public boolean isValid() {
         return this.timeout > 0;
     }
-
+    
     public Collection<ContributorDisplay> getContributors() {
         synchronized (this.contributors) {
-            return Collections.unmodifiableCollection((Collection<? extends ContributorDisplay>) this.contributors);
+            return Collections.unmodifiableCollection((Collection<? extends ContributorDisplay>)this.contributors);
         }
     }
-
+    
     public void init() {
-        MinecraftForge.EVENT_BUS.addListener((Consumer) this::onTick);
+        MinecraftForge.EVENT_BUS.addListener((Consumer)this::onTick);
     }
-
+    
     private void onTick(final TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             if (this.isValid()) {
@@ -70,14 +74,14 @@ public class ClientSandEventData {
             }
         }
     }
-
+    
     public void receive(final SandEventUpdateMessage pkt) {
         this.filledPercentage = pkt.getPercentFilled();
         this.collectedSand = pkt.getSandCollected();
         this.totalSand = pkt.getSandSpawned();
         this.timeout = 60;
     }
-
+    
     public void addContributor(final ITextComponent contributorDisplay) {
         synchronized (this.contributors) {
             this.contributors.addFirst(new ContributorDisplay(contributorDisplay));
@@ -86,25 +90,26 @@ public class ClientSandEventData {
             }
         }
     }
-
+    
     static {
         INSTANCE = new ClientSandEventData();
     }
-
-    public static class ContributorDisplay {
+    
+    public static class ContributorDisplay
+    {
         public static final int TICK_TOTAL_DISPLAY = 30;
         private final ITextComponent contributorDisplay;
         private int timeout;
-
+        
         public ContributorDisplay(final ITextComponent contributorDisplay) {
             this.contributorDisplay = contributorDisplay;
             this.timeout = 40;
         }
-
+        
         public ITextComponent getContributorDisplay() {
             return this.contributorDisplay;
         }
-
+        
         public float getRenderOpacity() {
             final float half = 15.0f;
             if (this.timeout > half) {

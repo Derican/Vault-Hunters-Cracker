@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -41,7 +44,8 @@ import iskallia.vault.skill.ability.effect.sub.CleanseApplyAbility;
 import iskallia.vault.skill.ability.AbilityRegistry;
 import iskallia.vault.skill.ability.effect.CleanseAbility;
 
-public class ModAbilities {
+public class ModAbilities
+{
     public static final String CLEANSE = "Cleanse";
     public static final String CLEANSE_APPLY = "Cleanse_Applynearby";
     public static final String CLEANSE_HEAL = "Cleanse_Heal";
@@ -83,7 +87,7 @@ public class ModAbilities {
     public static final String HUNTER_SPAWNERS = "Hunter_Spawners";
     public static final String HUNTER_CHESTS = "Hunter_Chests";
     public static final String HUNTER_BLOCKS = "Hunter_Blocks";
-
+    
     public static void init() {
         AbilityRegistry.register("Cleanse", new CleanseAbility());
         AbilityRegistry.register("Cleanse_Applynearby", new CleanseApplyAbility());

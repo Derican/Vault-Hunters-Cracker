@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -21,12 +24,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
-public class FlawedRubyItem extends BasicTooltipItem {
-    public FlawedRubyItem(final ResourceLocation id, final Item.Properties properties,
-            final ITextComponent... components) {
+public class FlawedRubyItem extends BasicTooltipItem
+{
+    public FlawedRubyItem(final ResourceLocation id, final Item.Properties properties, final ITextComponent... components) {
         super(id, properties, components);
     }
-
+    
     public static void markApplied(final ItemStack gearPiece) {
         if (!(gearPiece.getItem() instanceof VaultGear)) {
             return;
@@ -34,7 +37,7 @@ public class FlawedRubyItem extends BasicTooltipItem {
         final CompoundNBT nbt = gearPiece.getOrCreateTag();
         nbt.putBoolean("FlawedRubyApplied", true);
     }
-
+    
     public static void handleOutcome(final ServerPlayerEntity player, final ItemStack gearPiece) {
         if (!(gearPiece.getItem() instanceof VaultGear)) {
             return;
@@ -44,27 +47,28 @@ public class FlawedRubyItem extends BasicTooltipItem {
             if (!(world instanceof ServerWorld)) {
                 return;
             }
-            final ServerWorld serverWorld = (ServerWorld) world;
+            final ServerWorld serverWorld = (ServerWorld)world;
             FlawedRubyConfig.Outcome outcome = FlawedRubyConfig.Outcome.FAIL;
-            final TalentTree talents = PlayerTalentsData.get(serverWorld).getTalents((PlayerEntity) player);
+            final TalentTree talents = PlayerTalentsData.get(serverWorld).getTalents((PlayerEntity)player);
             if (talents.hasLearnedNode(ModConfigs.TALENTS.ARTISAN)) {
                 outcome = ModConfigs.FLAWED_RUBY.getForArtisan();
-            } else if (talents.hasLearnedNode(ModConfigs.TALENTS.TREASURE_HUNTER)) {
+            }
+            else if (talents.hasLearnedNode(ModConfigs.TALENTS.TREASURE_HUNTER)) {
                 outcome = ModConfigs.FLAWED_RUBY.getForTreasureHunter();
             }
             if (outcome == FlawedRubyConfig.Outcome.IMBUE) {
                 final int max = ModAttributes.GEAR_MAX_LEVEL.getOrDefault(gearPiece, 0).getValue(gearPiece);
                 ModAttributes.GEAR_MAX_LEVEL.create(gearPiece, max + 1);
                 ModAttributes.IMBUED.create(gearPiece, true);
-            } else if (outcome == FlawedRubyConfig.Outcome.BREAK) {
+            }
+            else if (outcome == FlawedRubyConfig.Outcome.BREAK) {
                 gearPiece.setCount(0);
-                player.getCommandSenderWorld().playSound((PlayerEntity) null, player.blockPosition(),
-                        SoundEvents.ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                player.getCommandSenderWorld().playSound((PlayerEntity)null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f);
             }
             resetApplied(gearPiece);
         }
     }
-
+    
     static void resetApplied(final ItemStack gearPiece) {
         if (!(gearPiece.getItem() instanceof VaultGear)) {
             return;
@@ -72,7 +76,7 @@ public class FlawedRubyItem extends BasicTooltipItem {
         final CompoundNBT nbt = gearPiece.getOrCreateTag();
         nbt.putBoolean("FlawedRubyApplied", false);
     }
-
+    
     public static boolean shouldHandleOutcome(final ItemStack gearPiece) {
         if (!(gearPiece.getItem() instanceof VaultGear)) {
             return false;

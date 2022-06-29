@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.gen.structure.pool;
 
@@ -42,61 +45,51 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 
-public class PalettedSinglePoolElement extends JigsawPiece {
+public class PalettedSinglePoolElement extends JigsawPiece
+{
     private static final Codec<Either<ResourceLocation, Template>> TEMPLATE_CODEC;
     public static final Codec<PalettedSinglePoolElement> CODEC;
     protected final Either<ResourceLocation, Template> template;
     protected final Supplier<StructureProcessorList> processors;
-
-    private static <T> DataResult<T> encodeTemplate(final Either<ResourceLocation, Template> p_236840_0_,
-            final DynamicOps<T> p_236840_1_, final T p_236840_2_) {
+    
+    private static <T> DataResult<T> encodeTemplate(final Either<ResourceLocation, Template> p_236840_0_, final DynamicOps<T> p_236840_1_, final T p_236840_2_) {
         final Optional<ResourceLocation> optional = p_236840_0_.left();
-        return (DataResult<T>) (optional.isPresent()
-                ? ResourceLocation.CODEC.encode((Object) optional.get(), (DynamicOps) p_236840_1_,
-                        (Object) p_236840_2_)
-                : DataResult.error("Can not serialize a runtime pool element"));
+        return (DataResult<T>)(optional.isPresent() ? ResourceLocation.CODEC.encode((Object)optional.get(), (DynamicOps)p_236840_1_, (Object)p_236840_2_) : DataResult.error("Can not serialize a runtime pool element"));
     }
-
+    
     protected static <E extends PalettedSinglePoolElement> RecordCodecBuilder<E, Supplier<StructureProcessorList>> processorsCodec() {
-        return (RecordCodecBuilder<E, Supplier<StructureProcessorList>>) IStructureProcessorType.LIST_CODEC
-                .fieldOf("processors").forGetter(p_236845_0_ -> p_236845_0_.processors);
+        return (RecordCodecBuilder<E, Supplier<StructureProcessorList>>)IStructureProcessorType.LIST_CODEC.fieldOf("processors").forGetter(p_236845_0_ -> p_236845_0_.processors);
     }
-
+    
     protected static <E extends PalettedSinglePoolElement> RecordCodecBuilder<E, Either<ResourceLocation, Template>> templateCodec() {
-        return (RecordCodecBuilder<E, Either<ResourceLocation, Template>>) PalettedSinglePoolElement.TEMPLATE_CODEC
-                .fieldOf("location").forGetter(p_236842_0_ -> p_236842_0_.template);
+        return (RecordCodecBuilder<E, Either<ResourceLocation, Template>>)PalettedSinglePoolElement.TEMPLATE_CODEC.fieldOf("location").forGetter(p_236842_0_ -> p_236842_0_.template);
     }
-
-    protected PalettedSinglePoolElement(final Either<ResourceLocation, Template> p_i242008_1_,
-            final Supplier<StructureProcessorList> p_i242008_2_, final JigsawPattern.PlacementBehaviour p_i242008_3_) {
+    
+    protected PalettedSinglePoolElement(final Either<ResourceLocation, Template> p_i242008_1_, final Supplier<StructureProcessorList> p_i242008_2_, final JigsawPattern.PlacementBehaviour p_i242008_3_) {
         super(p_i242008_3_);
         this.template = p_i242008_1_;
         this.processors = p_i242008_2_;
     }
-
+    
     public PalettedSinglePoolElement(final Template p_i242009_1_) {
-        this((Either<ResourceLocation, Template>) Either.right((Object) p_i242009_1_),
-                () -> ProcessorLists.EMPTY, JigsawPattern.PlacementBehaviour.RIGID);
+        this((Either<ResourceLocation, Template>)Either.right((Object)p_i242009_1_), () -> ProcessorLists.EMPTY, JigsawPattern.PlacementBehaviour.RIGID);
     }
-
+    
     public Either<ResourceLocation, Template> getTemplate() {
         return this.template;
     }
-
+    
     public Template getTemplate(final TemplateManager manager) {
-        return (Template) this.template.map((Function) manager::getOrCreate, (Function) Function.identity());
+        return (Template)this.template.map((Function)manager::getOrCreate, (Function)Function.identity());
     }
-
-    public List<Template.BlockInfo> getDataMarkers(final TemplateManager p_214857_1_, final BlockPos p_214857_2_,
-            final Rotation p_214857_3_, final boolean p_214857_4_) {
+    
+    public List<Template.BlockInfo> getDataMarkers(final TemplateManager p_214857_1_, final BlockPos p_214857_2_, final Rotation p_214857_3_, final boolean p_214857_4_) {
         final Template template = this.getTemplate(p_214857_1_);
-        final List<Template.BlockInfo> list = template.filterBlocks(p_214857_2_,
-                new PlacementSettings().setRotation(p_214857_3_), Blocks.STRUCTURE_BLOCK, p_214857_4_);
+        final List<Template.BlockInfo> list = template.filterBlocks(p_214857_2_, new PlacementSettings().setRotation(p_214857_3_), Blocks.STRUCTURE_BLOCK, p_214857_4_);
         final List<Template.BlockInfo> list2 = Lists.newArrayList();
         for (final Template.BlockInfo template$blockinfo : list) {
             if (template$blockinfo.nbt != null) {
-                final StructureMode structuremode = StructureMode
-                        .valueOf(template$blockinfo.nbt.getString("mode"));
+                final StructureMode structuremode = StructureMode.valueOf(template$blockinfo.nbt.getString("mode"));
                 if (structuremode != StructureMode.DATA) {
                     continue;
                 }
@@ -105,48 +98,36 @@ public class PalettedSinglePoolElement extends JigsawPiece {
         }
         return list2;
     }
-
-    public List<Template.BlockInfo> getShuffledJigsawBlocks(final TemplateManager templateManager, final BlockPos pos,
-            final Rotation rotation, final Random random) {
+    
+    public List<Template.BlockInfo> getShuffledJigsawBlocks(final TemplateManager templateManager, final BlockPos pos, final Rotation rotation, final Random random) {
         final Template template = this.getTemplate(templateManager);
-        final List<Template.BlockInfo> list = template.filterBlocks(pos,
-                new PlacementSettings().setRotation(rotation), Blocks.JIGSAW, true);
+        final List<Template.BlockInfo> list = template.filterBlocks(pos, new PlacementSettings().setRotation(rotation), Blocks.JIGSAW, true);
         Collections.shuffle(list, random);
         return list;
     }
-
-    public MutableBoundingBox getBoundingBox(final TemplateManager templateManager, final BlockPos pos,
-            final Rotation rotation) {
+    
+    public MutableBoundingBox getBoundingBox(final TemplateManager templateManager, final BlockPos pos, final Rotation rotation) {
         final Template template = this.getTemplate(templateManager);
         return template.getBoundingBox(new PlacementSettings().setRotation(rotation), pos);
     }
-
-    public boolean place(final TemplateManager templateManager, final ISeedReader world,
-            final StructureManager structureManager, final ChunkGenerator chunkGen, final BlockPos pos1,
-            final BlockPos pos2, final Rotation rotation, final MutableBoundingBox box, final Random random,
-            final boolean keepJigsaws) {
-        return this.generate(null, templateManager, world, structureManager, chunkGen, pos1, pos2, rotation, box,
-                random, keepJigsaws, 18);
+    
+    public boolean place(final TemplateManager templateManager, final ISeedReader world, final StructureManager structureManager, final ChunkGenerator chunkGen, final BlockPos pos1, final BlockPos pos2, final Rotation rotation, final MutableBoundingBox box, final Random random, final boolean keepJigsaws) {
+        return this.generate(null, templateManager, world, structureManager, chunkGen, pos1, pos2, rotation, box, random, keepJigsaws, 18);
     }
-
-    public boolean generate(@Nullable final Supplier<StructureProcessorList> extra,
-            final TemplateManager templateManager, final ISeedReader world, final StructureManager structureManager,
-            final ChunkGenerator chunkGen, final BlockPos pos1, final BlockPos pos2, final Rotation rotation,
-            final MutableBoundingBox box, final Random random, final boolean keepJigsaws, final int updateFlags) {
+    
+    public boolean generate(@Nullable final Supplier<StructureProcessorList> extra, final TemplateManager templateManager, final ISeedReader world, final StructureManager structureManager, final ChunkGenerator chunkGen, final BlockPos pos1, final BlockPos pos2, final Rotation rotation, final MutableBoundingBox box, final Random random, final boolean keepJigsaws, final int updateFlags) {
         final Template template = this.getTemplate(templateManager);
         final PlacementSettings placementsettings = this.getSettings(extra, rotation, box, keepJigsaws);
-        if (!template.placeInWorld((IServerWorld) world, pos1, pos2, placementsettings, random, updateFlags)) {
+        if (!template.placeInWorld((IServerWorld)world, pos1, pos2, placementsettings, random, updateFlags)) {
             return false;
         }
-        for (final Template.BlockInfo info : Template.processBlockInfos((IWorld) world, pos1, pos2, placementsettings,
-                (List) this.getDataMarkers(templateManager, pos1, rotation, false), template)) {
-            this.handleDataMarker((IWorld) world, info, pos1, rotation, random, box);
+        for (final Template.BlockInfo info : Template.processBlockInfos((IWorld)world, pos1, pos2, placementsettings, (List)this.getDataMarkers(templateManager, pos1, rotation, false), template)) {
+            this.handleDataMarker((IWorld)world, info, pos1, rotation, random, box);
         }
         return true;
     }
-
-    protected PlacementSettings getSettings(@Nullable final Supplier<StructureProcessorList> extra,
-            final Rotation p_230379_1_, final MutableBoundingBox p_230379_2_, final boolean p_230379_3_) {
+    
+    protected PlacementSettings getSettings(@Nullable final Supplier<StructureProcessorList> extra, final Rotation p_230379_1_, final MutableBoundingBox p_230379_2_, final boolean p_230379_3_) {
         final PlacementSettings placementsettings = new PlacementSettings();
         placementsettings.setBoundingBox(p_230379_2_);
         placementsettings.setRotation(p_230379_1_);
@@ -154,29 +135,26 @@ public class PalettedSinglePoolElement extends JigsawPiece {
         placementsettings.setIgnoreEntities(false);
         placementsettings.setFinalizeEntities(true);
         if (!p_230379_3_) {
-            placementsettings.addProcessor((StructureProcessor) JigsawReplacementStructureProcessor.INSTANCE);
+            placementsettings.addProcessor((StructureProcessor)JigsawReplacementStructureProcessor.INSTANCE);
         }
         this.processors.get().list().forEach(placementsettings::addProcessor);
         if (extra != null) {
             extra.get().list().forEach(placementsettings::addProcessor);
         }
-        this.getProjection().getProcessors().forEach((Consumer) placementsettings::addProcessor);
+        this.getProjection().getProcessors().forEach((Consumer)placementsettings::addProcessor);
         return placementsettings;
     }
-
+    
     public IJigsawDeserializer<?> getType() {
         return ModStructures.PoolElements.PALETTED_SINGLE_POOL_ELEMENT;
     }
-
+    
     public String toString() {
         return "PalettedSingle[" + this.template + "]";
     }
-
+    
     static {
-        TEMPLATE_CODEC = Codec.of(PalettedSinglePoolElement::encodeTemplate,
-                ResourceLocation.CODEC.map((Function) Either::left));
-        CODEC = RecordCodecBuilder.create(
-                p_236841_0_ -> p_236841_0_.group((App) templateCodec(), (App) processorsCodec(), (App) projectionCodec())
-                        .apply((Applicative) p_236841_0_, PalettedSinglePoolElement::new));
+        TEMPLATE_CODEC = Codec.of(PalettedSinglePoolElement::encodeTemplate, ResourceLocation.CODEC.map((Function)Either::left));
+        CODEC = RecordCodecBuilder.create(p_236841_0_ -> p_236841_0_.group((App)templateCodec(), (App)processorsCodec(), (App)projectionCodec()).apply((Applicative)p_236841_0_, PalettedSinglePoolElement::new));
     }
 }

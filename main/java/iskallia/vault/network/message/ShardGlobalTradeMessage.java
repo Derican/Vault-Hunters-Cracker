@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.network.message;
 
@@ -9,17 +12,18 @@ import net.minecraft.network.PacketBuffer;
 import iskallia.vault.config.SoulShardConfig;
 import iskallia.vault.util.data.WeightedList;
 
-public class ShardGlobalTradeMessage {
+public class ShardGlobalTradeMessage
+{
     private final WeightedList<SoulShardConfig.ShardTrade> shardTrades;
-
+    
     public ShardGlobalTradeMessage(final WeightedList<SoulShardConfig.ShardTrade> shardTrades) {
         this.shardTrades = shardTrades;
     }
-
+    
     public WeightedList<SoulShardConfig.ShardTrade> getShardTrades() {
         return this.shardTrades;
     }
-
+    
     public static void encode(final ShardGlobalTradeMessage message, final PacketBuffer buffer) {
         buffer.writeInt(message.shardTrades.size());
         message.shardTrades.forEach((trade, nbr) -> {
@@ -34,7 +38,7 @@ public class ShardGlobalTradeMessage {
             buffer.writeInt(nbr.intValue());
         });
     }
-
+    
     public static ShardGlobalTradeMessage decode(final PacketBuffer buffer) {
         final WeightedList<SoulShardConfig.ShardTrade> trades = new WeightedList<SoulShardConfig.ShardTrade>();
         for (int tradeCount = buffer.readInt(), i = 0; i < tradeCount; ++i) {
@@ -46,15 +50,13 @@ public class ShardGlobalTradeMessage {
             final int min = buffer.readInt();
             final int max = buffer.readInt();
             final int weight = buffer.readInt();
-            final SoulShardConfig.ShardTrade trade = new SoulShardConfig.ShardTrade(new SingleItemEntry(item, nbt), min,
-                    max);
+            final SoulShardConfig.ShardTrade trade = new SoulShardConfig.ShardTrade(new SingleItemEntry(item, nbt), min, max);
             trades.add(trade, weight);
         }
         return new ShardGlobalTradeMessage(trades);
     }
-
-    public static void handle(final ShardGlobalTradeMessage message,
-            final Supplier<NetworkEvent.Context> contextSupplier) {
+    
+    public static void handle(final ShardGlobalTradeMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
         final NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> ClientShardTradeData.receiveGlobal(message));
         context.setPacketHandled(true);

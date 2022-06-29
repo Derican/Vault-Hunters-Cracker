@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util;
 
@@ -32,14 +35,15 @@ import java.util.Map;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class PlayerRageHelper {
+public class PlayerRageHelper
+{
     public static final int MAX_RAGE = 100;
     public static final int RAGE_DEGEN_INTERVAL = 10;
     private static final Map<UUID, Integer> lastAttackTick;
     private static final Map<UUID, Integer> currentRage;
     private static final Map<UUID, PlayerDamageHelper.DamageMultiplier> multiplierMap;
     private static int clientRageInfo;
-
+    
     @SubscribeEvent
     public static void onChangeDim(final EntityTravelToDimensionEvent event) {
         if (!(event.getEntity() instanceof ServerPlayerEntity)) {
@@ -48,11 +52,11 @@ public class PlayerRageHelper {
         if (!event.getDimension().equals(Vault.VAULT_KEY)) {
             return;
         }
-        final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+        final ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
         PlayerRageHelper.lastAttackTick.remove(player.getUUID());
         setCurrentRage(player, 0);
     }
-
+    
     @SubscribeEvent
     public static void onGainRage(final LivingHurtEvent event) {
         final World world = event.getEntityLiving().getCommandSenderWorld();
@@ -63,11 +67,11 @@ public class PlayerRageHelper {
         if (!(source instanceof ServerPlayerEntity)) {
             return;
         }
-        final ServerPlayerEntity attacker = (ServerPlayerEntity) source;
+        final ServerPlayerEntity attacker = (ServerPlayerEntity)source;
         final UUID playerUUID = attacker.getUUID();
         final int lastAttack = PlayerRageHelper.lastAttackTick.getOrDefault(playerUUID, 0);
         if (lastAttack <= attacker.tickCount - 10) {
-            final TalentTree tree = PlayerTalentsData.get(attacker.getLevel()).getTalents((PlayerEntity) attacker);
+            final TalentTree tree = PlayerTalentsData.get(attacker.getLevel()).getTalents((PlayerEntity)attacker);
             final TalentNode<BarbaricTalent> node = tree.getNodeOf(ModConfigs.TALENTS.BARBARIC);
             if (ArchetypeTalent.isEnabled(world) && node.isLearned()) {
                 final int rage = getCurrentRage(playerUUID, LogicalSide.SERVER);
@@ -77,22 +81,22 @@ public class PlayerRageHelper {
             }
         }
     }
-
+    
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDeath(final LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof ServerPlayerEntity) {
             PlayerRageHelper.lastAttackTick.remove(event.getEntityLiving().getUUID());
         }
     }
-
+    
     @SubscribeEvent
     public static void onTick(final TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START || !(event.player instanceof ServerPlayerEntity)) {
             return;
         }
-        final ServerPlayerEntity sPlayer = (ServerPlayerEntity) event.player;
+        final ServerPlayerEntity sPlayer = (ServerPlayerEntity)event.player;
         final UUID playerUUID = sPlayer.getUUID();
-        final int rage = getCurrentRage((PlayerEntity) sPlayer, LogicalSide.SERVER);
+        final int rage = getCurrentRage((PlayerEntity)sPlayer, LogicalSide.SERVER);
         if (rage <= 0) {
             removeExistingDamageBuff(sPlayer);
             return;
@@ -102,68 +106,63 @@ public class PlayerRageHelper {
             removeExistingDamageBuff(sPlayer);
             return;
         }
-        final TalentTree tree = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity) sPlayer);
+        final TalentTree tree = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity)sPlayer);
         final BarbaricTalent talent = tree.getNodeOf(ModConfigs.TALENTS.BARBARIC).getTalent();
-        if (ArchetypeTalent.isEnabled((World) sPlayer.getLevel())) {
+        if (ArchetypeTalent.isEnabled((World)sPlayer.getLevel())) {
             final int lastTick = PlayerRageHelper.lastAttackTick.getOrDefault(playerUUID, 0);
-            if (lastTick < sPlayer.tickCount - talent.getRageDegenTickDelay()
-                    && sPlayer.tickCount % 10 == 0) {
+            if (lastTick < sPlayer.tickCount - talent.getRageDegenTickDelay() && sPlayer.tickCount % 10 == 0) {
                 setCurrentRage(sPlayer, rage - 1);
                 refreshDamageBuff(sPlayer, talent.getDamageMultiplierPerRage());
             }
         }
     }
-
+    
     private static void setCurrentRage(final ServerPlayerEntity player, int rage) {
         rage = MathHelper.clamp(rage, 0, 100);
         PlayerRageHelper.currentRage.put(player.getUUID(), rage);
-        ModNetwork.CHANNEL.sendTo((Object) new RageSyncMessage(rage), player.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT);
+        ModNetwork.CHANNEL.sendTo((Object)new RageSyncMessage(rage), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
-
+    
     public static int getCurrentRage(final PlayerEntity player, final LogicalSide side) {
         return getCurrentRage(player.getUUID(), side);
     }
-
+    
     public static int getCurrentRage(final UUID playerUUID, final LogicalSide side) {
         if (side.isServer()) {
             return PlayerRageHelper.currentRage.getOrDefault(playerUUID, 0);
         }
         return PlayerRageHelper.clientRageInfo;
     }
-
+    
     private static boolean canGenerateRage(final ServerPlayerEntity sPlayer) {
-        final TalentTree tree = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity) sPlayer);
-        return tree.hasLearnedNode(ModConfigs.TALENTS.BARBARIC)
-                && ArchetypeTalent.isEnabled((World) sPlayer.getLevel());
+        final TalentTree tree = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity)sPlayer);
+        return tree.hasLearnedNode(ModConfigs.TALENTS.BARBARIC) && ArchetypeTalent.isEnabled((World)sPlayer.getLevel());
     }
-
+    
     private static void refreshDamageBuff(final ServerPlayerEntity sPlayer, final float dmgMultiplier) {
         final UUID playerUUID = sPlayer.getUUID();
         final int rage = getCurrentRage(playerUUID, LogicalSide.SERVER);
         removeExistingDamageBuff(sPlayer);
-        PlayerRageHelper.multiplierMap.put(playerUUID, PlayerDamageHelper.applyMultiplier(sPlayer, rage * dmgMultiplier,
-                PlayerDamageHelper.Operation.ADDITIVE_MULTIPLY));
+        PlayerRageHelper.multiplierMap.put(playerUUID, PlayerDamageHelper.applyMultiplier(sPlayer, rage * dmgMultiplier, PlayerDamageHelper.Operation.ADDITIVE_MULTIPLY));
     }
-
+    
     private static void removeExistingDamageBuff(final ServerPlayerEntity player) {
-        final PlayerDamageHelper.DamageMultiplier existing = PlayerRageHelper.multiplierMap
-                .get(player.getUUID());
+        final PlayerDamageHelper.DamageMultiplier existing = PlayerRageHelper.multiplierMap.get(player.getUUID());
         if (existing != null) {
             PlayerDamageHelper.removeMultiplier(player, existing);
         }
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     public static void clearClientCache() {
         PlayerRageHelper.clientRageInfo = 0;
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     public static void receiveRageUpdate(final RageSyncMessage msg) {
         PlayerRageHelper.clientRageInfo = msg.getRage();
     }
-
+    
     static {
         lastAttackTick = new HashMap<UUID, Integer>();
         currentRage = new HashMap<UUID, Integer>();

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.renderer;
 
@@ -16,26 +19,26 @@ import net.minecraft.client.renderer.entity.model.VillagerModel;
 import iskallia.vault.entity.EtchingVendorEntity;
 import net.minecraft.client.renderer.entity.MobRenderer;
 
-public class EtchingVendorRenderer extends MobRenderer<EtchingVendorEntity, VillagerModel<EtchingVendorEntity>> {
+public class EtchingVendorRenderer extends MobRenderer<EtchingVendorEntity, VillagerModel<EtchingVendorEntity>>
+{
     private static final ResourceLocation TEXTURES;
-
+    
     public EtchingVendorRenderer(final EntityRendererManager renderManagerIn) {
-        super(renderManagerIn, (EntityModel) new VillagerModel(0.0f), 0.5f);
-        this.addLayer((LayerRenderer) new HeadLayer((IEntityRenderer) this));
-        this.addLayer((LayerRenderer) new CrossedArmsItemLayer((IEntityRenderer) this));
+        super(renderManagerIn, (EntityModel)new VillagerModel(0.0f), 0.5f);
+        this.addLayer((LayerRenderer)new HeadLayer((IEntityRenderer)this));
+        this.addLayer((LayerRenderer)new CrossedArmsItemLayer((IEntityRenderer)this));
     }
-
+    
     public ResourceLocation getEntityTexture(final EtchingVendorEntity entity) {
         return EtchingVendorRenderer.TEXTURES;
     }
-
-    protected void preRenderCallback(final EtchingVendorEntity entity, final MatrixStack matrixStack,
-            final float pTicks) {
+    
+    protected void preRenderCallback(final EtchingVendorEntity entity, final MatrixStack matrixStack, final float pTicks) {
         this.shadowRadius = 0.5f;
         final float size = 0.9375f;
         matrixStack.scale(size, size, size);
     }
-
+    
     static {
         TEXTURES = Vault.id("textures/entity/etching_trader.png");
     }

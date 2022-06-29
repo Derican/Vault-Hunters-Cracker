@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -15,24 +18,22 @@ import java.util.function.Supplier;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.ChestBlock;
 
-public class ScavengerChestBlock extends ChestBlock {
-    protected ScavengerChestBlock(final AbstractBlock.Properties builder,
-            final Supplier<TileEntityType<? extends ChestTileEntity>> tileEntityTypeIn) {
-        super(builder, (Supplier) tileEntityTypeIn);
+public class ScavengerChestBlock extends ChestBlock
+{
+    protected ScavengerChestBlock(final AbstractBlock.Properties builder, final Supplier<TileEntityType<? extends ChestTileEntity>> tileEntityTypeIn) {
+        super(builder, (Supplier)tileEntityTypeIn);
     }
-
+    
     public ScavengerChestBlock(final AbstractBlock.Properties builder) {
         this(builder, () -> ModBlocks.SCAVENGER_CHEST_TILE_ENTITY);
     }
-
+    
     public TileEntity newBlockEntity(final IBlockReader worldIn) {
-        return (TileEntity) new ScavengerChestTileEntity();
+        return (TileEntity)new ScavengerChestTileEntity();
     }
-
+    
     public BlockState getStateForPlacement(final BlockItemUseContext context) {
         final BlockState state = super.getStateForPlacement(context);
-        return (state == null) ? null
-                : ((BlockState) state.setValue((Property) ScavengerChestBlock.TYPE,
-                        (Comparable) ChestType.SINGLE));
+        return (state == null) ? null : ((BlockState)state.setValue((Property)ScavengerChestBlock.TYPE, (Comparable)ChestType.SINGLE));
     }
 }

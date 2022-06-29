@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -26,7 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.annotations.Expose;
 
-public class ScavengerHuntConfig extends Config {
+public class ScavengerHuntConfig extends Config
+{
     @Expose
     private ItemPool requiredItems;
     @Expose
@@ -35,34 +39,32 @@ public class ScavengerHuntConfig extends Config {
     private ItemPool treasureItems;
     @Expose
     private final Map<String, ItemPool> mobDropItems;
-
+    
     public ScavengerHuntConfig() {
         this.mobDropItems = new HashMap<String, ItemPool>();
     }
-
+    
     @Nullable
     public ItemEntry getRandomRequiredItem(final Predicate<Item> excludedItems) {
-        return this.requiredItems.pool.copyFiltered(entry -> !excludedItems.test(entry.getItem()))
-                .getRandom(ScavengerHuntConfig.rand);
+        return this.requiredItems.pool.copyFiltered(entry -> !excludedItems.test(entry.getItem())).getRandom(ScavengerHuntConfig.rand);
     }
-
+    
     public int getTotalRequiredItems() {
         return this.requiredItems.getRandomAmount();
     }
-
+    
     public List<ItemEntry> generateChestLoot(final Predicate<ItemEntry> dropFilter) {
         return this.chestItems.getRandomEntries(dropFilter);
     }
-
+    
     public List<ItemEntry> generateTreasureLoot(final Predicate<ItemEntry> dropFilter) {
         return this.treasureItems.getRandomEntries(dropFilter);
     }
-
+    
     public List<ItemEntry> generateMobDropLoot(final Predicate<ItemEntry> dropFilter, final EntityType<?> mobType) {
-        return this.mobDropItems.getOrDefault(mobType.getRegistryName().toString(), ItemPool.EMPTY)
-                .getRandomEntries(dropFilter);
+        return this.mobDropItems.getOrDefault(mobType.getRegistryName().toString(), ItemPool.EMPTY).getRandomEntries(dropFilter);
     }
-
+    
     public SourceType getRequirementSource(final ItemStack stack) {
         final Item requiredItem = stack.getItem();
         for (final WeightedList.Entry<ItemEntry> entry : this.chestItems.pool) {
@@ -77,25 +79,25 @@ public class ScavengerHuntConfig extends Config {
         }
         return SourceType.MOB;
     }
-
+    
     @Nullable
     public ResourceLocation getRequirementMobType(final ItemStack stack) {
         final Item requiredItem = stack.getItem();
         for (final Map.Entry<String, ItemPool> mobDropEntry : this.mobDropItems.entrySet()) {
             for (final WeightedList.Entry<ItemEntry> entry : mobDropEntry.getValue().getPool()) {
                 if (requiredItem.equals(entry.value.getItem())) {
-                    return new ResourceLocation((String) mobDropEntry.getKey());
+                    return new ResourceLocation((String)mobDropEntry.getKey());
                 }
             }
         }
         return null;
     }
-
+    
     @Override
     public String getName() {
         return "scavenger_hunt";
     }
-
+    
     @Override
     protected void reset() {
         this.requiredItems = new ItemPool(10, 15);
@@ -219,16 +221,17 @@ public class ScavengerHuntConfig extends Config {
         this.mobDropItems.put(EntityType.SKELETON.getRegistryName().toString(), skeletonPool);
         this.mobDropItems.put(EntityType.WITHER_SKELETON.getRegistryName().toString(), skeletonPool);
     }
-
+    
     private void addRequiredItem(final ItemPool out, final Item i) {
         out.pool.add(new ItemEntry(i, 10, 15), 1);
     }
-
+    
     private void addDropItem(final ItemPool out, final Item i) {
         out.pool.add(new ItemEntry(i, 1, 1), 1);
     }
-
-    public static class ItemPool {
+    
+    public static class ItemPool
+    {
         private static final ItemPool EMPTY;
         @Expose
         private final WeightedList<ItemEntry> pool;
@@ -236,84 +239,84 @@ public class ScavengerHuntConfig extends Config {
         private final int min;
         @Expose
         private final int max;
-
+        
         public ItemPool(final int min, final int max) {
             this.pool = new WeightedList<ItemEntry>();
             this.min = min;
             this.max = max;
         }
-
+        
         public List<WeightedList.Entry<ItemEntry>> getPool() {
-            return Collections.unmodifiableList((List<? extends WeightedList.Entry<ItemEntry>>) this.pool);
+            return Collections.unmodifiableList((List<? extends WeightedList.Entry<ItemEntry>>)this.pool);
         }
-
+        
         public ItemEntry getRandomEntry(final Predicate<ItemEntry> dropFilter) {
             return this.pool.copyFiltered(dropFilter).getRandom(Config.rand);
         }
-
+        
         public int getRandomAmount() {
             return MathUtilities.getRandomInt(this.min, this.max + 1);
         }
-
+        
         public List<ItemEntry> getRandomEntries(final Predicate<ItemEntry> dropFilter) {
-            return IntStream.range(0, this.getRandomAmount()).mapToObj(index -> this.getRandomEntry(dropFilter))
-                    .filter(Objects::nonNull)
-                    .collect((Collector<? super Object, ?, List<ItemEntry>>) Collectors.toList());
+            return IntStream.range(0, this.getRandomAmount()).mapToObj(index -> this.getRandomEntry(dropFilter)).filter(Objects::nonNull).collect((Collector<? super Object, ?, List<ItemEntry>>)Collectors.toList());
         }
-
+        
         static {
             EMPTY = new ItemPool(0, 0);
         }
     }
-
-    public static class ItemEntry {
+    
+    public static class ItemEntry
+    {
         @Expose
         private final String item;
         @Expose
         private final int min;
         @Expose
         private final int max;
-
+        
         public ItemEntry(final Item item, final int min, final int max) {
             this(item.getRegistryName().toString(), min, max);
         }
-
+        
         public ItemEntry(final String item, final int min, final int max) {
             this.item = item;
             this.min = min;
             this.max = max;
         }
-
+        
         public Item getItem() {
-            return (Item) ForgeRegistries.ITEMS.getValue(new ResourceLocation(this.item));
+            return (Item)ForgeRegistries.ITEMS.getValue(new ResourceLocation(this.item));
         }
-
+        
         public int getRandomAmount() {
             return MathUtilities.getRandomInt(this.min, this.max + 1);
         }
-
+        
         public ItemStack createItemStack() {
-            return new ItemStack((IItemProvider) this.getItem(), this.getRandomAmount());
+            return new ItemStack((IItemProvider)this.getItem(), this.getRandomAmount());
         }
     }
-
-    public enum SourceType {
-        MOB(Vault.id("textures/gui/overlay/scav_mob.png"), TextFormatting.RED),
-        CHEST(Vault.id("textures/gui/overlay/scav_chest.png"), TextFormatting.GREEN),
+    
+    public enum SourceType
+    {
+        MOB(Vault.id("textures/gui/overlay/scav_mob.png"), TextFormatting.RED), 
+        CHEST(Vault.id("textures/gui/overlay/scav_chest.png"), TextFormatting.GREEN), 
         TREASURE(Vault.id("textures/gui/overlay/scav_treasure.png"), TextFormatting.GOLD);
-
+        
         private final ResourceLocation iconPath;
         private final TextFormatting requirementColor;
-
+        
         private SourceType(final ResourceLocation iconPath, final TextFormatting requirementColor) {
             this.iconPath = iconPath;
             this.requirementColor = requirementColor;
         }
-
+        
         public ResourceLocation getIconPath() {
             return this.iconPath;
         }
-
+        
         public TextFormatting getRequirementColor() {
             return this.requirementColor;
         }

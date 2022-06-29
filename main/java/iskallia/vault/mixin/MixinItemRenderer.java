@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -12,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.client.gui.FontRenderer;
 
-public abstract class MixinItemRenderer {
-    private void render(final FontRenderer fr, final ItemStack stack, final int xPosition, final int yPosition,
-            final String text, final CallbackInfo ci) {
+public abstract class MixinItemRenderer
+{
+    private void render(final FontRenderer fr, final ItemStack stack, final int xPosition, final int yPosition, final String text, final CallbackInfo ci) {
         if (!ModAttributes.GEAR_MAX_LEVEL.exists(stack)) {
             return;
         }

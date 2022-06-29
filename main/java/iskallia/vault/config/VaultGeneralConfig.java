@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -25,7 +28,8 @@ import com.google.gson.annotations.Expose;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class VaultGeneralConfig extends Config {
+public class VaultGeneralConfig extends Config
+{
     @Expose
     private int TICK_COUNTER;
     @Expose
@@ -46,37 +50,37 @@ public class VaultGeneralConfig extends Config {
     private final List<Level> VAULT_OBJECTIVES;
     @Expose
     private final List<Level> VAULT_COOP_OBJECTIVES;
-
+    
     public VaultGeneralConfig() {
         this.VAULT_OBJECTIVES = new ArrayList<Level>();
         this.VAULT_COOP_OBJECTIVES = new ArrayList<Level>();
     }
-
+    
     @Override
     public String getName() {
         return "vault_general";
     }
-
+    
     public int getTickCounter() {
         return this.TICK_COUNTER;
     }
-
+    
     public int getNoExitChance() {
         return this.NO_EXIT_CHANCE;
     }
-
+    
     public int getObeliskDropChance() {
         return this.OBELISK_DROP_CHANCE;
     }
-
+    
     public VaultObjective generateObjective(final int vaultLevel) {
         return this.getObjective(vaultLevel, false);
     }
-
+    
     public VaultObjective generateCoopObjective(final int vaultLevel) {
         return this.getObjective(vaultLevel, true);
     }
-
+    
     @Override
     protected void reset() {
         this.TICK_COUNTER = 30000;
@@ -98,7 +102,7 @@ public class VaultGeneralConfig extends Config {
         objectives.add(Vault.id("scavenger_hunt").toString(), 1);
         this.VAULT_COOP_OBJECTIVES.add(new Level(0, objectives));
     }
-
+    
     @SubscribeEvent
     public static void cancelItemInteraction(final PlayerInteractEvent event) {
         if (event.getPlayer().level.dimension() != Vault.VAULT_KEY) {
@@ -118,7 +122,7 @@ public class VaultGeneralConfig extends Config {
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void cancelBlockInteraction(final PlayerInteractEvent event) {
         if (event.getPlayer().level.dimension() != Vault.VAULT_KEY) {
@@ -139,14 +143,14 @@ public class VaultGeneralConfig extends Config {
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void cancelBlockPlacement(final BlockEvent.EntityPlaceEvent event) {
         final IWorld world = event.getWorld();
         if (world.isClientSide()) {
             return;
         }
-        if (((ServerWorld) world).dimension() != Vault.VAULT_KEY) {
+        if (((ServerWorld)world).dimension() != Vault.VAULT_KEY) {
             return;
         }
         if (!event.isCancelable()) {
@@ -164,11 +168,10 @@ public class VaultGeneralConfig extends Config {
             }
         }
     }
-
+    
     @Nonnull
     private VaultObjective getObjective(final int vaultLevel, final boolean coop) {
-        final Level levelConfig = this.getForLevel(coop ? this.VAULT_COOP_OBJECTIVES : this.VAULT_OBJECTIVES,
-                vaultLevel);
+        final Level levelConfig = this.getForLevel(coop ? this.VAULT_COOP_OBJECTIVES : this.VAULT_OBJECTIVES, vaultLevel);
         if (levelConfig == null) {
             return VaultRaid.SUMMON_AND_KILL_BOSS.get();
         }
@@ -178,7 +181,7 @@ public class VaultGeneralConfig extends Config {
         }
         return VaultObjective.getObjective(new ResourceLocation(objective));
     }
-
+    
     @Nullable
     public Level getForLevel(final List<Level> levels, final int level) {
         int i = 0;
@@ -188,7 +191,8 @@ public class VaultGeneralConfig extends Config {
                     break;
                 }
                 return levels.get(i - 1);
-            } else {
+            }
+            else {
                 if (i == levels.size() - 1) {
                     return levels.get(i);
                 }
@@ -197,13 +201,14 @@ public class VaultGeneralConfig extends Config {
         }
         return null;
     }
-
-    public static class Level {
+    
+    public static class Level
+    {
         @Expose
         private final int level;
         @Expose
         private final WeightedList<String> outcomes;
-
+        
         public Level(final int level, final WeightedList<String> outcomes) {
             this.level = level;
             this.outcomes = outcomes;

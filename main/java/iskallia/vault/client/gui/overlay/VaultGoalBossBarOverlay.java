@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.overlay;
 
@@ -12,7 +15,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class VaultGoalBossBarOverlay {
+public class VaultGoalBossBarOverlay
+{
     @SubscribeEvent
     public static void onBossBarRender(final RenderGameOverlayEvent.Pre event) {
         final VaultOverlayMessage.OverlayType type = ClientVaultRaidData.getOverlayType();

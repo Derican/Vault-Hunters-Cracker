@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.renderer;
 
@@ -11,24 +14,24 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 
-public class BoogiemanRenderer extends ZombieRenderer {
+public class BoogiemanRenderer extends ZombieRenderer
+{
     public static final ResourceLocation TEXTURE;
-
+    
     public BoogiemanRenderer(final EntityRendererManager renderManagerIn) {
         super(renderManagerIn);
         this.layers.remove(this.layers.size() - 1);
     }
-
-    protected void preRenderCallback(final ZombieEntity entitylivingbase, final MatrixStack matrixStack,
-            final float partialTickTime) {
-        super.scale((LivingEntity) entitylivingbase, matrixStack, partialTickTime);
+    
+    protected void preRenderCallback(final ZombieEntity entitylivingbase, final MatrixStack matrixStack, final float partialTickTime) {
+        super.scale((LivingEntity)entitylivingbase, matrixStack, partialTickTime);
         matrixStack.scale(2.0f, 2.0f, 2.0f);
     }
-
+    
     public ResourceLocation getTextureLocation(final ZombieEntity entity) {
         return BoogiemanRenderer.TEXTURE;
     }
-
+    
     static {
         TEXTURE = Vault.id("textures/entity/boogieman.png");
     }

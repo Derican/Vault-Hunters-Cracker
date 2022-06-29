@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.item;
 
@@ -23,15 +26,14 @@ import net.minecraft.item.Item;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.item.BlockItem;
 
-public class RelicStatueBlockItem extends BlockItem {
+public class RelicStatueBlockItem extends BlockItem
+{
     public RelicStatueBlockItem() {
-        super((Block) ModBlocks.RELIC_STATUE,
-                new Item.Properties().tab(ModItems.VAULT_MOD_GROUP).stacksTo(1));
+        super((Block)ModBlocks.RELIC_STATUE, new Item.Properties().tab(ModItems.VAULT_MOD_GROUP).stacksTo(1));
     }
-
+    
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip,
-            final ITooltipFlag flagIn) {
+    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip, final ITooltipFlag flagIn) {
         final CompoundNBT nbt = stack.getTag();
         if (nbt != null) {
             final CompoundNBT blockEntityTag = nbt.getCompound("BlockEntityTag");
@@ -40,18 +42,18 @@ public class RelicStatueBlockItem extends BlockItem {
             if (set != null) {
                 final StringTextComponent titleText = new StringTextComponent(" Relic Set: " + set.getName());
                 titleText.setStyle(Style.EMPTY.withColor(Color.fromRgb(-26266)));
-                tooltip.add((ITextComponent) titleText);
+                tooltip.add((ITextComponent)titleText);
             }
         }
-        super.appendHoverText(stack, worldIn, (List) tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, (List)tooltip, flagIn);
     }
-
+    
     public static ItemStack withRelicSet(final RelicSet relicSet) {
-        final ItemStack itemStack = new ItemStack((IItemProvider) ModBlocks.RELIC_STATUE);
+        final ItemStack itemStack = new ItemStack((IItemProvider)ModBlocks.RELIC_STATUE);
         final CompoundNBT nbt = new CompoundNBT();
         nbt.putString("RelicSet", relicSet.getId().toString());
         final CompoundNBT stackNBT = new CompoundNBT();
-        stackNBT.put("BlockEntityTag", (INBT) nbt);
+        stackNBT.put("BlockEntityTag", (INBT)nbt);
         itemStack.setTag(stackNBT);
         return itemStack;
     }

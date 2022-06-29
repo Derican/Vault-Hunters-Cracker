@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -17,18 +20,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.entity.LivingEntity;
 
 @Mixin({ PlayerEntity.class })
-public abstract class MixinPlayerEntity extends LivingEntity {
+public abstract class MixinPlayerEntity extends LivingEntity
+{
     @Shadow
     public abstract ItemStack getItemBySlot(final EquipmentSlotType p0);
-
+    
     protected MixinPlayerEntity(final EntityType<? extends LivingEntity> type, final World worldIn) {
-        super((EntityType) type, worldIn);
+        super((EntityType)type, worldIn);
     }
-
-    @Redirect(method = {
-            "dropInventory" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z"))
+    
+    @Redirect(method = { "dropInventory" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z"))
     public boolean yes(final GameRules instance, final GameRules.RuleKey<GameRules.BooleanValue> key) {
-        final VaultRaid vault = VaultRaidData.get((ServerWorld) this.level).getActiveFor(this.getUUID());
-        return vault != null || instance.getBoolean((GameRules.RuleKey) key);
+        final VaultRaid vault = VaultRaidData.get((ServerWorld)this.level).getActiveFor(this.getUUID());
+        return vault != null || instance.getBoolean((GameRules.RuleKey)key);
     }
 }

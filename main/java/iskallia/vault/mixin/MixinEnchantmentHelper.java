@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -10,11 +13,12 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ EnchantmentHelper.class })
-public class MixinEnchantmentHelper {
+public class MixinEnchantmentHelper
+{
     @Inject(method = { "getDepthStriderModifier" }, at = { @At("RETURN") }, cancellable = true)
     private static void modifyBossDepthStrider(final LivingEntity entityIn, final CallbackInfoReturnable<Integer> cir) {
         if (entityIn instanceof VaultBoss) {
-            cir.setReturnValue((Object) 3);
+            cir.setReturnValue((Object)3);
         }
     }
 }

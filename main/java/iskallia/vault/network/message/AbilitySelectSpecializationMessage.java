@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.network.message;
 
@@ -15,16 +18,17 @@ import java.util.function.Supplier;
 import net.minecraft.network.PacketBuffer;
 import javax.annotation.Nullable;
 
-public class AbilitySelectSpecializationMessage {
+public class AbilitySelectSpecializationMessage
+{
     private final String ability;
     @Nullable
     private final String specialization;
-
+    
     public AbilitySelectSpecializationMessage(final String ability, @Nullable final String specialization) {
         this.ability = ability;
         this.specialization = specialization;
     }
-
+    
     public static void encode(final AbilitySelectSpecializationMessage message, final PacketBuffer buffer) {
         buffer.writeUtf(message.ability);
         buffer.writeBoolean(message.specialization != null);
@@ -32,42 +36,44 @@ public class AbilitySelectSpecializationMessage {
             buffer.writeUtf(message.specialization);
         }
     }
-
+    
     public static AbilitySelectSpecializationMessage decode(final PacketBuffer buffer) {
-        return new AbilitySelectSpecializationMessage(buffer.readUtf(32767),
-                buffer.readBoolean() ? buffer.readUtf(32767) : null);
+        return new AbilitySelectSpecializationMessage(buffer.readUtf(32767), buffer.readBoolean() ? buffer.readUtf(32767) : null);
     }
-
-    public static void handle(final AbilitySelectSpecializationMessage message,
-            final Supplier<NetworkEvent.Context> contextSupplier) {
+    
+    public static void handle(final AbilitySelectSpecializationMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
         final NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             final ServerPlayerEntity sender = context.getSender();
             if (sender == null) {
                 return;
-            } else {
+            }
+            else {
                 final String specialization = message.specialization;
-                final PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.level);
-                final AbilityTree abilityTree = abilitiesData.getAbilities((PlayerEntity) sender);
+                final PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld)sender.level);
+                final AbilityTree abilityTree = abilitiesData.getAbilities((PlayerEntity)sender);
                 final AbilityNode<?, ?> abilityNode = abilityTree.getNodeByName(message.ability);
                 if (abilityNode == null) {
                     return;
-                } else {
-                    final PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld) sender.level);
-                    final PlayerVaultStats stats = statsData.getVaultStats((PlayerEntity) sender);
+                }
+                else {
+                    final PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld)sender.level);
+                    final PlayerVaultStats stats = statsData.getVaultStats((PlayerEntity)sender);
                     if (specialization != null) {
                         if (!abilityNode.getGroup().hasSpecialization(specialization)) {
                             return;
-                        } else {
-                            final AbilityConfig specConfig = (AbilityConfig) abilityNode.getGroup()
-                                    .getAbilityConfig(specialization, abilityNode.getLevel());
+                        }
+                        else {
+                            final AbilityConfig specConfig = (AbilityConfig)abilityNode.getGroup().getAbilityConfig(specialization, abilityNode.getLevel());
                             if (specConfig == null) {
                                 return;
-                            } else if (stats.getVaultLevel() < specConfig.getLevelRequirement()) {
+                            }
+                            else if (stats.getVaultLevel() < specConfig.getLevelRequirement()) {
                                 return;
                             }
                         }
-                    } else if (abilityNode.getSpecialization() == null) {
+                    }
+                    else if (abilityNode.getSpecialization() == null) {
                         return;
                     }
                     abilitiesData.selectSpecialization(sender, abilityNode.getGroup().getParentName(), specialization);

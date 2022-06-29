@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -12,15 +15,15 @@ import net.minecraft.world.World;
 import iskallia.vault.skill.ability.config.sub.HunterSpawnerConfig;
 import iskallia.vault.skill.ability.effect.HunterAbility;
 
-public class HunterSpawnerAbility extends HunterAbility<HunterSpawnerConfig> {
+public class HunterSpawnerAbility extends HunterAbility<HunterSpawnerConfig>
+{
     @Override
-    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterSpawnerConfig config, final World world,
-            final PlayerEntity player) {
+    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterSpawnerConfig config, final World world, final PlayerEntity player) {
         final List<Tuple<BlockPos, Color>> entityPositions = super.selectPositions(config, world, player);
         final Color c = new Color(config.getColor(), false);
         this.forEachTileEntity(config, world, player, (pos, tile) -> {
             if (config.shouldHighlightTileEntity(tile)) {
-                entityPositions.add(new Tuple((Object) pos, (Object) c));
+                entityPositions.add(new Tuple((Object)pos, (Object)c));
             }
             return;
         });

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic;
 
@@ -89,13 +92,14 @@ import iskallia.vault.world.vault.logic.task.IVaultTask;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
+public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask
+{
     protected List<Branch> branches;
     protected VListNBT<UUID, StringNBT> players;
     protected Map<PlayerFavourData.VaultGodType, List<Integer>> scores;
     protected UUID bossVaultId;
     public InventorySnapshotData snapshots;
-
+    
     public VaultLobby() {
         this.branches = new ArrayList<Branch>();
         this.players = VListNBT.ofUUID();
@@ -106,14 +110,13 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             protected boolean shouldSnapshotItem(final PlayerEntity player, final ItemStack stack) {
                 return true;
             }
-
+            
             @Override
             public void createSnapshot(final PlayerEntity player) {
-                this.snapshotData.put(player.getUUID(), new Builder(player)
-                        .setStackFilter(this::shouldSnapshotItem).replaceExisting().createSnapshot());
+                this.snapshotData.put(player.getUUID(), new Builder(player).setStackFilter(this::shouldSnapshotItem).replaceExisting().createSnapshot());
                 this.setDirty();
             }
-
+            
             @Override
             public boolean restoreSnapshot(final PlayerEntity player) {
                 final InventorySnapshot snapshot = this.snapshotData.get(player.getUUID());
@@ -121,7 +124,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             }
         };
     }
-
+    
     public Branch getOrCreate(final UUID portal, final Supplier<Branch> supplier) {
         Optional<Branch> opt = this.branches.stream().filter(g -> g.portalId.equals(portal)).findFirst();
         if (!opt.isPresent()) {
@@ -131,7 +134,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         }
         return opt.get();
     }
-
+    
     public void execute(final VaultRaid vault, final VaultPlayer player, final ServerWorld world) {
         if (!this.players.contains(player.getPlayerId())) {
             this.players.add(player.getPlayerId());
@@ -142,19 +145,17 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             if (attribute != null) {
                 attribute.removeModifier(CakeHuntObjective.PENALTY);
             }
-            if (sPlayer.isAlive() && this.snapshots.restoreSnapshot((PlayerEntity) sPlayer)) {
-                this.snapshots.removeSnapshot((PlayerEntity) sPlayer);
+            if (sPlayer.isAlive() && this.snapshots.restoreSnapshot((PlayerEntity)sPlayer)) {
+                this.snapshots.removeSnapshot((PlayerEntity)sPlayer);
             }
-            final Collection<VaultPortal> portals = vault.getGenerator().getPiecesAt(sPlayer.blockPosition(),
-                    VaultPortal.class);
+            final Collection<VaultPortal> portals = vault.getGenerator().getPiecesAt(sPlayer.blockPosition(), VaultPortal.class);
             if (!portals.isEmpty()) {
                 final VaultPortal portal = portals.iterator().next();
                 if (!(!this.isInPortal(world, sPlayer))) {
                     final String[] split = portal.getTemplate().getPath().split(Pattern.quote("_"));
                     final PlayerFavourData.VaultGodType type = this.fromColor(split[split.length - 1]);
                     if (type != null) {
-                        final Branch branch = this.getOrCreate(portal.getUUID(),
-                                () -> new Branch(portal.getUUID(), type));
+                        final Branch branch = this.getOrCreate(portal.getUUID(), () -> new Branch(portal.getUUID(), type));
                         if (branch.vaultId == null || VaultRaidData.get(world).get(branch.vaultId) == null) {
                             final CrystalData data = this.createCrystalData(branch);
                             if (data != null) {
@@ -162,8 +163,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
                                 VaultRaidData.get(world).startVault(world, builder, v -> {
                                     v.getProperties().create(VaultRaid.LEVEL, 300);
                                     v.getProperties().create(VaultRaid.FORCE_ACTIVE, true);
-                                    v.getProperties().create(VaultRaid.PARENT, (UUID) vault.getProperties()
-                                            .getValue((VAttribute<T, UUIDAttribute>) VaultRaid.IDENTIFIER));
+                                    v.getProperties().create(VaultRaid.PARENT, (UUID)vault.getProperties().getValue((VAttribute<T, UUIDAttribute>)VaultRaid.IDENTIFIER));
                                     branch.vaultId = v.getProperties().getBase(VaultRaid.IDENTIFIER).orElse(null);
                                     this.initialize(branch, v);
                                     return;
@@ -175,10 +175,9 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
                             if (branch.vaultId != null) {
                                 final VaultRaid target = VaultRaidData.get(world).get(branch.vaultId);
                                 if (target != null) {
-                                    if (VaultRaidData.get(world).getActiveFor(player.getPlayerId()) != VaultRaidData
-                                            .get(world).get(branch.vaultId)) {
+                                    if (VaultRaidData.get(world).getActiveFor(player.getPlayerId()) != VaultRaidData.get(world).get(branch.vaultId)) {
                                         vault.getPlayers().remove(player);
-                                        this.snapshots.createSnapshot((PlayerEntity) sPlayer);
+                                        this.snapshots.createSnapshot((PlayerEntity)sPlayer);
                                         this.joinVault(target, sPlayer, world, branch);
                                     }
                                 }
@@ -189,13 +188,11 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             }
         });
     }
-
+    
     private void tickFinalBoss(final VaultRaid vault, final ServerWorld world, final ServerPlayerEntity sPlayer) {
         if (this.bossVaultId == null) {
-            final List<VaultGodEye> allEyes = new ArrayList<VaultGodEye>((Collection<? extends VaultGodEye>) vault
-                    .getGenerator().getPieces((Class<? extends E>) VaultGodEye.class));
-            final List<VaultGodEye> filledEyes = allEyes.stream().filter(eye -> eye.isLit(world))
-                    .collect((Collector<? super Object, ?, List<VaultGodEye>>) Collectors.toList());
+            final List<VaultGodEye> allEyes = new ArrayList<VaultGodEye>((Collection<? extends VaultGodEye>)vault.getGenerator().getPieces((Class<? extends E>)VaultGodEye.class));
+            final List<VaultGodEye> filledEyes = allEyes.stream().filter(eye -> eye.isLit(world)).collect((Collector<? super Object, ?, List<VaultGodEye>>)Collectors.toList());
             if (allEyes.size() != 0 && allEyes.size() == filledEyes.size()) {
                 this.bossVaultId = UUID.randomUUID();
                 VaultRaid v = null;
@@ -211,25 +208,19 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
                 }
                 for (final VaultPlayer vPlayer : vault.getPlayers()) {
                     vPlayer.runIfPresent(world.getServer(), playerEntity -> {
-                        new FireworkRocketEntity((World) world, playerEntity.getX(),
-                                playerEntity.getY(), playerEntity.getZ(),
-                                new ItemStack((IItemProvider) Items.FIREWORK_ROCKET));
+                        new FireworkRocketEntity((World)world, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), new ItemStack((IItemProvider)Items.FIREWORK_ROCKET));
                         final FireworkRocketEntity fireworkRocketEntity;
                         final FireworkRocketEntity fireworks = fireworkRocketEntity;
-                        world.addFreshEntity((Entity) fireworks);
-                        world.playSound((PlayerEntity) null, playerEntity.getX(),
-                                playerEntity.getY(), playerEntity.getZ(),
-                                SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 1.0f, 1.0f);
+                        world.addFreshEntity((Entity)fireworks);
+                        world.playSound((PlayerEntity)null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 1.0f, 1.0f);
                         final StringTextComponent title = new StringTextComponent("The Final Challenge");
                         title.setStyle(Style.EMPTY.withColor(Color.fromRgb(14491166)));
                         final StringTextComponent subtitle = new StringTextComponent("The Gods are watching...");
                         subtitle.setStyle(Style.EMPTY.withColor(Color.fromRgb(14491166)));
-                        final STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE,
-                                (ITextComponent) title);
-                        final STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE,
-                                (ITextComponent) subtitle);
-                        playerEntity.connection.send((IPacket) titlePacket);
-                        playerEntity.connection.send((IPacket) subtitlePacket);
+                        final STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, (ITextComponent)title);
+                        final STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, (ITextComponent)subtitle);
+                        playerEntity.connection.send((IPacket)titlePacket);
+                        playerEntity.connection.send((IPacket)subtitlePacket);
                         return;
                     });
                 }
@@ -253,19 +244,16 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
                     data.setCanGenerateTreasureRooms(false);
                     data.setCanTriggerInfluences(false);
                     data.setType(CrystalData.Type.FINAL_BOSS);
-                    data.setSelectedObjective(
-                            (ResourceLocation) VaultObjective.REGISTRY.inverse().get((Object) VaultRaid.KILL_THE_BOSS));
+                    data.setSelectedObjective((ResourceLocation)VaultObjective.REGISTRY.inverse().get((Object)VaultRaid.KILL_THE_BOSS));
                     final VaultRaid.Builder builder = data.createVault(world, sPlayer);
                     vault.getPlayers().iterator();
                     final Iterator iterator4;
                     while (iterator4.hasNext()) {
                         final VaultPlayer player2 = iterator4.next();
-                        player2.runIfPresent(world.getServer(),
-                                p -> this.snapshots.createSnapshot((PlayerEntity) p));
+                        player2.runIfPresent(world.getServer(), p -> this.snapshots.createSnapshot((PlayerEntity)p));
                     }
                     VaultRaidData.get(world).startVault(world, builder, v -> {
-                        v.getProperties().create(VaultRaid.PARENT, (UUID) vault.getProperties()
-                                .getValue((VAttribute<T, UUIDAttribute>) VaultRaid.IDENTIFIER));
+                        v.getProperties().create(VaultRaid.PARENT, (UUID)vault.getProperties().getValue((VAttribute<T, UUIDAttribute>)VaultRaid.IDENTIFIER));
                         this.bossVaultId = v.getProperties().getBase(VaultRaid.IDENTIFIER).orElse(null);
                         vault.getPlayers().clear();
                         vault.getProperties().create(VaultRaid.LOBBY, this);
@@ -274,25 +262,22 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             }
         }
     }
-
+    
     public void countdown(final VaultRaid vault, final ServerWorld world, final int secondsLeft) {
-        final EffectMessage msg = EffectMessage.playSound(ModSounds.TIMER_PANIC_TICK_SFX, SoundCategory.MASTER, 1.0f,
-                0.4f);
+        final EffectMessage msg = EffectMessage.playSound(ModSounds.TIMER_PANIC_TICK_SFX, SoundCategory.MASTER, 1.0f, 0.4f);
         for (final VaultPlayer vPlayer : vault.getPlayers()) {
             vPlayer.runIfPresent(world.getServer(), player -> {
-                final IFormattableTextComponent title = new StringTextComponent(String.valueOf(secondsLeft))
-                        .withStyle(TextFormatting.BOLD);
+                final IFormattableTextComponent title = new StringTextComponent(String.valueOf(secondsLeft)).withStyle(TextFormatting.BOLD);
                 title.setStyle(Style.EMPTY.withColor(Color.fromRgb(14491166)));
-                final STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, (ITextComponent) title);
-                final STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE,
-                        StringTextComponent.EMPTY);
-                player.connection.send((IPacket) titlePacket);
-                player.connection.send((IPacket) subtitlePacket);
-                ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), (Object) msg);
+                final STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, (ITextComponent)title);
+                final STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, StringTextComponent.EMPTY);
+                player.connection.send((IPacket)titlePacket);
+                player.connection.send((IPacket)subtitlePacket);
+                ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), (Object)msg);
             });
         }
     }
-
+    
     @Nullable
     public Branch getBranch(final UUID vaultId) {
         for (final Branch branch : this.branches) {
@@ -302,7 +287,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         }
         return null;
     }
-
+    
     private PlayerFavourData.VaultGodType fromColor(final String color) {
         if ("green".equals(color)) {
             return PlayerFavourData.VaultGodType.BENEVOLENT;
@@ -318,35 +303,35 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         }
         return null;
     }
-
+    
     private CrystalData createCrystalData(final Branch branch) {
         CrystalData data = new CrystalData();
         data.setCanGenerateTreasureRooms(false);
         data.setCanTriggerInfluences(false);
         if (branch.type == PlayerFavourData.VaultGodType.BENEVOLENT) {
             data.setType(CrystalData.Type.FINAL_VELARA);
-            data.setSelectedObjective(
-                    (ResourceLocation) VaultObjective.REGISTRY.inverse().get((Object) VaultRaid.CAKE_HUNT));
+            data.setSelectedObjective((ResourceLocation)VaultObjective.REGISTRY.inverse().get((Object)VaultRaid.CAKE_HUNT));
             data.setTargetObjectiveCount(42);
-        } else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
             data.setType(CrystalData.Type.FINAL_TENOS);
-            data.setSelectedObjective((ResourceLocation) VaultObjective.REGISTRY.inverse()
-                    .get((Object) VaultRaid.ARCHITECT_KILL_ALL_BOSSES));
-        } else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
+            data.setSelectedObjective((ResourceLocation)VaultObjective.REGISTRY.inverse().get((Object)VaultRaid.ARCHITECT_KILL_ALL_BOSSES));
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
             data.setType(CrystalData.Type.FINAL_WENDARR);
-            data.setSelectedObjective(
-                    (ResourceLocation) VaultObjective.REGISTRY.inverse().get((Object) VaultRaid.TREASURE_HUNT));
-        } else if (branch.type == PlayerFavourData.VaultGodType.MALEVOLENCE) {
+            data.setSelectedObjective((ResourceLocation)VaultObjective.REGISTRY.inverse().get((Object)VaultRaid.TREASURE_HUNT));
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.MALEVOLENCE) {
             data.setType(CrystalData.Type.FINAL_IDONA);
-            data.setSelectedObjective(
-                    (ResourceLocation) VaultObjective.REGISTRY.inverse().get((Object) VaultRaid.RAID_CHALLENGE));
+            data.setSelectedObjective((ResourceLocation)VaultObjective.REGISTRY.inverse().get((Object)VaultRaid.RAID_CHALLENGE));
             data.setTargetObjectiveCount(10);
-        } else {
+        }
+        else {
             data = null;
         }
         return data;
     }
-
+    
     private void initialize(final Branch branch, final VaultRaid vault) {
         if (branch.type == PlayerFavourData.VaultGodType.BENEVOLENT) {
             vault.getActiveObjective(CakeHuntObjective.class).ifPresent(cakeHunt -> {
@@ -359,97 +344,73 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             });
             vault.getProperties().create(VaultRaid.COW_VAULT, true);
             vault.getEvents().add(VaultRaid.REPLACE_WITH_COW);
-        } else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
             vault.getActiveObjective(ArchitectSummonAndKillBossesObjective.class).ifPresent(killAll -> {
                 killAll.setRoomPool(Vault.id("final_vault/tenos/rooms"));
                 killAll.setTunnelPool(Vault.id("final_vault/tenos/tunnels"));
             });
-        } else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
             vault.getActiveObjective(TreasureHuntObjective.class).ifPresent(treasureHunt -> {
-                treasureHunt.setSandPerModifier((this.players.size() > 1) ? ModConfigs.TREASURE_HUNT.mpSandTrigger
-                        : ModConfigs.TREASURE_HUNT.spSandTrigger);
+                treasureHunt.setSandPerModifier((this.players.size() > 1) ? ModConfigs.TREASURE_HUNT.mpSandTrigger : ModConfigs.TREASURE_HUNT.spSandTrigger);
                 treasureHunt.setRoomPool(Vault.id("final_vault/wendarr/rooms"));
                 treasureHunt.setTunnelPool(Vault.id("final_vault/wendarr/tunnels"));
             });
-        } else if (branch.type == PlayerFavourData.VaultGodType.MALEVOLENCE) {
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.MALEVOLENCE) {
             vault.getActiveObjective(RaidChallengeObjective.class).ifPresent(raid -> {
                 raid.setRoomPool(Vault.id("final_vault/idona/rooms"));
                 raid.setTunnelPool(Vault.id("final_vault/idona/tunnels"));
             });
         }
     }
-
-    private void joinVault(final VaultRaid vault, final ServerPlayerEntity player, final ServerWorld world,
-            final Branch branch) {
+    
+    private void joinVault(final VaultRaid vault, final ServerPlayerEntity player, final ServerWorld world, final Branch branch) {
         final VaultRunner runner = new VaultRunner(player.getUUID());
         if (branch.type == PlayerFavourData.VaultGodType.BENEVOLENT) {
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
             runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_TIME_LEFT, VaultRaid.EXIT_DEATH));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
-            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(),
-                    VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
-            runner.getBehaviours().add(new VaultBehaviour(
-                    VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS
-                            .then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(), VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
             runner.getProperties().create(VaultRaid.SPAWNER, new VaultSpawner());
             runner.getTimer().start(30000);
-        } else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.OMNISCIENT) {
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
             runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_TIME_LEFT, VaultRaid.EXIT_DEATH));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
-            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(),
-                    VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
-            runner.getBehaviours().add(new VaultBehaviour(
-                    VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS
-                            .then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(), VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
             runner.getProperties().create(VaultRaid.SPAWNER, new VaultSpawner());
             runner.getTimer().start(30000);
-        } else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
-            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY,
-                    VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.EXIT_SAFELY)));
+        }
+        else if (branch.type == PlayerFavourData.VaultGodType.TIMEKEEPER) {
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.EXIT_SAFELY)));
             runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_TIME_LEFT, VaultRaid.EXIT_DEATH));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
-            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(),
-                    VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
-            runner.getBehaviours().add(new VaultBehaviour(
-                    VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS
-                            .then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(), VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
             runner.getProperties().create(VaultRaid.SPAWNER, new VaultSpawner());
             runner.getTimer().start(ModConfigs.TREASURE_HUNT.startTicks);
-        } else {
+        }
+        else {
             if (branch.type != PlayerFavourData.VaultGodType.MALEVOLENCE) {
                 return;
             }
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
-            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(),
-                    VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
-            runner.getBehaviours().add(new VaultBehaviour(
-                    VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
-            runner.getBehaviours().add(
-                    new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
-            runner.getBehaviours()
-                    .add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS
-                            .then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_OBJECTIVES_LEFT_GLOBALLY, VaultRaid.EXIT_SAFELY));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER.and(VaultRaid.IS_DEAD), VaultRaid.EXIT_DEATH_ALL_NO_SAVE));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_FINISHED.negate(), VaultRaid.TICK_SPAWNER.then(VaultRaid.TICK_CHEST_PITY)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.AFTER_GRACE_PERIOD.and(VaultRaid.IS_FINISHED.negate()), VaultRaid.TICK_INFLUENCES));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.IS_RUNNER, VaultRaid.PAUSE_IN_ARENA.then(VaultRaid.CHECK_BAIL_FINAL)));
+            runner.getBehaviours().add(new VaultBehaviour(VaultRaid.NO_ACTIVE_RUNNERS_LEFT, VaultRaid.REMOVE_SCAVENGER_ITEMS.then(VaultRaid.REMOVE_INVENTORY_RESTORE_SNAPSHOTS).then(VaultRaid.EXIT_SAFELY)));
             runner.getProperties().create(VaultRaid.SPAWNER, new VaultSpawner());
             runner.getProperties().create(VaultRaid.SHOW_TIMER, false);
         }
@@ -458,49 +419,40 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         vault.getPlayers().add(runner);
         vault.getInitializer().execute(vault, runner, world);
     }
-
-    public void exitVault(final VaultRaid vault, final ServerWorld world, final VaultRaid parent,
-            final VaultMember member, final ServerPlayerEntity player, final boolean death) {
+    
+    public void exitVault(final VaultRaid vault, final ServerWorld world, final VaultRaid parent, final VaultMember member, final ServerPlayerEntity player, final boolean death) {
         if (vault.getProperties().getValue(VaultRaid.IDENTIFIER).equals(this.bossVaultId)) {
             if (death) {
                 if (vault.getPlayers().size() == 1) {
-                    final List<VaultGodEye> godEyes = new ArrayList<VaultGodEye>(
-                            (Collection<? extends VaultGodEye>) parent.getGenerator()
-                                    .getPieces((Class<? extends E>) VaultGodEye.class));
-                    final VaultGodEye target = godEyes
-                            .get(player.level.getRandom().nextInt(godEyes.size()));
+                    final List<VaultGodEye> godEyes = new ArrayList<VaultGodEye>((Collection<? extends VaultGodEye>)parent.getGenerator().getPieces((Class<? extends E>)VaultGodEye.class));
+                    final VaultGodEye target = godEyes.get(player.level.getRandom().nextInt(godEyes.size()));
                     final BlockState state = player.getLevel().getBlockState(target.getMin());
-                    if (state.hasProperty((Property) GodEyeBlock.LIT)) {
-                        player.getLevel().setBlockAndUpdate(target.getMin(), (BlockState) state
-                                .setValue((Property) GodEyeBlock.LIT, (Comparable) Boolean.FALSE));
+                    if (state.hasProperty((Property)GodEyeBlock.LIT)) {
+                        player.getLevel().setBlockAndUpdate(target.getMin(), (BlockState)state.setValue((Property)GodEyeBlock.LIT, (Comparable)Boolean.FALSE));
                     }
                     this.bossVaultId = null;
                     parent.getProperties().create(VaultRaid.LOBBY, this);
                 }
-            } else {
+            }
+            else {
                 parent.getPlayers().removeIf(vPlayer -> vPlayer.getPlayerId().equals(player.getUUID()));
                 parent.getProperties().create(VaultRaid.FORCE_ACTIVE, false);
-                final int score = this.scores.values().stream()
-                        .map(integers -> integers.stream().mapToInt(Integer::intValue).sum() / integers.size())
-                        .mapToInt(Integer::intValue).sum();
+                final int score = this.scores.values().stream().map(integers -> integers.stream().mapToInt(Integer::intValue).sum() / integers.size()).mapToInt(Integer::intValue).sum();
                 final int id = FinalVaultData.get(world).getTimesCompleted(player.getUUID());
                 FinalVaultData.get(world).onCompleted(player.getUUID());
-                final ItemStack trophy = VaultChampionTrophyBlockItem.create(player, VaultChampionTrophy.Variant
-                        .values()[MathHelper.clamp(id, 0, VaultChampionTrophy.Variant.values().length - 1)]);
+                final ItemStack trophy = VaultChampionTrophyBlockItem.create(player, VaultChampionTrophy.Variant.values()[MathHelper.clamp(id, 0, VaultChampionTrophy.Variant.values().length - 1)]);
                 VaultChampionTrophyBlockItem.setScore(trophy, score);
-                ScheduledItemDropData.get(player.getLevel()).addDrop((PlayerEntity) player, trophy);
+                ScheduledItemDropData.get(player.getLevel()).addDrop((PlayerEntity)player, trophy);
             }
             if (vault.getActiveObjectives().isEmpty()) {
-                player.getLevel().getServer()
-                        .submit(() -> VaultRaid.EXIT_SAFELY.execute(parent, member, player.getLevel()));
+                player.getLevel().getServer().submit(() -> VaultRaid.EXIT_SAFELY.execute(parent, member, player.getLevel()));
             }
             return;
         }
         if (vault.getPlayers().size() != 1 || !vault.getActiveObjectives().isEmpty()) {
             return;
         }
-        final Optional<Branch> opt = this.branches.stream()
-                .filter(b -> b.vaultId.equals(vault.getProperties().getValue(VaultRaid.IDENTIFIER))).findFirst();
+        final Optional<Branch> opt = this.branches.stream().filter(b -> b.vaultId.equals(vault.getProperties().getValue(VaultRaid.IDENTIFIER))).findFirst();
         opt.ifPresent(branch -> {
             Item item = null;
             final PlayerFavourData.VaultGodType type = branch.getType();
@@ -523,48 +475,34 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
                 }
             }
             if (item != null) {
-                new ItemStack((IItemProvider) item, (this.players.size() > 1) ? 1 : 2);
+                new ItemStack((IItemProvider)item, (this.players.size() > 1) ? 1 : 2);
                 final ItemStack itemStack;
                 final ItemStack stack = itemStack;
                 player.inventory.add(stack);
-                final String vaultName = (new String[] { "Velara's Gluttony", "Tenos' Puzzle", "Wendarr's Passage",
-                        "Idona's Wrath" })[type.ordinal()];
-                final ITextComponent c0 = (ITextComponent) player.getDisplayName().copy()
-                        .withStyle(TextFormatting.LIGHT_PURPLE);
-                final ITextComponent c2 = (ITextComponent) new StringTextComponent(" completed ")
-                        .withStyle(TextFormatting.GRAY);
-                final ITextComponent c3 = (ITextComponent) new StringTextComponent(vaultName)
-                        .withStyle(branch.type.getChatColor());
-                final ITextComponent c4 = (ITextComponent) new StringTextComponent(" and was awarded ")
-                        .withStyle(TextFormatting.GRAY);
+                final String vaultName = (new String[] { "Velara's Gluttony", "Tenos' Puzzle", "Wendarr's Passage", "Idona's Wrath" })[type.ordinal()];
+                final ITextComponent c0 = (ITextComponent)player.getDisplayName().copy().withStyle(TextFormatting.LIGHT_PURPLE);
+                final ITextComponent c2 = (ITextComponent)new StringTextComponent(" completed ").withStyle(TextFormatting.GRAY);
+                final ITextComponent c3 = (ITextComponent)new StringTextComponent(vaultName).withStyle(branch.type.getChatColor());
+                final ITextComponent c4 = (ITextComponent)new StringTextComponent(" and was awarded ").withStyle(TextFormatting.GRAY);
                 new StringTextComponent(branch.type.getName() + "'s Essence");
                 final StringTextComponent stringTextComponent;
-                final ITextComponent c5 = (ITextComponent) stringTextComponent
-                        .withStyle(branch.type.getChatColor());
-                final ITextComponent c6 = (ITextComponent) new StringTextComponent("!")
-                        .withStyle(TextFormatting.GRAY);
-                final ITextComponent message = (ITextComponent) new StringTextComponent("").append(c0)
-                        .append(c2).append(c3).append(c4).append(c5).append(c6);
+                final ITextComponent c5 = (ITextComponent)stringTextComponent.withStyle(branch.type.getChatColor());
+                final ITextComponent c6 = (ITextComponent)new StringTextComponent("!").withStyle(TextFormatting.GRAY);
+                final ITextComponent message = (ITextComponent)new StringTextComponent("").append(c0).append(c2).append(c3).append(c4).append(c5).append(c6);
                 player.getServer().getPlayerList().broadcastMessage(message, ChatType.CHAT, player.getUUID());
                 int score2 = 0;
                 switch (type) {
                     case BENEVOLENT:
                     case OMNISCIENT: {
-                        score2 = vault.getPlayers().stream()
-                                .filter(vPlayer -> vPlayer.getPlayerId().equals(player.getUUID())).findFirst()
-                                .map(vPlayer -> vPlayer.getTimer().getTimeLeft()).orElse(0) / 20;
+                        score2 = vault.getPlayers().stream().filter(vPlayer -> vPlayer.getPlayerId().equals(player.getUUID())).findFirst().map(vPlayer -> vPlayer.getTimer().getTimeLeft()).orElse(0) / 20;
                         break;
                     }
                     case TIMEKEEPER: {
-                        score2 = vault.getObjective(TreasureHuntObjective.class).map(
-                                (Function<? super TreasureHuntObjective, ? extends Integer>) TreasureHuntObjective::getAddedSand)
-                                .orElse(0);
+                        score2 = vault.getObjective(TreasureHuntObjective.class).map((Function<? super TreasureHuntObjective, ? extends Integer>)TreasureHuntObjective::getAddedSand).orElse(0);
                         break;
                     }
                     case MALEVOLENCE: {
-                        final int score3 = vault.getObjective(RaidChallengeObjective.class).map(
-                                (Function<? super RaidChallengeObjective, ?>) RaidChallengeObjective::getDamageTaken)
-                                .map(dmgTaken -> 2000 - (int) (dmgTaken / 100.0)).orElse(0);
+                        final int score3 = vault.getObjective(RaidChallengeObjective.class).map((Function<? super RaidChallengeObjective, ?>)RaidChallengeObjective::getDamageTaken).map(dmgTaken -> 2000 - (int)(dmgTaken / 100.0)).orElse(0);
                         score2 = Math.max(0, score3);
                         break;
                     }
@@ -574,13 +512,11 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             }
         });
     }
-
+    
     public boolean isInPortal(final ServerWorld world, final ServerPlayerEntity player) {
         final AxisAlignedBB box = player.getBoundingBox();
-        final BlockPos min = new BlockPos(box.minX + 0.001, box.minY + 0.001,
-                box.minZ + 0.001);
-        final BlockPos max = new BlockPos(box.maxX - 0.001, box.maxY - 0.001,
-                box.maxZ - 0.001);
+        final BlockPos min = new BlockPos(box.minX + 0.001, box.minY + 0.001, box.minZ + 0.001);
+        final BlockPos max = new BlockPos(box.maxX - 0.001, box.maxY - 0.001, box.maxZ - 0.001);
         final BlockPos.Mutable pos = new BlockPos.Mutable();
         if (!world.hasChunksAt(min, max)) {
             return false;
@@ -592,7 +528,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         for (int xx = min.getX(); xx <= max.getX(); ++xx) {
             for (int yy = min.getY(); yy <= max.getY(); ++yy) {
                 for (int zz = min.getZ(); zz <= max.getZ(); ++zz) {
-                    final BlockState state = world.getBlockState((BlockPos) pos.set(xx, yy, zz));
+                    final BlockState state = world.getBlockState((BlockPos)pos.set(xx, yy, zz));
                     if (state.getBlock() == ModBlocks.VAULT_PORTAL) {
                         return true;
                     }
@@ -601,28 +537,28 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         }
         return false;
     }
-
+    
     public CompoundNBT serializeNBT() {
         final CompoundNBT nbt = new CompoundNBT();
         final ListNBT branchList = new ListNBT();
-        this.branches.stream().map((Function<? super Object, ?>) Branch::serializeNBT).forEach(branchList::add);
+        this.branches.stream().map((Function<? super Object, ?>)Branch::serializeNBT).forEach(branchList::add);
         if (this.bossVaultId != null) {
             nbt.putString("BossVaultId", this.bossVaultId.toString());
         }
-        nbt.put("Branches", (INBT) branchList);
-        nbt.put("Snapshots", (INBT) this.snapshots.serializeNBT());
-        nbt.put("Players", (INBT) this.players.serializeNBT());
+        nbt.put("Branches", (INBT)branchList);
+        nbt.put("Snapshots", (INBT)this.snapshots.serializeNBT());
+        nbt.put("Players", (INBT)this.players.serializeNBT());
         final CompoundNBT scores = new CompoundNBT();
-        this.scores.forEach((type, scoreList) -> NBTHelper.writeList(scores, type.name(), scoreList, IntNBT.class,
-                IntNBT::valueOf));
-        nbt.put("scores", (INBT) scores);
+        this.scores.forEach((type, scoreList) -> NBTHelper.writeList(scores, type.name(), scoreList, IntNBT.class, IntNBT::valueOf));
+        nbt.put("scores", (INBT)scores);
         return nbt;
     }
-
+    
     public void deserializeNBT(final CompoundNBT nbt) {
         if (nbt.contains("BossVaultId", 8)) {
             this.bossVaultId = UUID.fromString(nbt.getString("BossVaultId"));
-        } else {
+        }
+        else {
             this.bossVaultId = null;
         }
         this.players.deserializeNBT(nbt.getList("Players", 8));
@@ -637,36 +573,36 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
         this.scores = new HashMap<PlayerFavourData.VaultGodType, List<Integer>>();
         final CompoundNBT scores = nbt.getCompound("scores");
         for (final String key : scores.getAllKeys()) {
-            this.scores.put(PlayerFavourData.VaultGodType.valueOf(key),
-                    NBTHelper.readList(scores, key, IntNBT.class, IntNBT::getAsInt));
+            this.scores.put(PlayerFavourData.VaultGodType.valueOf(key), NBTHelper.readList(scores, key, IntNBT.class, IntNBT::getAsInt));
         }
     }
-
-    public static class Branch implements INBTSerializable<CompoundNBT> {
+    
+    public static class Branch implements INBTSerializable<CompoundNBT>
+    {
         protected UUID portalId;
         protected UUID vaultId;
         protected PlayerFavourData.VaultGodType type;
-
+        
         private Branch() {
         }
-
+        
         public Branch(final UUID portalId, final PlayerFavourData.VaultGodType type) {
             this.portalId = portalId;
             this.type = type;
         }
-
+        
         public UUID getPortalId() {
             return this.portalId;
         }
-
+        
         public UUID getVaultId() {
             return this.vaultId;
         }
-
+        
         public PlayerFavourData.VaultGodType getType() {
             return this.type;
         }
-
+        
         public CompoundNBT serializeNBT() {
             final CompoundNBT nbt = new CompoundNBT();
             nbt.putString("Portal", this.portalId.toString());
@@ -676,7 +612,7 @@ public class VaultLobby implements INBTSerializable<CompoundNBT>, IVaultTask {
             nbt.putString("Type", this.type.getName());
             return nbt;
         }
-
+        
         public void deserializeNBT(final CompoundNBT nbt) {
             this.portalId = UUID.fromString(nbt.getString("Portal"));
             this.vaultId = (nbt.contains("Vault", 8) ? UUID.fromString(nbt.getString("Vault")) : null);

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect;
 
@@ -32,59 +35,45 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import iskallia.vault.skill.ability.config.HunterConfig;
 
-public class HunterAbility<C extends HunterConfig> extends AbilityEffect<C> {
+public class HunterAbility<C extends HunterConfig> extends AbilityEffect<C>
+{
     private static final AxisAlignedBB SEARCH_BOX;
-
+    
     @Override
     public String getAbilityGroupName() {
         return "Hunter";
     }
-
+    
     @Override
     public boolean onAction(final C config, final ServerPlayerEntity player, final boolean active) {
         final World world = player.getCommandSenderWorld();
-        if (!(player instanceof ServerPlayerEntity) || !(world instanceof ServerWorld)
-                || world.dimension() != Vault.VAULT_KEY) {
+        if (!(player instanceof ServerPlayerEntity) || !(world instanceof ServerWorld) || world.dimension() != Vault.VAULT_KEY) {
             return false;
         }
-        final ServerWorld sWorld = (ServerWorld) world;
+        final ServerWorld sWorld = (ServerWorld)world;
         final ServerPlayerEntity sPlayer = player;
         for (int delay = 0; delay < config.getTickDuration() / 5; ++delay) {
-            ServerScheduler.INSTANCE.schedule(delay * 5,
-                    () -> this.selectPositions(config, world, (PlayerEntity) player).forEach(tpl -> {
-                        final Color c = (Color) tpl.getB();
-                        for (int i = 0; i < 8; ++i) {
-                            final Vector3d v = MiscUtils.getRandomOffset((BlockPos) tpl.getA(),
-                                    HunterAbility.rand);
-                            sWorld.sendParticles(sPlayer, (IParticleData) ModParticles.DEPTH_FIREWORK.get(), true,
-                                    v.x, v.y, v.z, 0,
-                                    (double) (c.getRed() / 255.0f), (double) (c.getGreen() / 255.0f),
-                                    (double) (c.getBlue() / 255.0f), 1.0);
-                        }
-                    }));
+            ServerScheduler.INSTANCE.schedule(delay * 5, () -> this.selectPositions(config, world, (PlayerEntity)player).forEach(tpl -> {
+                final Color c = (Color)tpl.getB();
+                for (int i = 0; i < 8; ++i) {
+                    final Vector3d v = MiscUtils.getRandomOffset((BlockPos)tpl.getA(), HunterAbility.rand);
+                    sWorld.sendParticles(sPlayer, (IParticleData)ModParticles.DEPTH_FIREWORK.get(), true, v.x, v.y, v.z, 0, (double)(c.getRed() / 255.0f), (double)(c.getGreen() / 255.0f), (double)(c.getBlue() / 255.0f), 1.0);
+                }
+            }));
         }
         return true;
     }
-
+    
     protected Predicate<LivingEntity> getEntityFilter() {
-        return e -> e.isAlive() && !e.isSpectator()
-                && e.getClassification(false) == EntityClassification.MONSTER;
+        return e -> e.isAlive() && !e.isSpectator() && e.getClassification(false) == EntityClassification.MONSTER;
     }
-
-    protected List<Tuple<BlockPos, Color>> selectPositions(final C config, final World world,
-            final PlayerEntity player) {
+    
+    protected List<Tuple<BlockPos, Color>> selectPositions(final C config, final World world, final PlayerEntity player) {
         final Color c = new Color(config.getColor(), false);
-        return (List) world
-                .getLoadedEntitiesOfClass((Class) LivingEntity.class,
-                        HunterAbility.SEARCH_BOX.move(player.blockPosition())
-                                .inflate(config.getSearchRadius()),
-                        (Predicate) this.getEntityFilter())
-                .stream().map(Entity::blockPosition).map(pos -> new Tuple((Object) pos, (Object) c))
-                .collect(Collectors.toList());
+        return (List)world.getLoadedEntitiesOfClass((Class)LivingEntity.class, HunterAbility.SEARCH_BOX.move(player.blockPosition()).inflate(config.getSearchRadius()), (Predicate)this.getEntityFilter()).stream().map(Entity::blockPosition).map(pos -> new Tuple((Object)pos, (Object)c)).collect(Collectors.toList());
     }
-
-    protected void forEachTileEntity(final C config, final World world, final PlayerEntity player,
-            final BiConsumer<BlockPos, TileEntity> tileFn) {
+    
+    protected void forEachTileEntity(final C config, final World world, final PlayerEntity player, final BiConsumer<BlockPos, TileEntity> tileFn) {
         final BlockPos playerOffset = player.blockPosition();
         final double radius = config.getSearchRadius();
         final double radiusSq = radius * radius;
@@ -97,7 +86,7 @@ public class HunterAbility<C extends HunterConfig> extends AbilityEffect<C> {
                 final Chunk ch = world.getChunkSource().getChunkNow(xx, zz);
                 if (ch != null) {
                     ch.getBlockEntities().forEach((pos, tile) -> {
-                        if (tile != null && pos.distSqr((Vector3i) playerOffset) <= radiusSq) {
+                        if (tile != null && pos.distSqr((Vector3i)playerOffset) <= radiusSq) {
                             tileFn.accept(pos, tile);
                         }
                         return;
@@ -106,7 +95,7 @@ public class HunterAbility<C extends HunterConfig> extends AbilityEffect<C> {
             }
         }
     }
-
+    
     static {
         SEARCH_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     }

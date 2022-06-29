@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic;
 
@@ -24,41 +27,38 @@ import net.minecraft.entity.LivingEntity;
 import iskallia.vault.world.vault.VaultRaid;
 import java.util.UUID;
 
-public class VaultCowOverrides {
+public class VaultCowOverrides
+{
     private static final UUID DAMAGE_NERF_MULTIPLIER;
     public static boolean forceSpecialVault;
     public static final String ENTITY_TAG = "replaced_entity";
-
+    
     public static void setupVault(final VaultRaid vault) {
         vault.getEvents().add(VaultRaid.REPLACE_WITH_COW);
     }
-
+    
     @Nullable
-    public static AggressiveCowEntity replaceVaultEntity(final VaultRaid vault, final LivingEntity spawned,
-            final ServerWorld world) {
-        if (spawned instanceof SilverfishEntity || spawned instanceof EtchingVendorEntity
-                || spawned instanceof EternalEntity) {
+    public static AggressiveCowEntity replaceVaultEntity(final VaultRaid vault, final LivingEntity spawned, final ServerWorld world) {
+        if (spawned instanceof SilverfishEntity || spawned instanceof EtchingVendorEntity || spawned instanceof EternalEntity) {
             spawned.addTag("replaced_entity");
             return null;
         }
-        EntityScaler.scaleVaultEntity(vault, (Entity) spawned);
-        final AggressiveCowEntity override = (AggressiveCowEntity) ModEntities.AGGRESSIVE_COW
-                .create((World) world);
+        EntityScaler.scaleVaultEntity(vault, (Entity)spawned);
+        final AggressiveCowEntity override = (AggressiveCowEntity)ModEntities.AGGRESSIVE_COW.create((World)world);
         final AttributeModifierManager mgr = override.getAttributes();
         for (final Attribute attr : ForgeRegistries.ATTRIBUTES) {
             if (spawned.getAttributes().hasAttribute(attr) && mgr.hasAttribute(attr)) {
                 override.getAttribute(attr).setBaseValue(spawned.getAttributeValue(attr));
             }
         }
-        mgr.getInstance(Attributes.ATTACK_DAMAGE)
-                .addPermanentModifier(new AttributeModifier(VaultCowOverrides.DAMAGE_NERF_MULTIPLIER,
-                        "Scaling Damage Reduction", 0.4, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        mgr.getInstance(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier(VaultCowOverrides.DAMAGE_NERF_MULTIPLIER, "Scaling Damage Reduction", 0.4, AttributeModifier.Operation.MULTIPLY_TOTAL));
         if (spawned instanceof MobEntity) {
             for (final EquipmentSlotType slot : EquipmentSlotType.values()) {
                 final ItemStack has = override.getItemBySlot(slot);
                 if (!has.isEmpty()) {
                     spawned.setItemSlot(slot, has.copy());
-                } else {
+                }
+                else {
                     spawned.setItemSlot(slot, ItemStack.EMPTY);
                 }
             }
@@ -66,7 +66,7 @@ public class VaultCowOverrides {
         override.addTag("replaced_entity");
         return override;
     }
-
+    
     static {
         DAMAGE_NERF_MULTIPLIER = UUID.fromString("384df991-f603-344c-a090-3693adfa984a");
         VaultCowOverrides.forceSpecialVault = false;

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -82,7 +85,8 @@ import iskallia.vault.config.TalentsConfig;
 import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.config.AbilitiesConfig;
 
-public class ModConfigs {
+public class ModConfigs
+{
     public static AbilitiesConfig ABILITIES;
     public static AbilitiesGUIConfig ABILITIES_GUI;
     public static TalentsConfig TALENTS;
@@ -171,10 +175,10 @@ public class ModConfigs {
     public static EyesoreConfig EYESORE;
     public static FinalRaidConfig FINAL_RAID;
     public static FinalArchitectEventConfig FINAL_ARCHITECT;
-
+    
     public static void registerCompressionConfigs() {
     }
-
+    
     public static void register() {
         ModConfigs.ABILITIES = new AbilitiesConfig().readConfig();
         ModConfigs.ABILITIES_GUI = new AbilitiesGUIConfig().readConfig();

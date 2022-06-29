@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.util;
 
@@ -12,21 +15,22 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class ShaderUtil {
+public class ShaderUtil
+{
     private static final String PREFIX = "/assets/the_vault/shader/";
     public static int GRAYSCALE_SHADER;
     public static int COLORIZE_SHADER;
     private static final Map<Integer, Map<String, Integer>> UNIFORM_CONSTANTS;
-
+    
     public static void initShaders() {
         ShaderUtil.GRAYSCALE_SHADER = createProgram("grayscale.vert", "grayscale.frag");
         ShaderUtil.COLORIZE_SHADER = createProgram("colorize.vert", "colorize.frag");
     }
-
+    
     public static void useShader(final int shader) {
         useShader(shader, null);
     }
-
+    
     public static void useShader(final int shader, @Nullable final Runnable setter) {
         ARBShaderObjects.glUseProgramObjectARB(shader);
         if (shader != 0) {
@@ -36,18 +40,16 @@ public class ShaderUtil {
             }
         }
     }
-
+    
     public static int getUniformLocation(final int shaderProgram, final String uniform) {
-        final Map<String, Integer> uniforms = ShaderUtil.UNIFORM_CONSTANTS
-                .computeIfAbsent(Integer.valueOf(shaderProgram), program -> new HashMap());
-        return uniforms.computeIfAbsent(uniform,
-                uniformKey -> ARBShaderObjects.glGetUniformLocationARB(shaderProgram, (CharSequence) uniformKey));
+        final Map<String, Integer> uniforms = ShaderUtil.UNIFORM_CONSTANTS.computeIfAbsent(Integer.valueOf(shaderProgram), program -> new HashMap());
+        return uniforms.computeIfAbsent(uniform, uniformKey -> ARBShaderObjects.glGetUniformLocationARB(shaderProgram, (CharSequence)uniformKey));
     }
-
+    
     public static void releaseShader() {
         useShader(0, null);
     }
-
+    
     private static int createProgram(@Nullable final String vert, @Nullable final String frag) {
         int vertId = 0;
         int fragId = 0;
@@ -79,7 +81,7 @@ public class ShaderUtil {
         }
         return program;
     }
-
+    
     private static int createShader(final String filename, final int shaderType) {
         int shader = 0;
         try {
@@ -87,23 +89,24 @@ public class ShaderUtil {
             if (shader == 0) {
                 return 0;
             }
-            ARBShaderObjects.glShaderSourceARB(shader, (CharSequence) readFile(filename));
+            ARBShaderObjects.glShaderSourceARB(shader, (CharSequence)readFile(filename));
             ARBShaderObjects.glCompileShaderARB(shader);
             if (ARBShaderObjects.glGetObjectParameteriARB(shader, 35713) == 0) {
                 throw new RuntimeException("Error creating shader \"" + filename + "\": " + getLogInfo(shader));
             }
             return shader;
-        } catch (final Exception exc) {
+        }
+        catch (final Exception exc) {
             ARBShaderObjects.glDeleteObjectARB(shader);
             exc.printStackTrace();
             return -1;
         }
     }
-
+    
     private static String getLogInfo(final int obj) {
         return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, 35716));
     }
-
+    
     private static String readFile(final String filename) throws Exception {
         final InputStream in = ShaderUtil.class.getResourceAsStream(filename);
         if (in == null) {
@@ -121,7 +124,7 @@ public class ShaderUtil {
             return result.toString();
         }
     }
-
+    
     static {
         ShaderUtil.GRAYSCALE_SHADER = 0;
         ShaderUtil.COLORIZE_SHADER = 0;

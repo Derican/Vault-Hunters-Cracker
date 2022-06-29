@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.render;
 
@@ -22,33 +25,27 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import iskallia.vault.block.entity.VaultChampionTrophyTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 
-public class VaultChampionTrophyRenderer extends TileEntityRenderer<VaultChampionTrophyTileEntity> {
+public class VaultChampionTrophyRenderer extends TileEntityRenderer<VaultChampionTrophyTileEntity>
+{
     public VaultChampionTrophyRenderer(final TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
-
-    public void render(@Nonnull final VaultChampionTrophyTileEntity tileEntity, final float partialTicks,
-            @Nonnull final MatrixStack matrixStack, @Nonnull final IRenderTypeBuffer buffer, final int combinedLight,
-            final int combinedOverlay) {
-        final ClientWorld world = (ClientWorld) tileEntity.getLevel();
+    
+    public void render(@Nonnull final VaultChampionTrophyTileEntity tileEntity, final float partialTicks, @Nonnull final MatrixStack matrixStack, @Nonnull final IRenderTypeBuffer buffer, final int combinedLight, final int combinedOverlay) {
+        final ClientWorld world = (ClientWorld)tileEntity.getLevel();
         if (world == null) {
             return;
         }
         final BlockState blockState = tileEntity.getBlockState();
-        final Direction facing = (Direction) blockState.getValue((Property) VaultChampionTrophy.FACING);
-        final String ownerNickname = McClientHelper.getOnlineProfile(tileEntity.getOwnerUUID())
-                .map((Function<? super GameProfile, ? extends String>) GameProfile::getName)
-                .orElse(tileEntity.getOwnerNickname());
+        final Direction facing = (Direction)blockState.getValue((Property)VaultChampionTrophy.FACING);
+        final String ownerNickname = McClientHelper.getOnlineProfile(tileEntity.getOwnerUUID()).map((Function<? super GameProfile, ? extends String>)GameProfile::getName).orElse(tileEntity.getOwnerNickname());
         final int score = tileEntity.getScore();
         this.drawNameplate(matrixStack, buffer, ownerNickname, score, facing, combinedLight, combinedOverlay);
     }
-
-    private void drawNameplate(final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final String displayName,
-            final int score, final Direction direction, final int combinedLight, final int combinedOverlay) {
-        final IReorderingProcessor text = new StringTextComponent(displayName).withStyle(TextFormatting.BLACK)
-                .getVisualOrderText();
-        final IReorderingProcessor scoreText = new StringTextComponent(String.valueOf(score))
-                .withStyle(TextFormatting.BLACK).getVisualOrderText();
+    
+    private void drawNameplate(final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final String displayName, final int score, final Direction direction, final int combinedLight, final int combinedOverlay) {
+        final IReorderingProcessor text = new StringTextComponent(displayName).withStyle(TextFormatting.BLACK).getVisualOrderText();
+        final IReorderingProcessor scoreText = new StringTextComponent(String.valueOf(score)).withStyle(TextFormatting.BLACK).getVisualOrderText();
         final FontRenderer fr = this.renderer.getFont();
         final int width = fr.width(text);
         final int scoreWidth = fr.width(scoreText);
@@ -57,10 +54,8 @@ public class VaultChampionTrophyRenderer extends TileEntityRenderer<VaultChampio
         matrixStack.mulPose(Vector3f.YN.rotationDegrees(direction.toYRot() + 180.0f));
         matrixStack.translate(0.0, 0.0, 0.255);
         matrixStack.scale(0.01f, -0.01f, 0.01f);
-        fr.drawInBatch(text, -width / 2.0f, 0.0f, -16777216, false, matrixStack.last().pose(),
-                buffer, false, 0, combinedLight);
-        fr.drawInBatch(scoreText, -scoreWidth / 2.0f, 8.0f, -16777216, false,
-                matrixStack.last().pose(), buffer, false, 0, combinedLight);
+        fr.drawInBatch(text, -width / 2.0f, 0.0f, -16777216, false, matrixStack.last().pose(), buffer, false, 0, combinedLight);
+        fr.drawInBatch(scoreText, -scoreWidth / 2.0f, 8.0f, -16777216, false, matrixStack.last().pose(), buffer, false, 0, combinedLight);
         matrixStack.popPose();
     }
 }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.builder;
 
@@ -13,32 +16,30 @@ import iskallia.vault.item.crystal.CrystalData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ServerWorld;
 
-public class FinalBossBuilder extends VaultRaidBuilder {
+public class FinalBossBuilder extends VaultRaidBuilder
+{
     private static final FinalBossBuilder INSTANCE;
-
+    
     private FinalBossBuilder() {
     }
-
+    
     public static FinalBossBuilder getInstance() {
         return FinalBossBuilder.INSTANCE;
     }
-
+    
     @Override
-    public VaultRaid.Builder initializeBuilder(final ServerWorld world, final ServerPlayerEntity player,
-            final CrystalData crystal) {
+    public VaultRaid.Builder initializeBuilder(final ServerWorld world, final ServerPlayerEntity player, final CrystalData crystal) {
         final VaultRaid.Builder builder = this.getDefaultBuilder(crystal, world, player);
         final VaultRaid vault = VaultRaidData.get(world).getActiveFor(player);
         if (vault == null) {
             return null;
         }
-        vault.getPlayers().stream().map(p -> p.getServerPlayer(world.getServer())).filter(Optional::isPresent)
-                .map((Function<? super Object, ?>) Optional::get)
-                .forEach(sPlayer -> builder.addPlayer(VaultPlayerType.RUNNER, sPlayer));
+        vault.getPlayers().stream().map(p -> p.getServerPlayer(world.getServer())).filter(Optional::isPresent).map((Function<? super Object, ?>)Optional::get).forEach(sPlayer -> builder.addPlayer(VaultPlayerType.RUNNER, sPlayer));
         builder.set(VaultRaid.HOST, player.getUUID());
         builder.setGenerator(VaultRaid.FINAL_BOSS);
         return builder;
     }
-
+    
     static {
         INSTANCE = new FinalBossBuilder();
     }

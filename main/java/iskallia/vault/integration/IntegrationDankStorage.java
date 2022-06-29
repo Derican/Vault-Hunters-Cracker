@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.integration;
 
@@ -12,7 +15,8 @@ import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.item.DankItem;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 
-public class IntegrationDankStorage {
+public class IntegrationDankStorage
+{
     @SubscribeEvent
     public static void onStewFinish(final LivingEntityUseItemEvent.Finish event) {
         final ItemStack dank = event.getItem();
@@ -32,7 +36,7 @@ public class IntegrationDankStorage {
                 if (effectTag.contains("EffectDuration", 3)) {
                     duration = effectTag.getInt("EffectDuration");
                 }
-                final Effect effect = Effect.byId((int) effectTag.getByte("EffectId"));
+                final Effect effect = Effect.byId((int)effectTag.getByte("EffectId"));
                 if (effect != null) {
                     event.getEntityLiving().addEffect(new EffectInstance(effect, duration));
                 }

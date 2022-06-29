@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.ai.eyesore;
 
@@ -32,15 +35,16 @@ import net.minecraft.entity.LivingEntity;
 import java.util.UUID;
 import iskallia.vault.entity.EyesoreEntity;
 
-public class LaserAttackTask extends EyesoreTask<EyesoreEntity> {
+public class LaserAttackTask extends EyesoreTask<EyesoreEntity>
+{
     public int tick;
     public UUID target;
-
+    
     public LaserAttackTask(final EyesoreEntity entity) {
-        super((LivingEntity) entity);
+        super((LivingEntity)entity);
         this.tick = 0;
     }
-
+    
     @Override
     public void tick() {
         if (this.isFinished()) {
@@ -48,112 +52,92 @@ public class LaserAttackTask extends EyesoreTask<EyesoreEntity> {
         }
         if (this.target == null) {
             final ServerPlayerEntity player;
-            final List<ServerPlayerEntity> players = this.getVault().getPlayers().stream()
-                    .filter(player -> player instanceof VaultRunner)
-                    .map(p -> p.getServerPlayer(this.getWorld().getServer())).filter(Optional::isPresent)
-                    .map((Function<? super Object, ?>) Optional::get)
-                    .collect((Collector<? super Object, ?, List<ServerPlayerEntity>>) Collectors.toList());
+            final List<ServerPlayerEntity> players = this.getVault().getPlayers().stream().filter(player -> player instanceof VaultRunner).map(p -> p.getServerPlayer(this.getWorld().getServer())).filter(Optional::isPresent).map((Function<? super Object, ?>)Optional::get).collect((Collector<? super Object, ?, List<ServerPlayerEntity>>)Collectors.toList());
             if (players.size() == 0) {
                 return;
             }
             player = players.get(this.getRandom().nextInt(players.size()));
             this.target = player.getUUID();
-            this.getEntity().getEntityData().set((DataParameter) EyesoreEntity.LASER_TARGET,
-                    (Object) Optional.of(player.getUUID()));
-            this.getVault().getPlayers().stream().map(p -> p.getServerPlayer(this.getWorld().getServer()))
-                    .filter(Optional::isPresent).map((Function<? super Object, ?>) Optional::get)
-                    .forEach(p -> this.getWorld().playSound((PlayerEntity) null, p.getX(),
-                            p.getY(), p.getZ(), SoundEvents.ELDER_GUARDIAN_CURSE,
-                            SoundCategory.HOSTILE, 10.0f, 1.0f));
+            this.getEntity().getEntityData().set((DataParameter)EyesoreEntity.LASER_TARGET, (Object)Optional.of(player.getUUID()));
+            this.getVault().getPlayers().stream().map(p -> p.getServerPlayer(this.getWorld().getServer())).filter(Optional::isPresent).map((Function<? super Object, ?>)Optional::get).forEach(p -> this.getWorld().playSound((PlayerEntity)null, p.getX(), p.getY(), p.getZ(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundCategory.HOSTILE, 10.0f, 1.0f));
         }
         final Entity entity = this.getWorld().getEntity(this.target);
         final LivingEntity targetEntity = (entity instanceof LivingEntity) ? entity : null;
         if (targetEntity != null) {
-            final double distance = this.getEntity().blockPosition()
-                    .distSqr((Vector3i) targetEntity.blockPosition());
-            final Optional<FinalVaultBoss> finalVault = this.getVault().getGenerator().getPieces(FinalVaultBoss.class)
-                    .stream().findFirst();
+            final double distance = this.getEntity().blockPosition().distSqr((Vector3i)targetEntity.blockPosition());
+            final Optional<FinalVaultBoss> finalVault = this.getVault().getGenerator().getPieces(FinalVaultBoss.class).stream().findFirst();
             if (finalVault.isPresent()) {
                 final Vector3i center = finalVault.get().getCenter();
-                this.getEntity().path.stayInRange(new Vector3d((double) center.getX(),
-                        (double) center.getY(), (double) center.getZ()), (Entity) targetEntity, 0.15,
-                        30.0, 2.0);
-            } else {
-                this.getEntity().path.stayInRange(this.getEntity(), (Entity) targetEntity, 0.15, 30.0, 2.0);
+                this.getEntity().path.stayInRange(new Vector3d((double)center.getX(), (double)center.getY(), (double)center.getZ()), (Entity)targetEntity, 0.15, 30.0, 2.0);
+            }
+            else {
+                this.getEntity().path.stayInRange(this.getEntity(), (Entity)targetEntity, 0.15, 30.0, 2.0);
             }
             final Vector3d eyePos1 = this.getEntity().getEyePosition(1.0f);
-            final Vector3d eyePos2 = this.getPosition((Entity) targetEntity);
-            final RayTraceContext context = new RayTraceContext(eyePos1, eyePos2, RayTraceContext.BlockMode.COLLIDER,
-                    RayTraceContext.FluidMode.NONE, ((EyesoreTask<Entity>) this).getEntity());
+            final Vector3d eyePos2 = this.getPosition((Entity)targetEntity);
+            final RayTraceContext context = new RayTraceContext(eyePos1, eyePos2, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, ((EyesoreTask<Entity>)this).getEntity());
             final BlockRayTraceResult result = this.getWorld().clip(context);
             if (result.getType() == RayTraceResult.Type.MISS) {
                 targetEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 60, 2, false, false));
-                final DamageSource source = new EntityDamageSource("laser", ((EyesoreTask<Entity>) this).getEntity())
-                        .setMagic();
+                final DamageSource source = new EntityDamageSource("laser", ((EyesoreTask<Entity>)this).getEntity()).setMagic();
                 final float damage = ModConfigs.EYESORE.laserAttack.getDamage(this.getEntity(), this.tick);
                 if (damage > 0.0f) {
                     targetEntity.hurt(source, damage);
                 }
                 if (this.getWorld().getGameTime() % 10L == 0L) {
-                    this.getWorld().sendParticles((IParticleData) ParticleTypes.SMOKE,
-                            targetEntity.getX(), targetEntity.getY(),
-                            targetEntity.getZ(), 300, 0.0, 0.0, 0.0, 0.001);
+                    this.getWorld().sendParticles((IParticleData)ParticleTypes.SMOKE, targetEntity.getX(), targetEntity.getY(), targetEntity.getZ(), 300, 0.0, 0.0, 0.0, 0.001);
                 }
-            } else {
+            }
+            else {
                 if (this.getWorld().getGameTime() % 10L == 0L) {
-                    this.getWorld().destroyBlock(result.getBlockPos(), true,
-                            ((EyesoreTask<Entity>) this).getEntity());
+                    this.getWorld().destroyBlock(result.getBlockPos(), true, ((EyesoreTask<Entity>)this).getEntity());
                 }
                 if (this.getWorld().getGameTime() % 10L == 0L) {
-                    this.getWorld().sendParticles((IParticleData) ParticleTypes.SMOKE,
-                            result.getLocation().x, result.getLocation().y,
-                            result.getLocation().z, 300, 0.0, 0.0, 0.0, 0.001);
+                    this.getWorld().sendParticles((IParticleData)ParticleTypes.SMOKE, result.getLocation().x, result.getLocation().y, result.getLocation().z, 300, 0.0, 0.0, 0.0, 0.001);
                 }
             }
         }
         ++this.tick;
         if (this.isFinished()) {
-            this.getEntity().getEntityData().set((DataParameter) EyesoreEntity.LASER_TARGET,
-                    (Object) Optional.empty());
+            this.getEntity().getEntityData().set((DataParameter)EyesoreEntity.LASER_TARGET, (Object)Optional.empty());
         }
     }
-
+    
     protected void lookAtTarget(final LivingEntity target) {
         this.getEntity().xRot = this.getTargetPitch(target);
         this.getEntity().yHeadRot = this.getTargetYaw(target);
     }
-
+    
     private double getEyePosition(final Entity entity) {
-        return (entity instanceof LivingEntity) ? entity.getEyeY()
-                : ((entity.getBoundingBox().minY + entity.getBoundingBox().maxY) / 2.0);
+        return (entity instanceof LivingEntity) ? entity.getEyeY() : ((entity.getBoundingBox().minY + entity.getBoundingBox().maxY) / 2.0);
     }
-
+    
     protected float getTargetPitch(final LivingEntity target) {
         final double d0 = target.getX() - this.getEntity().getX();
-        final double d2 = this.getEyePosition((Entity) target) - this.getEntity().getEyeY();
+        final double d2 = this.getEyePosition((Entity)target) - this.getEntity().getEyeY();
         final double d3 = target.getZ() - this.getEntity().getZ();
         final double d4 = MathHelper.sqrt(d0 * d0 + d3 * d3);
-        return (float) (-(MathHelper.atan2(d2, d4) * 57.2957763671875));
+        return (float)(-(MathHelper.atan2(d2, d4) * 57.2957763671875));
     }
-
+    
     protected float getTargetYaw(final LivingEntity target) {
         final double d0 = target.getX() - this.getEntity().getX();
         final double d2 = target.getZ() - this.getEntity().getZ();
-        return (float) (MathHelper.atan2(d2, d0) * 57.2957763671875) - 90.0f;
+        return (float)(MathHelper.atan2(d2, d0) * 57.2957763671875) - 90.0f;
     }
-
+    
     private Vector3d getPosition(final Entity entityLivingBaseIn) {
         final double d0 = entityLivingBaseIn.getX();
         final double d2 = entityLivingBaseIn.getY() + entityLivingBaseIn.getBbHeight() / 2.0f;
         final double d3 = entityLivingBaseIn.getZ();
         return new Vector3d(d0, d2, d3);
     }
-
+    
     @Override
     public boolean isFinished() {
         return this.getVault() == null || this.tick >= 100;
     }
-
+    
     @Override
     public void reset() {
         this.tick = 0;

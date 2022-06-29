@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.event;
 
@@ -8,13 +11,14 @@ import net.minecraftforge.eventbus.api.Event;
 import iskallia.vault.world.vault.VaultRaid;
 import java.util.Map;
 
-public class VaultListener {
+public class VaultListener
+{
     public static final Map<VaultRaid, Void> REGISTRY;
-
+    
     public static void listen(final VaultRaid vault) {
         VaultListener.REGISTRY.put(vault, null);
     }
-
+    
     public static synchronized <T extends Event> void onEvent(final T event) {
         if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) {
             return;
@@ -26,12 +30,13 @@ public class VaultListener {
                     listener.accept(vault, event);
                 }
             }));
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             Vault.LOGGER.error("Upsie, you know what causes this but are lazy to fix it :(");
             e.printStackTrace();
         }
     }
-
+    
     static {
         REGISTRY = new WeakHashMap<VaultRaid, Void>();
     }

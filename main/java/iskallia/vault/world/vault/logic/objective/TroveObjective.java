@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective;
 
@@ -19,59 +22,59 @@ import iskallia.vault.world.vault.VaultRaid;
 import iskallia.vault.world.vault.logic.task.VaultTask;
 import net.minecraft.util.ResourceLocation;
 
-public class TroveObjective extends VaultObjective {
+public class TroveObjective extends VaultObjective
+{
     public TroveObjective(final ResourceLocation id) {
         super(id, VaultTask.EMPTY, VaultTask.EMPTY);
     }
-
+    
     @Nonnull
     @Override
     public BlockState getObjectiveRelevantBlock(final VaultRaid vault, final ServerWorld world, final BlockPos pos) {
         return Blocks.AIR.defaultBlockState();
     }
-
+    
     @Nullable
     @Override
-    public LootTable getRewardLootTable(final VaultRaid vault,
-            final Function<ResourceLocation, LootTable> tblResolver) {
+    public LootTable getRewardLootTable(final VaultRaid vault, final Function<ResourceLocation, LootTable> tblResolver) {
         return null;
     }
-
+    
     @Override
     public ITextComponent getObjectiveDisplayName() {
         return this.getVaultName();
     }
-
+    
     @Override
     public ITextComponent getVaultName() {
-        return (ITextComponent) new StringTextComponent("Vault Trove").withStyle(TextFormatting.GOLD);
+        return (ITextComponent)new StringTextComponent("Vault Trove").withStyle(TextFormatting.GOLD);
     }
-
+    
     @Override
     public int getVaultTimerStart(final int vaultTime) {
         return 12000;
     }
-
+    
     @Override
     public boolean preventsEatingExtensionFruit(final MinecraftServer srv, final VaultRaid vault) {
         return true;
     }
-
+    
     @Override
     public boolean preventsMobSpawning() {
         return true;
     }
-
+    
     @Override
     public boolean preventsTrappedChests() {
         return true;
     }
-
+    
     @Override
     public boolean preventsInfluences() {
         return true;
     }
-
+    
     @Nonnull
     @Override
     public Supplier<? extends VaultGenerator> getVaultGenerator() {

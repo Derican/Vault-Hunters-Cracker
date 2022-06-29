@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -12,7 +15,8 @@ import net.minecraft.client.renderer.Atlases;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ Atlases.class })
-public class MixinAtlases {
+public class MixinAtlases
+{
     @Inject(method = { "collectAllMaterials" }, at = { @At("RETURN") })
     private static void collectAllMaterials(final Consumer<RenderMaterial> materialConsumer, final CallbackInfo ci) {
         materialConsumer.accept(VaultChestRenderer.NORMAL);

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.dump;
 
@@ -15,13 +18,14 @@ import java.io.File;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import com.google.gson.Gson;
 
-public class VaultDataDump {
+public class VaultDataDump
+{
     private static final Gson GSON;
-
+    
     public static void onStart(final FMLServerStartedEvent event) {
         dumpModData();
     }
-
+    
     public static void dumpModData() {
         final File dir = new File("data/the_vault/");
         if (!dir.exists()) {
@@ -34,23 +38,22 @@ public class VaultDataDump {
         try {
             dataFile.createNewFile();
             final FileWriter writer = new FileWriter(dataFile);
-            VaultDataDump.GSON.toJson((Object) getData(), (Appendable) writer);
+            VaultDataDump.GSON.toJson((Object)getData(), (Appendable)writer);
             writer.flush();
             writer.close();
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             e.printStackTrace();
         }
     }
-
+    
     public static Map<String, String> getData() {
         final Map<String, String> data = new HashMap<String, String>();
-        final String version = ModList.get().getModContainerById("the_vault").map(ModContainer::getModInfo)
-                .map((Function<? super Object, ?>) IModInfo::getVersion)
-                .map((Function<? super Object, ? extends String>) Objects::toString).orElse("");
+        final String version = ModList.get().getModContainerById("the_vault").map(ModContainer::getModInfo).map((Function<? super Object, ?>)IModInfo::getVersion).map((Function<? super Object, ? extends String>)Objects::toString).orElse("");
         data.put("version", version);
         return data;
     }
-
+    
     static {
         GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
     }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.overlay;
 
@@ -8,7 +11,8 @@ import iskallia.vault.init.ModEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
-public class AbilityVignetteOverlay {
+public class AbilityVignetteOverlay
+{
     @SubscribeEvent
     public static void onPreRender(final RenderGameOverlayEvent.Pre event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
@@ -23,7 +27,8 @@ public class AbilityVignetteOverlay {
         }
         if (minecraft.player.getEffect(ModEffects.GHOST_WALK) != null) {
             AbstractGui.fill(matrixStack, 0, 0, width, height, 548137662);
-        } else if (minecraft.player.getEffect(ModEffects.TANK) != null) {
+        }
+        else if (minecraft.player.getEffect(ModEffects.TANK) != null) {
             AbstractGui.fill(matrixStack, 0, 0, width, height, 545887369);
         }
     }

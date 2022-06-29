@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.modifier;
 
@@ -14,7 +17,8 @@ import java.util.UUID;
 import com.google.gson.annotations.Expose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 
-public class FrenzyModifier extends TexturedVaultModifier {
+public class FrenzyModifier extends TexturedVaultModifier
+{
     public static final AttributeModifier.Operation FRENZY_HEALTH_OPERATION;
     @Expose
     private final float damageMultiplier;
@@ -25,9 +29,8 @@ public class FrenzyModifier extends TexturedVaultModifier {
     private UUID healthModifierID;
     private UUID damageModifierID;
     private UUID movementSpeedModifierID;
-
-    public FrenzyModifier(final String name, final ResourceLocation icon, final float damageMultiplier,
-            final float additionalMovementSpeed, final boolean doHealthReduction) {
+    
+    public FrenzyModifier(final String name, final ResourceLocation icon, final float damageMultiplier, final float additionalMovementSpeed, final boolean doHealthReduction) {
         super(name, icon);
         this.healthModifierID = null;
         this.damageModifierID = null;
@@ -36,11 +39,11 @@ public class FrenzyModifier extends TexturedVaultModifier {
         this.additionalMovementSpeed = additionalMovementSpeed;
         this.doHealthReduction = doHealthReduction;
     }
-
+    
     public float getDamageMultiplier() {
         return this.damageMultiplier;
     }
-
+    
     public UUID getDamageModifierID() {
         if (this.damageModifierID == null) {
             final Random r = new Random(this.getName().hashCode());
@@ -48,11 +51,11 @@ public class FrenzyModifier extends TexturedVaultModifier {
         }
         return this.damageModifierID;
     }
-
+    
     public float getAdditionalMovementSpeed() {
         return this.additionalMovementSpeed;
     }
-
+    
     public UUID getMovementSpeedModifierID() {
         if (this.movementSpeedModifierID == null) {
             final Random r = new Random(this.getName().hashCode());
@@ -63,7 +66,7 @@ public class FrenzyModifier extends TexturedVaultModifier {
         }
         return this.movementSpeedModifierID;
     }
-
+    
     public static boolean isFrenzyHealthModifier(final UUID uuid) {
         for (final FrenzyModifier modifier : ModConfigs.VAULT_MODIFIERS.FRENZY_MODIFIERS) {
             if (modifier.doHealthReduction && uuid.equals(modifier.getHealthModifierID())) {
@@ -72,7 +75,7 @@ public class FrenzyModifier extends TexturedVaultModifier {
         }
         return false;
     }
-
+    
     @Nullable
     public UUID getHealthModifierID() {
         if (this.doHealthReduction) {
@@ -87,28 +90,23 @@ public class FrenzyModifier extends TexturedVaultModifier {
         }
         return null;
     }
-
+    
     public void applyToEntity(final LivingEntity entity) {
-        this.applyModifier(entity, Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(this.getDamageModifierID(), "Frenzy Damage Multiplier",
-                        (double) this.getDamageMultiplier(), AttributeModifier.Operation.MULTIPLY_BASE));
-        this.applyModifier(entity, Attributes.MOVEMENT_SPEED,
-                new AttributeModifier(this.getMovementSpeedModifierID(), "Frenzy MovementSpeed Addition",
-                        (double) this.getAdditionalMovementSpeed(), AttributeModifier.Operation.ADDITION));
+        this.applyModifier(entity, Attributes.ATTACK_DAMAGE, new AttributeModifier(this.getDamageModifierID(), "Frenzy Damage Multiplier", (double)this.getDamageMultiplier(), AttributeModifier.Operation.MULTIPLY_BASE));
+        this.applyModifier(entity, Attributes.MOVEMENT_SPEED, new AttributeModifier(this.getMovementSpeedModifierID(), "Frenzy MovementSpeed Addition", (double)this.getAdditionalMovementSpeed(), AttributeModifier.Operation.ADDITION));
         if (this.doHealthReduction) {
-            this.applyModifier(entity, Attributes.MAX_HEALTH, new AttributeModifier(this.getHealthModifierID(),
-                    "Frenzy MaxHealth 1", 1.0, FrenzyModifier.FRENZY_HEALTH_OPERATION));
+            this.applyModifier(entity, Attributes.MAX_HEALTH, new AttributeModifier(this.getHealthModifierID(), "Frenzy MaxHealth 1", 1.0, FrenzyModifier.FRENZY_HEALTH_OPERATION));
             entity.setHealth(1.0f);
         }
     }
-
+    
     private void applyModifier(final LivingEntity entity, final Attribute attribute, final AttributeModifier modifier) {
         final ModifiableAttributeInstance attributeInstance = entity.getAttribute(attribute);
         if (attributeInstance != null) {
             attributeInstance.addPermanentModifier(modifier);
         }
     }
-
+    
     static {
         FRENZY_HEALTH_OPERATION = AttributeModifier.Operation.MULTIPLY_TOTAL;
     }

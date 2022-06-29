@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.screen;
 
@@ -18,25 +21,24 @@ import net.minecraft.util.ResourceLocation;
 import iskallia.vault.container.inventory.EtchingTradeContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 
-public class EtchingTradeScreen extends ContainerScreen<EtchingTradeContainer> {
+public class EtchingTradeScreen extends ContainerScreen<EtchingTradeContainer>
+{
     private static final ResourceLocation TEXTURE;
-
-    public EtchingTradeScreen(final EtchingTradeContainer screenContainer, final PlayerInventory inv,
-            final ITextComponent title) {
-        super((Container) screenContainer, inv, StringTextComponent.EMPTY);
+    
+    public EtchingTradeScreen(final EtchingTradeContainer screenContainer, final PlayerInventory inv, final ITextComponent title) {
+        super((Container)screenContainer, inv, StringTextComponent.EMPTY);
         this.imageWidth = 176;
         this.imageHeight = 184;
         this.inventoryLabelY = 90;
     }
-
+    
     protected void renderBg(final MatrixStack matrixStack, final float partialTicks, final int x, final int y) {
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         this.minecraft.getTextureManager().bind(EtchingTradeScreen.TEXTURE);
         final int offsetX = (this.width - this.imageWidth) / 2;
         final int offsetY = (this.height - this.imageHeight) / 2;
-        blit(matrixStack, offsetX, offsetY, this.getBlitOffset(), 0.0f, 0.0f, this.imageWidth,
-                this.imageHeight, 256, 512);
-        final EtchingTradeContainer container = (EtchingTradeContainer) this.getMenu();
+        blit(matrixStack, offsetX, offsetY, this.getBlitOffset(), 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 512);
+        final EtchingTradeContainer container = (EtchingTradeContainer)this.getMenu();
         final EtchingVendorEntity vendor = container.getVendor();
         if (vendor == null) {
             return;
@@ -56,21 +58,22 @@ public class EtchingTradeScreen extends ContainerScreen<EtchingTradeContainer> {
             final EtchingVendorControllerTileEntity.EtchingTrade trade = controllerTile.getTrade(i);
             if (trade == null || trade.isSold()) {
                 vOffset = 57;
-            } else {
+            }
+            else {
                 final Rectangle tradeBox = new Rectangle(xx, yy, 88, 27);
                 if (tradeBox.contains(x, y)) {
                     vOffset = 29;
                 }
             }
-            blit(matrixStack, xx, yy, this.getBlitOffset(), 177.0f, (float) vOffset, 88, 27, 256, 512);
+            blit(matrixStack, xx, yy, this.getBlitOffset(), 177.0f, (float)vOffset, 88, 27, 256, 512);
             blit(matrixStack, slotInXX, slotInYY, this.getBlitOffset(), 177.0f, 85.0f, 18, 18, 256, 512);
             blit(matrixStack, slotOutXX, slotOutYY, this.getBlitOffset(), 177.0f, 85.0f, 18, 18, 256, 512);
         }
     }
-
+    
     protected void renderLabels(final MatrixStack matrixStack, final int x, final int y) {
         super.renderLabels(matrixStack, x, y);
-        final EtchingTradeContainer container = (EtchingTradeContainer) this.getMenu();
+        final EtchingTradeContainer container = (EtchingTradeContainer)this.getMenu();
         final EtchingVendorEntity vendor = container.getVendor();
         if (vendor == null) {
             return;
@@ -85,26 +88,24 @@ public class EtchingTradeScreen extends ContainerScreen<EtchingTradeContainer> {
                 if (!trade.isSold()) {
                     final int xx = 71;
                     final int yy = 10 + i * 28;
-                    final ItemStack stack = new ItemStack((IItemProvider) ModItems.VAULT_PLATINUM,
-                            trade.getRequiredPlatinum());
+                    final ItemStack stack = new ItemStack((IItemProvider)ModItems.VAULT_PLATINUM, trade.getRequiredPlatinum());
                     this.itemRenderer.renderGuiItem(stack, xx, yy);
-                    this.itemRenderer.renderGuiItemDecorations(this.font, stack, xx, yy, (String) null);
+                    this.itemRenderer.renderGuiItemDecorations(this.font, stack, xx, yy, (String)null);
                 }
             }
         }
     }
-
-    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY,
-            final float partialTicks) {
+    
+    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY, final float partialTicks) {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
     }
-
+    
     public boolean isPauseScreen() {
         return false;
     }
-
+    
     static {
         TEXTURE = Vault.id("textures/gui/etching_trade.png");
     }

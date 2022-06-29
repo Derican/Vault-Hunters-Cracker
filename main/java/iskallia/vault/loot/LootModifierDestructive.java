@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.loot;
 
@@ -17,29 +20,30 @@ import java.util.List;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraftforge.common.loot.LootModifier;
 
-public class LootModifierDestructive extends LootModifier {
+public class LootModifierDestructive extends LootModifier
+{
     private LootModifierDestructive(final ILootCondition[] conditionsIn) {
         super(conditionsIn);
     }
-
+    
     @Nonnull
     protected List<ItemStack> doApply(final List<ItemStack> generatedLoot, final LootContext context) {
         if (!LootUtils.doesContextFulfillSet(context, LootParameterSets.BLOCK)) {
             return generatedLoot;
         }
-        final ItemStack tool = (ItemStack) context.getParamOrNull(LootParameters.TOOL);
+        final ItemStack tool = (ItemStack)context.getParamOrNull(LootParameters.TOOL);
         if (PaxelEnhancements.getEnhancement(tool) != PaxelEnhancements.DESTRUCTIVE) {
             return generatedLoot;
         }
         return new ArrayList<ItemStack>();
     }
-
-    public static class Serializer extends GlobalLootModifierSerializer<LootModifierDestructive> {
-        public LootModifierDestructive read(final ResourceLocation location, final JsonObject object,
-                final ILootCondition[] lootConditions) {
+    
+    public static class Serializer extends GlobalLootModifierSerializer<LootModifierDestructive>
+    {
+        public LootModifierDestructive read(final ResourceLocation location, final JsonObject object, final ILootCondition[] lootConditions) {
             return new LootModifierDestructive(lootConditions, null);
         }
-
+        
         public JsonObject write(final LootModifierDestructive instance) {
             return this.makeConditions(instance.conditions);
         }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -12,21 +15,22 @@ import iskallia.vault.skill.ability.effect.TankAbility;
 import iskallia.vault.skill.ability.config.TankConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class TankAbilityGroup extends AbilityGroup<TankConfig, TankAbility<TankConfig>> {
+public class TankAbilityGroup extends AbilityGroup<TankConfig, TankAbility<TankConfig>>
+{
     @Expose
     private final List<TankParryConfig> parryLevelConfiguration;
     @Expose
     private final List<TankReflectConfig> reflectLevelConfiguration;
     @Expose
     private final List<TankSlowConfig> slowLevelConfiguration;
-
+    
     private TankAbilityGroup() {
         super("Tank");
         this.parryLevelConfiguration = new ArrayList<TankParryConfig>();
         this.reflectLevelConfiguration = new ArrayList<TankReflectConfig>();
         this.slowLevelConfiguration = new ArrayList<TankSlowConfig>();
     }
-
+    
     @Override
     protected TankConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -44,7 +48,7 @@ public class TankAbilityGroup extends AbilityGroup<TankConfig, TankAbility<TankC
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -62,14 +66,14 @@ public class TankAbilityGroup extends AbilityGroup<TankConfig, TankAbility<TankC
             }
         }
     }
-
+    
     public static TankAbilityGroup defaultConfig() {
         final TankAbilityGroup group = new TankAbilityGroup();
-        ((AbilityGroup<TankConfig, E>) group).addLevel(new TankConfig(3, 100, 0.1f));
-        ((AbilityGroup<TankConfig, E>) group).addLevel(new TankConfig(3, 200, 0.13f));
-        ((AbilityGroup<TankConfig, E>) group).addLevel(new TankConfig(3, 300, 0.16f));
-        ((AbilityGroup<TankConfig, E>) group).addLevel(new TankConfig(3, 400, 0.18f));
-        ((AbilityGroup<TankConfig, E>) group).addLevel(new TankConfig(3, 500, 0.2f));
+        ((AbilityGroup<TankConfig, E>)group).addLevel(new TankConfig(3, 100, 0.1f));
+        ((AbilityGroup<TankConfig, E>)group).addLevel(new TankConfig(3, 200, 0.13f));
+        ((AbilityGroup<TankConfig, E>)group).addLevel(new TankConfig(3, 300, 0.16f));
+        ((AbilityGroup<TankConfig, E>)group).addLevel(new TankConfig(3, 400, 0.18f));
+        ((AbilityGroup<TankConfig, E>)group).addLevel(new TankConfig(3, 500, 0.2f));
         group.parryLevelConfiguration.add(new TankParryConfig(3, 100, 0.15f));
         group.parryLevelConfiguration.add(new TankParryConfig(3, 200, 0.17f));
         group.parryLevelConfiguration.add(new TankParryConfig(3, 300, 0.19f));

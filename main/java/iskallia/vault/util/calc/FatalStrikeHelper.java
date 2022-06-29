@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util.calc;
 
@@ -23,62 +26,58 @@ import net.minecraft.entity.player.PlayerEntity;
 import iskallia.vault.world.data.PlayerTalentsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
-public class FatalStrikeHelper {
+public class FatalStrikeHelper
+{
     public static float getPlayerFatalStrikeChance(final ServerPlayerEntity player) {
         float chance = 0.0f;
-        final TalentTree tree = PlayerTalentsData.get(player.getLevel()).getTalents((PlayerEntity) player);
+        final TalentTree tree = PlayerTalentsData.get(player.getLevel()).getTalents((PlayerEntity)player);
         for (final FatalStrikeTalent talent : tree.getTalents(FatalStrikeTalent.class)) {
             chance += talent.getFatalStrikeChance();
         }
         for (final FatalStrikeChanceTalent talent2 : tree.getTalents(FatalStrikeChanceTalent.class)) {
             chance += talent2.getAdditionalFatalStrikeChance();
         }
-        final SetTree sets = PlayerSetsData.get(player.getLevel()).getSets((PlayerEntity) player);
+        final SetTree sets = PlayerSetsData.get(player.getLevel()).getSets((PlayerEntity)player);
         for (final SetNode<?> node : sets.getNodes()) {
             if (!(node.getSet() instanceof AssassinSet)) {
                 continue;
             }
-            final AssassinSet set = (AssassinSet) node.getSet();
+            final AssassinSet set = (AssassinSet)node.getSet();
             chance += set.getIncreasedFatalStrikeChance();
         }
         final VaultRaid vault = VaultRaidData.get(player.getLevel()).getActiveFor(player);
         if (vault != null) {
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_CHANCE
-                        && !influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_CHANCE && !influence.isMultiplicative()) {
                     chance += influence.getValue();
                 }
             }
         }
-        chance += getFatalStrikeChance((LivingEntity) player);
+        chance += getFatalStrikeChance((LivingEntity)player);
         if (vault != null) {
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_CHANCE
-                        && influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_CHANCE && influence.isMultiplicative()) {
                     chance *= influence.getValue();
                 }
             }
         }
         return chance;
     }
-
+    
     public static float getFatalStrikeChance(final LivingEntity entity) {
         float chance = 0.0f;
         for (final EquipmentSlotType slot : EquipmentSlotType.values()) {
             final ItemStack stack = entity.getItemBySlot(slot);
-            if (!(stack.getItem() instanceof VaultGear)
-                    || ((VaultGear) stack.getItem()).isIntendedForSlot(slot)) {
+            if (!(stack.getItem() instanceof VaultGear) || ((VaultGear)stack.getItem()).isIntendedForSlot(slot)) {
                 chance += ModAttributes.FATAL_STRIKE_CHANCE.getOrDefault(stack, 0.0f).getValue(stack);
             }
         }
         return chance;
     }
-
+    
     public static float getPlayerFatalStrikeDamage(final ServerPlayerEntity player) {
         float additionalMultiplier = 0.0f;
-        final TalentTree tree = PlayerTalentsData.get(player.getLevel()).getTalents((PlayerEntity) player);
+        final TalentTree tree = PlayerTalentsData.get(player.getLevel()).getTalents((PlayerEntity)player);
         for (final FatalStrikeTalent talent : tree.getTalents(FatalStrikeTalent.class)) {
             additionalMultiplier += talent.getFatalStrikeDamage();
         }
@@ -87,33 +86,28 @@ public class FatalStrikeHelper {
         }
         final VaultRaid vault = VaultRaidData.get(player.getLevel()).getActiveFor(player);
         if (vault != null) {
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_DAMAGE
-                        && !influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_DAMAGE && !influence.isMultiplicative()) {
                     additionalMultiplier += influence.getValue();
                 }
             }
         }
-        additionalMultiplier += getFatalStrikeDamage((LivingEntity) player);
+        additionalMultiplier += getFatalStrikeDamage((LivingEntity)player);
         if (vault != null) {
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_DAMAGE
-                        && influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.FATAL_STRIKE_DAMAGE && influence.isMultiplicative()) {
                     additionalMultiplier *= influence.getValue();
                 }
             }
         }
         return additionalMultiplier;
     }
-
+    
     public static float getFatalStrikeDamage(final LivingEntity entity) {
         float additionalMultiplier = 0.0f;
         for (final EquipmentSlotType slot : EquipmentSlotType.values()) {
             final ItemStack stack = entity.getItemBySlot(slot);
-            if (!(stack.getItem() instanceof VaultGear)
-                    || ((VaultGear) stack.getItem()).isIntendedForSlot(slot)) {
+            if (!(stack.getItem() instanceof VaultGear) || ((VaultGear)stack.getItem()).isIntendedForSlot(slot)) {
                 additionalMultiplier += ModAttributes.FATAL_STRIKE_DAMAGE.getOrDefault(stack, 0.0f).getValue(stack);
             }
         }

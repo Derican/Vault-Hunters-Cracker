@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util;
 
@@ -5,23 +8,24 @@ import iskallia.vault.init.ModConfigs;
 import java.util.Random;
 import net.minecraft.util.text.TextFormatting;
 
-public enum VaultRarity {
-    COMMON(TextFormatting.WHITE),
-    RARE(TextFormatting.YELLOW),
-    EPIC(TextFormatting.LIGHT_PURPLE),
+public enum VaultRarity
+{
+    COMMON(TextFormatting.WHITE), 
+    RARE(TextFormatting.YELLOW), 
+    EPIC(TextFormatting.LIGHT_PURPLE), 
     OMEGA(TextFormatting.GREEN);
-
+    
     public final TextFormatting color;
-
+    
     private VaultRarity(final TextFormatting color) {
         this.color = color;
     }
-
+    
     public static VaultRarity getWeightedRandom() {
         final Random rand = new Random();
         return getWeightedRarityAt(rand.nextInt(getTotalWeight()));
     }
-
+    
     private static int getTotalWeight() {
         int totalWeight = 0;
         for (final VaultRarity rarity : values()) {
@@ -29,7 +33,7 @@ public enum VaultRarity {
         }
         return totalWeight;
     }
-
+    
     private static VaultRarity getWeightedRarityAt(int index) {
         VaultRarity current = null;
         final VaultRarity[] values = values();
@@ -42,7 +46,7 @@ public enum VaultRarity {
         }
         return current;
     }
-
+    
     private static int getWeight(final VaultRarity rarity) {
         switch (rarity) {
             case COMMON: {

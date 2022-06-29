@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.gen.layout;
 
@@ -6,24 +9,25 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.ResourceLocation;
 import java.util.Random;
 
-public interface JigsawPoolProvider {
+public interface JigsawPoolProvider
+{
     public static final Random rand = new Random();
-
+    
     ResourceLocation getStartRoomId();
-
+    
     ResourceLocation getRoomId();
-
+    
     ResourceLocation getTunnelId();
-
+    
     default JigsawPattern getStartRoomPool(final Registry<JigsawPattern> jigsawRegistry) {
-        return (JigsawPattern) jigsawRegistry.get(this.getStartRoomId());
+        return (JigsawPattern)jigsawRegistry.get(this.getStartRoomId());
     }
-
+    
     default JigsawPattern getRoomPool(final Registry<JigsawPattern> jigsawRegistry) {
-        return (JigsawPattern) jigsawRegistry.get(this.getRoomId());
+        return (JigsawPattern)jigsawRegistry.get(this.getRoomId());
     }
-
+    
     default JigsawPattern getTunnelPool(final Registry<JigsawPattern> jigsawRegistry) {
-        return (JigsawPattern) jigsawRegistry.get(this.getTunnelId());
+        return (JigsawPattern)jigsawRegistry.get(this.getTunnelId());
     }
 }

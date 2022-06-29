@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -15,15 +18,16 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
 
 @Mixin({ ElytraLayer.class })
-public abstract class MixinElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M> {
+public abstract class MixinElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M>
+{
     public MixinElytraLayer(final IEntityRenderer<T, M> renderer) {
-        super((IEntityRenderer) renderer);
+        super((IEntityRenderer)renderer);
     }
-
+    
     @Inject(method = { "shouldRender" }, at = { @At("HEAD") }, cancellable = true, remap = false)
     public void shouldRender(final ItemStack stack, final T entity, final CallbackInfoReturnable<Boolean> ci) {
         if (PlayerSet.isActive(VaultGear.Set.DRAGON, entity)) {
-            ci.setReturnValue((Object) true);
+            ci.setReturnValue((Object)true);
         }
     }
 }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.gen.decorator;
 
@@ -15,15 +18,15 @@ import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeature;
 
-public class OverworldOreFeature extends OreFeature {
+public class OverworldOreFeature extends OreFeature
+{
     public static Feature<OreFeatureConfig> INSTANCE;
-
+    
     public OverworldOreFeature(final Codec<OreFeatureConfig> codec) {
-        super((Codec) codec);
+        super((Codec)codec);
     }
-
-    public boolean place(final ISeedReader world, final ChunkGenerator gen, final Random random,
-            final BlockPos pos, final OreFeatureConfig config) {
+    
+    public boolean place(final ISeedReader world, final ChunkGenerator gen, final Random random, final BlockPos pos, final OreFeatureConfig config) {
         if (world.getLevel().dimension() != World.OVERWORLD) {
             return false;
         }
@@ -36,10 +39,9 @@ public class OverworldOreFeature extends OreFeature {
         }
         return false;
     }
-
+    
     public static void register(final RegistryEvent.Register<Feature<?>> event) {
-        (OverworldOreFeature.INSTANCE = (Feature<OreFeatureConfig>) new OverworldOreFeature(
-                (Codec<OreFeatureConfig>) OreFeatureConfig.CODEC)).setRegistryName(Vault.id("overworld_ore"));
-        event.getRegistry().register((IForgeRegistryEntry) OverworldOreFeature.INSTANCE);
+        (OverworldOreFeature.INSTANCE = (Feature<OreFeatureConfig>)new OverworldOreFeature((Codec<OreFeatureConfig>)OreFeatureConfig.CODEC)).setRegistryName(Vault.id("overworld_ore"));
+        event.getRegistry().register((IForgeRegistryEntry)OverworldOreFeature.INSTANCE);
     }
 }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util.nbt;
 
@@ -10,6 +13,6 @@ import java.lang.annotation.Retention;
 @Target({ ElementType.FIELD })
 public @interface NBTSerialize {
     String name() default "";
-
+    
     Class<?> typeOverride() default Object.class;
 }

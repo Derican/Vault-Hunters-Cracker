@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -11,12 +14,12 @@ import net.minecraft.client.gui.overlay.DebugOverlayGui;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ DebugOverlayGui.class })
-public class MixinDebugOverlayGui {
+public class MixinDebugOverlayGui
+{
     @Inject(method = { "getPropertyString" }, at = { @At("RETURN") }, cancellable = true)
-    public void hidePropertyString(final Map.Entry<Property<?>, Comparable<?>> entryIn,
-            final CallbackInfoReturnable<String> cir) {
+    public void hidePropertyString(final Map.Entry<Property<?>, Comparable<?>> entryIn, final CallbackInfoReturnable<String> cir) {
         if (entryIn.getKey() instanceof HiddenIntegerProperty) {
-            cir.setReturnValue((Object) (entryIn.getKey().getName() + ": unknown"));
+            cir.setReturnValue((Object)(entryIn.getKey().getName() + ": unknown"));
         }
     }
 }

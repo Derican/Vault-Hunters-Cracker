@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect;
 
@@ -16,26 +19,25 @@ import iskallia.vault.init.ModEffects;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import iskallia.vault.skill.ability.config.TankConfig;
 
-public class TankAbility<C extends TankConfig> extends AbilityEffect<C> {
+public class TankAbility<C extends TankConfig> extends AbilityEffect<C>
+{
     @Override
     public String getAbilityGroupName() {
         return "Tank";
     }
-
+    
     @Override
     public boolean onAction(final C config, final ServerPlayerEntity player, final boolean active) {
         if (player.hasEffect(ModEffects.TANK)) {
             return false;
         }
-        final EffectInstance newEffect = new EffectInstance(ModEffects.TANK, config.getDurationTicks(),
-                config.getAmplifier(), false, config.getType().showParticles, config.getType().showIcon);
-        player.level.playSound((PlayerEntity) null, player.getX(), player.getY(),
-                player.getZ(), ModSounds.TANK_SFX, SoundCategory.MASTER, 0.175f, 1.0f);
+        final EffectInstance newEffect = new EffectInstance(ModEffects.TANK, config.getDurationTicks(), config.getAmplifier(), false, config.getType().showParticles, config.getType().showIcon);
+        player.level.playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), ModSounds.TANK_SFX, SoundCategory.MASTER, 0.175f, 1.0f);
         player.playNotifySound(ModSounds.TANK_SFX, SoundCategory.MASTER, 0.175f, 1.0f);
         player.addEffect(newEffect);
         return false;
     }
-
+    
     @SubscribeEvent
     public void onDamage(final LivingDamageEvent event) {
         final EffectInstance tank = event.getEntityLiving().getEffect(ModEffects.TANK);
@@ -43,13 +45,13 @@ public class TankAbility<C extends TankConfig> extends AbilityEffect<C> {
             return;
         }
         if (event.getEntityLiving() instanceof PlayerEntity) {
-            final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
             if (!player.getCommandSenderWorld().isClientSide() && player.getCommandSenderWorld() instanceof ServerWorld) {
-                final ServerWorld world = (ServerWorld) player.getCommandSenderWorld();
+                final ServerWorld world = (ServerWorld)player.getCommandSenderWorld();
                 final AbilityTree abilities = PlayerAbilitiesData.get(world).getAbilities(player);
                 final AbilityNode<?, ?> tankNode = abilities.getNodeByName("Tank");
                 if (tankNode.getAbility() == this && tankNode.isLearned()) {
-                    final TankConfig cfg = (TankConfig) tankNode.getAbilityConfig();
+                    final TankConfig cfg = (TankConfig)tankNode.getAbilityConfig();
                     if (cfg != null) {
                         event.setAmount(event.getAmount() * (1.0f - cfg.getDamageReductionPercent()));
                     }

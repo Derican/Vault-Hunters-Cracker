@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective.architect.modifier;
 
@@ -14,21 +17,21 @@ import iskallia.vault.util.data.WeightedList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 
-public class PieceSelectionModifier extends VoteModifier {
+public class PieceSelectionModifier extends VoteModifier
+{
     @Expose
     private final float filterChance;
     @Expose
     private final List<String> selectedRoomPrefixes;
     private WeightedList<JigsawPiece> filteredPieces;
-
-    public PieceSelectionModifier(final String name, final String description, final int voteLockDurationChangeSeconds,
-            final float filterChance, final List<String> selectedRoomPrefixes) {
+    
+    public PieceSelectionModifier(final String name, final String description, final int voteLockDurationChangeSeconds, final float filterChance, final List<String> selectedRoomPrefixes) {
         super(name, description, voteLockDurationChangeSeconds);
         this.filteredPieces = null;
         this.filterChance = filterChance;
         this.selectedRoomPrefixes = selectedRoomPrefixes;
     }
-
+    
     @Nullable
     @Override
     public JigsawPiece getSpecialRoom(final ArchitectObjective objective, final VaultRaid vault) {
@@ -42,10 +45,10 @@ public class PieceSelectionModifier extends VoteModifier {
         this.filteredPieces = VaultJigsawHelper.getVaultRoomList(vaultLevel).copyFiltered(this::isApplicable);
         return this.filteredPieces.getRandom(PieceSelectionModifier.rand);
     }
-
+    
     private boolean isApplicable(final JigsawPiece piece) {
         if (piece instanceof PalettedListPoolElement) {
-            final List<JigsawPiece> elements = ((PalettedListPoolElement) piece).getElements();
+            final List<JigsawPiece> elements = ((PalettedListPoolElement)piece).getElements();
             for (final JigsawPiece elementPiece : elements) {
                 if (!this.isApplicable(elementPiece)) {
                     return false;
@@ -54,7 +57,7 @@ public class PieceSelectionModifier extends VoteModifier {
             return !elements.isEmpty();
         }
         if (piece instanceof PalettedSinglePoolElement) {
-            final ResourceLocation key = ((PalettedSinglePoolElement) piece).getTemplate().left().orElse(null);
+            final ResourceLocation key = ((PalettedSinglePoolElement)piece).getTemplate().left().orElse(null);
             if (key != null) {
                 final String keyStr = key.toString();
                 for (final String prefix : this.selectedRoomPrefixes) {

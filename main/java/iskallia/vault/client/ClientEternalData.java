@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client;
 
@@ -11,9 +14,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map;
 
-public class ClientEternalData {
+public class ClientEternalData
+{
     private static Map<UUID, List<EternalDataSnapshot>> eternalSnapshots;
-
+    
     @Nullable
     public static EternalDataSnapshot getSnapshot(final UUID eternalId) {
         for (final UUID playerId : ClientEternalData.eternalSnapshots.keySet()) {
@@ -26,15 +30,15 @@ public class ClientEternalData {
         }
         return null;
     }
-
+    
     public static List<EternalDataSnapshot> getPlayerEternals(final UUID playerId) {
         return ClientEternalData.eternalSnapshots.getOrDefault(playerId, new ArrayList<EternalDataSnapshot>());
     }
-
+    
     public static void receiveUpdate(final EternalSyncMessage pkt) {
         ClientEternalData.eternalSnapshots = pkt.getEternalData();
     }
-
+    
     static {
         ClientEternalData.eternalSnapshots = new HashMap<UUID, List<EternalDataSnapshot>>();
     }

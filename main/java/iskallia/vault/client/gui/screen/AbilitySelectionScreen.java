@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.screen;
 
@@ -18,14 +21,15 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.gui.screen.Screen;
 
-public class AbilitySelectionScreen extends Screen {
+public class AbilitySelectionScreen extends Screen
+{
     public static final ResourceLocation HUD_RESOURCE;
     private static final ResourceLocation ABILITIES_RESOURCE;
-
+    
     public AbilitySelectionScreen() {
-        super((ITextComponent) new StringTextComponent(""));
+        super((ITextComponent)new StringTextComponent(""));
     }
-
+    
     public List<AbilitySelectionWidget> getAbilitiesAsWidgets() {
         final List<AbilitySelectionWidget> abilityWidgets = new LinkedList<AbilitySelectionWidget>();
         final Minecraft minecraft = Minecraft.getInstance();
@@ -39,21 +43,20 @@ public class AbilitySelectionScreen extends Screen {
             final double angle = i * (6.283185307179586 / learnedAbilities.size()) - 1.5707963267948966;
             final double x = radius * Math.cos(angle) + midX;
             final double y = radius * Math.sin(angle) + midY;
-            final AbilitySelectionWidget widget = new AbilitySelectionWidget((int) x, (int) y, ability,
-                    clickableAngle / 2.0);
+            final AbilitySelectionWidget widget = new AbilitySelectionWidget((int)x, (int)y, ability, clickableAngle / 2.0);
             abilityWidgets.add(widget);
         }
         return abilityWidgets;
     }
-
+    
     public boolean shouldCloseOnEsc() {
         return false;
     }
-
+    
     public boolean isPauseScreen() {
         return false;
     }
-
+    
     public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
         for (final AbilitySelectionWidget widget : this.getAbilitiesAsWidgets()) {
             if (widget.isMouseOver(mouseX, mouseY)) {
@@ -65,7 +68,7 @@ public class AbilitySelectionScreen extends Screen {
         this.onClose();
         return super.mouseReleased(mouseX, mouseY, button);
     }
-
+    
     public boolean keyReleased(final int keyCode, final int scanCode, final int modifiers) {
         if (keyCode == ModKeybinds.abilityWheelKey.getKey().getValue()) {
             final Minecraft minecraft = Minecraft.getInstance();
@@ -83,15 +86,14 @@ public class AbilitySelectionScreen extends Screen {
         }
         return super.keyReleased(keyCode, scanCode, modifiers);
     }
-
+    
     public void requestSwap(final AbilityNode<?, ?> abilityNode) {
         if (!abilityNode.getGroup().equals(ClientAbilityData.getSelectedAbility())) {
-            ModNetwork.CHANNEL.sendToServer((Object) new AbilityKeyMessage(abilityNode.getGroup()));
+            ModNetwork.CHANNEL.sendToServer((Object)new AbilityKeyMessage(abilityNode.getGroup()));
         }
     }
-
-    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY,
-            final float partialTicks) {
+    
+    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY, final float partialTicks) {
         this.renderBackground(matrixStack);
         final Minecraft minecraft = Minecraft.getInstance();
         final float midX = minecraft.getWindow().getGuiScaledWidth() / 2.0f;
@@ -108,26 +110,23 @@ public class AbilitySelectionScreen extends Screen {
                 }
                 final String abilityName = widget.getAbilityNode().getName();
                 final int abilityNameWidth = minecraft.font.width(abilityName);
-                minecraft.font.drawShadow(matrixStack, abilityName, midX - abilityNameWidth / 2.0f,
-                        midY - (radius + yOffset), 16777215);
+                minecraft.font.drawShadow(matrixStack, abilityName, midX - abilityNameWidth / 2.0f, midY - (radius + yOffset), 16777215);
                 if (widget.getAbilityNode().getSpecialization() != null) {
                     final String specName = widget.getAbilityNode().getSpecializationName();
                     final int specNameWidth = minecraft.font.width(specName);
-                    minecraft.font.drawShadow(matrixStack, specName, midX - specNameWidth / 2.0f,
-                            midY - (radius + yOffset - 10.0f), (int) TextFormatting.GOLD.getColor());
+                    minecraft.font.drawShadow(matrixStack, specName, midX - specNameWidth / 2.0f, midY - (radius + yOffset - 10.0f), (int)TextFormatting.GOLD.getColor());
                 }
                 if (widget.getAbilityNode().getGroup().equals(ClientAbilityData.getSelectedAbility())) {
                     final String text = "Currently Focused Ability";
                     final int textWidth = minecraft.font.width(text);
-                    minecraft.font.drawShadow(matrixStack, text, midX - textWidth / 2.0f,
-                            midY + (radius + 15.0f), 11266750);
+                    minecraft.font.drawShadow(matrixStack, text, midX - textWidth / 2.0f, midY + (radius + 15.0f), 11266750);
                 }
                 focusRendered = true;
             }
         }
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
-
+    
     static {
         HUD_RESOURCE = new ResourceLocation("the_vault", "textures/gui/vault-hud.png");
         ABILITIES_RESOURCE = new ResourceLocation("the_vault", "textures/gui/abilities.png");

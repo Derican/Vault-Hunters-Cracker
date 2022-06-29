@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -6,19 +9,20 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.config.entry.SkillStyle;
 import java.util.HashMap;
 
-public class AbilitiesGUIConfig extends Config {
+public class AbilitiesGUIConfig extends Config
+{
     @Expose
     private HashMap<String, SkillStyle> styles;
-
+    
     @Override
     public String getName() {
         return "abilities_gui_styles";
     }
-
+    
     public HashMap<String, SkillStyle> getStyles() {
         return this.styles;
     }
-
+    
     @Override
     protected void reset() {
         (this.styles = new HashMap<String, SkillStyle>()).put("Vein Miner", new SkillStyle(40, -130, 16, 0));

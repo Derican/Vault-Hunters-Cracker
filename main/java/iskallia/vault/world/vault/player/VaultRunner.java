@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.player;
 
@@ -13,20 +16,21 @@ import iskallia.vault.world.vault.VaultRaid;
 import java.util.UUID;
 import net.minecraft.util.ResourceLocation;
 
-public class VaultRunner extends VaultPlayer {
+public class VaultRunner extends VaultPlayer
+{
     public static final ResourceLocation ID;
-
+    
     public VaultRunner() {
     }
-
+    
     public VaultRunner(final UUID playerId) {
         this(VaultRunner.ID, playerId);
     }
-
+    
     public VaultRunner(final ResourceLocation id, final UUID playerId) {
         super(id, playerId);
     }
-
+    
     @Override
     public void tickTimer(final VaultRaid vault, final ServerWorld world, final VaultTimer timer) {
         timer.tick();
@@ -35,7 +39,7 @@ public class VaultRunner extends VaultPlayer {
             this.appliedExtensions.clear();
         });
     }
-
+    
     @Override
     public void tickObjectiveUpdates(final VaultRaid vault, final ServerWorld world) {
         this.runIfPresent(world.getServer(), player -> {
@@ -43,17 +47,15 @@ public class VaultRunner extends VaultPlayer {
             if (vault.hasActiveObjective(this, SummonAndKillBossObjective.class)) {
                 final boolean isRaffle = vault.getProperties().getBase(VaultRaid.IS_RAFFLE).orElse(false);
                 if (isRaffle) {
-                    final PlayerVaultStatsData.PlayerRecordEntry fastestVault = PlayerVaultStatsData.get(world)
-                            .getFastestVaultTime();
+                    final PlayerVaultStatsData.PlayerRecordEntry fastestVault = PlayerVaultStatsData.get(world).getFastestVaultTime();
                     earlyKill = (this.timer.getRunTime() < fastestVault.getTickCount());
                 }
             }
             final boolean showTimer = this.getProperties().getBaseOrDefault(VaultRaid.SHOW_TIMER, true);
-            this.sendIfPresent(world.getServer(),
-                    VaultOverlayMessage.forVault(showTimer ? this.timer.getTimeLeft() : 0, earlyKill, showTimer));
+            this.sendIfPresent(world.getServer(), VaultOverlayMessage.forVault(showTimer ? this.timer.getTimeLeft() : 0, earlyKill, showTimer));
         });
     }
-
+    
     static {
         ID = Vault.id("runner");
     }

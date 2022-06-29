@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.item;
 
@@ -30,27 +33,27 @@ import net.minecraft.item.Item;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 
-public class VaultChampionTrophyBlockItem extends BlockItem {
+public class VaultChampionTrophyBlockItem extends BlockItem
+{
     public static final String NBT_OWNER_UUID = "OwnerUUID";
     public static final String NBT_OWNER_NICK = "OwnerNickname";
     public static final String NBT_VARIANT = "Variant";
     public static final String NBT_SCORE = "Score";
-
+    
     public VaultChampionTrophyBlockItem(final Block block) {
         super(block, new Item.Properties().tab(ModItems.VAULT_MOD_GROUP).stacksTo(1));
     }
-
+    
     public void fillItemCategory(@Nonnull final ItemGroup group, @Nonnull final NonNullList<ItemStack> items) {
         if (this.allowdedIn(group)) {
-            items.add((Object) create(null, VaultChampionTrophy.Variant.GOLDEN));
-            items.add((Object) create(null, VaultChampionTrophy.Variant.PLATINUM));
-            items.add((Object) create(null, VaultChampionTrophy.Variant.BLUE_SILVER));
-            items.add((Object) create(null, VaultChampionTrophy.Variant.SILVER));
+            items.add((Object)create(null, VaultChampionTrophy.Variant.GOLDEN));
+            items.add((Object)create(null, VaultChampionTrophy.Variant.PLATINUM));
+            items.add((Object)create(null, VaultChampionTrophy.Variant.BLUE_SILVER));
+            items.add((Object)create(null, VaultChampionTrophy.Variant.SILVER));
         }
     }
-
-    public void inventoryTick(@Nonnull final ItemStack itemStack, @Nonnull final World world,
-            @Nonnull final Entity entity, final int itemSlot, final boolean isSelected) {
+    
+    public void inventoryTick(@Nonnull final ItemStack itemStack, @Nonnull final World world, @Nonnull final Entity entity, final int itemSlot, final boolean isSelected) {
         if (world.isClientSide) {
             return;
         }
@@ -61,50 +64,40 @@ public class VaultChampionTrophyBlockItem extends BlockItem {
         if (blockEntityTag.contains("OwnerUUID")) {
             return;
         }
-        final ServerPlayerEntity player = (ServerPlayerEntity) entity;
+        final ServerPlayerEntity player = (ServerPlayerEntity)entity;
         blockEntityTag.putString("OwnerUUID", player.getUUID().toString());
         blockEntityTag.putString("OwnerNickname", player.getName().getString());
         super.inventoryTick(itemStack, world, entity, itemSlot, isSelected);
     }
-
+    
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(@Nonnull final ItemStack stack, @Nullable final World worldIn,
-            @Nonnull final List<ITextComponent> tooltip, @Nonnull final ITooltipFlag flag) {
-        super.appendHoverText(stack, worldIn, (List) tooltip, flag);
+    public void appendHoverText(@Nonnull final ItemStack stack, @Nullable final World worldIn, @Nonnull final List<ITextComponent> tooltip, @Nonnull final ITooltipFlag flag) {
+        super.appendHoverText(stack, worldIn, (List)tooltip, flag);
         final CompoundNBT blockEntityTag = stack.getOrCreateTagElement("BlockEntityTag");
         final String uuidString = blockEntityTag.getString("OwnerUUID");
         final UUID ownerUUID = uuidString.isEmpty() ? null : UUID.fromString(uuidString);
-        final String ownerNickname = McClientHelper.getOnlineProfile(ownerUUID)
-                .map((Function<? super GameProfile, ? extends String>) GameProfile::getName)
-                .orElse(blockEntityTag.getString("OwnerNickname"));
+        final String ownerNickname = McClientHelper.getOnlineProfile(ownerUUID).map((Function<? super GameProfile, ? extends String>)GameProfile::getName).orElse(blockEntityTag.getString("OwnerNickname"));
         final int score = blockEntityTag.getInt("Score");
-        final IFormattableTextComponent titleText = new StringTextComponent("Vault Champion")
-                .withStyle(TextFormatting.GOLD);
-        final IFormattableTextComponent championText = new StringTextComponent("Mighty " + ownerNickname)
-                .withStyle(TextFormatting.GOLD).withStyle(TextFormatting.BOLD);
-        final IFormattableTextComponent scoreText = new StringTextComponent("Score: ")
-                .withStyle(TextFormatting.GOLD)
-                .append((ITextComponent) new StringTextComponent(String.valueOf(score))
-                        .withStyle(TextFormatting.AQUA));
-        tooltip.add((ITextComponent) new StringTextComponent(""));
-        tooltip.add((ITextComponent) titleText);
-        tooltip.add((ITextComponent) championText);
-        tooltip.add((ITextComponent) scoreText);
+        final IFormattableTextComponent titleText = new StringTextComponent("Vault Champion").withStyle(TextFormatting.GOLD);
+        final IFormattableTextComponent championText = new StringTextComponent("Mighty " + ownerNickname).withStyle(TextFormatting.GOLD).withStyle(TextFormatting.BOLD);
+        final IFormattableTextComponent scoreText = new StringTextComponent("Score: ").withStyle(TextFormatting.GOLD).append((ITextComponent)new StringTextComponent(String.valueOf(score)).withStyle(TextFormatting.AQUA));
+        tooltip.add((ITextComponent)new StringTextComponent(""));
+        tooltip.add((ITextComponent)titleText);
+        tooltip.add((ITextComponent)championText);
+        tooltip.add((ITextComponent)scoreText);
     }
-
+    
     public static void setScore(final ItemStack itemStack, final int score) {
         final CompoundNBT blockEntityTag = itemStack.getOrCreateTagElement("BlockEntityTag");
         blockEntityTag.putInt("Score", score);
     }
-
+    
     public static ItemStack create(final ServerPlayerEntity owner, final VaultChampionTrophy.Variant variant) {
-        return create((owner == null) ? null : owner.getUUID(),
-                (owner == null) ? null : owner.getName().getString(), variant);
+        return create((owner == null) ? null : owner.getUUID(), (owner == null) ? null : owner.getName().getString(), variant);
     }
-
-    public static ItemStack create(final UUID ownerUUID, final String ownerNickname,
-            final VaultChampionTrophy.Variant variant) {
-        final ItemStack itemStack = new ItemStack((IItemProvider) ModBlocks.VAULT_CHAMPION_TROPHY_BLOCK_ITEM);
+    
+    public static ItemStack create(final UUID ownerUUID, final String ownerNickname, final VaultChampionTrophy.Variant variant) {
+        final ItemStack itemStack = new ItemStack((IItemProvider)ModBlocks.VAULT_CHAMPION_TROPHY_BLOCK_ITEM);
         final CompoundNBT nbt = itemStack.getOrCreateTag();
         final CompoundNBT blockEntityTag = itemStack.getOrCreateTagElement("BlockEntityTag");
         if (ownerUUID != null) {

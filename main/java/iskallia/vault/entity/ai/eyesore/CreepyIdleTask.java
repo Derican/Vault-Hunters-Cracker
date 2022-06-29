@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.ai.eyesore;
 
@@ -9,16 +12,17 @@ import iskallia.vault.network.message.EnteredEyesoreDomainMessage;
 import net.minecraft.entity.LivingEntity;
 import iskallia.vault.entity.EyesoreEntity;
 
-public class CreepyIdleTask extends EyesoreTask<EyesoreEntity> {
+public class CreepyIdleTask extends EyesoreTask<EyesoreEntity>
+{
     public int tick;
     public boolean finished;
-
+    
     public CreepyIdleTask(final EyesoreEntity entity) {
-        super((LivingEntity) entity);
+        super((LivingEntity)entity);
         this.tick = 0;
         this.finished = false;
     }
-
+    
     @Override
     public void tick() {
         if (this.isFinished()) {
@@ -26,22 +30,21 @@ public class CreepyIdleTask extends EyesoreTask<EyesoreEntity> {
         }
         if (this.tick == 40) {
             final EnteredEyesoreDomainMessage packet = new EnteredEyesoreDomainMessage();
-            ModNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with((Supplier) this::getEntity),
-                    (Object) packet);
+            ModNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with((Supplier)this::getEntity), (Object)packet);
         }
-        this.getEntity().getEntityData().set((DataParameter) EyesoreEntity.WATCH_CLIENT, (Object) true);
+        this.getEntity().getEntityData().set((DataParameter)EyesoreEntity.WATCH_CLIENT, (Object)true);
         ++this.tick;
         if (this.tick >= 300 || this.getEntity().getLastDamageSource() != null) {
-            this.getEntity().getEntityData().set((DataParameter) EyesoreEntity.WATCH_CLIENT, (Object) false);
+            this.getEntity().getEntityData().set((DataParameter)EyesoreEntity.WATCH_CLIENT, (Object)false);
             this.finished = true;
         }
     }
-
+    
     @Override
     public boolean isFinished() {
         return this.finished;
     }
-
+    
     @Override
     public void reset() {
         this.tick = 0;

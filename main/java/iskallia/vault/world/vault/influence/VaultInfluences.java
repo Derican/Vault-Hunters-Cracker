@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.influence;
 
@@ -16,42 +19,42 @@ import java.util.List;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class VaultInfluences implements INBTSerializable<CompoundNBT>, Iterable<VaultInfluence> {
+public class VaultInfluences implements INBTSerializable<CompoundNBT>, Iterable<VaultInfluence>
+{
     private final List<VaultInfluence> influences;
     protected boolean initialized;
-
+    
     public VaultInfluences() {
         this.influences = new ArrayList<VaultInfluence>();
         this.initialized = false;
     }
-
+    
     public boolean isInitialized() {
         return this.initialized;
     }
-
+    
     public void setInitialized() {
         this.initialized = true;
     }
-
+    
     public void addInfluence(final VaultInfluence influence, final VaultRaid vault, final ServerWorld world) {
         this.influences.add(influence);
         final Random rand = world.getRandom();
         vault.getPlayers().forEach(vPlayer -> influence.apply(vault, vPlayer, world, rand));
     }
-
+    
     public void tick(final VaultRaid vault, final VaultPlayer vPlayer, final ServerWorld world) {
         this.forEach(influence -> influence.tick(vault, vPlayer, world));
     }
-
+    
     public <T extends VaultInfluence> List<T> getInfluences(final Class<T> influenceClass) {
-        return this.influences.stream().filter(influence -> influenceClass.isAssignableFrom(influence.getClass()))
-                .map(influence -> influence).collect((Collector<? super Object, ?, List<T>>) Collectors.toList());
+        return this.influences.stream().filter(influence -> influenceClass.isAssignableFrom(influence.getClass())).map(influence -> influence).collect((Collector<? super Object, ?, List<T>>)Collectors.toList());
     }
-
+    
     public Iterator<VaultInfluence> iterator() {
         return this.influences.iterator();
     }
-
+    
     public CompoundNBT serializeNBT() {
         final CompoundNBT tag = new CompoundNBT();
         tag.putBoolean("initialized", this.initialized);
@@ -59,12 +62,12 @@ public class VaultInfluences implements INBTSerializable<CompoundNBT>, Iterable<
         for (final VaultInfluence influence : this.influences) {
             final CompoundNBT ct = new CompoundNBT();
             ct.putString("id", influence.getKey().toString());
-            ct.put("data", (INBT) influence.serializeNBT());
+            ct.put("data", (INBT)influence.serializeNBT());
         }
-        tag.put("influences", (INBT) influenceList);
+        tag.put("influences", (INBT)influenceList);
         return tag;
     }
-
+    
     public void deserializeNBT(final CompoundNBT tag) {
         this.initialized = tag.getBoolean("initialized");
         final ListNBT influenceList = tag.getList("influences", 10);

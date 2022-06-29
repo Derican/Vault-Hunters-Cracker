@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -11,13 +14,13 @@ import net.minecraft.tileentity.StructureBlockTileEntity;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ StructureBlockTileEntity.class })
-public abstract class MixinStructureBlockTileEntity {
-    @Redirect(method = {
-            "read" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;clamp(III)I"))
+public abstract class MixinStructureBlockTileEntity
+{
+    @Redirect(method = { "read" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;clamp(III)I"))
     private int read(final int num, final int min, final int max) {
         return MathHelper.clamp(num, min * 11, max * 11);
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     @Overwrite
     public double getViewDistance() {

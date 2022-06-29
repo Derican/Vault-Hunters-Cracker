@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -9,19 +12,20 @@ import iskallia.vault.config.entry.vending.ProductEntry;
 import iskallia.vault.util.data.WeightedList;
 import java.util.Map;
 
-public class ModBoxConfig extends Config {
+public class ModBoxConfig extends Config
+{
     @Expose
     public Map<String, WeightedList<ProductEntry>> POOL;
-
+    
     public ModBoxConfig() {
         this.POOL = new HashMap<String, WeightedList<ProductEntry>>();
     }
-
+    
     @Override
     public String getName() {
         return "mod_box";
     }
-
+    
     @Override
     protected void reset() {
         final WeightedList<ProductEntry> none = new WeightedList<ProductEntry>();

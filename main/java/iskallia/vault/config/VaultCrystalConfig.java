@@ -1,10 +1,14 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
 import java.util.Random;
 import com.google.gson.annotations.Expose;
 
-public class VaultCrystalConfig extends Config {
+public class VaultCrystalConfig extends Config
+{
     @Expose
     public int NORMAL_WEIGHT;
     @Expose
@@ -14,16 +18,16 @@ public class VaultCrystalConfig extends Config {
     @Expose
     public int OMEGA_WEIGHT;
     private Random rand;
-
+    
     public VaultCrystalConfig() {
         this.rand = new Random();
     }
-
+    
     @Override
     public String getName() {
         return "vault_crystal";
     }
-
+    
     @Override
     protected void reset() {
         this.NORMAL_WEIGHT = 20;

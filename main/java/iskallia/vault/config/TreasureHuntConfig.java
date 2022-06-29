@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -22,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.annotations.Expose;
 
-public class TreasureHuntConfig extends Config {
+public class TreasureHuntConfig extends Config
+{
     @Expose
     public int startTicks;
     @Expose
@@ -41,37 +45,32 @@ public class TreasureHuntConfig extends Config {
     private ItemPool treasureItems;
     @Expose
     private final Map<String, ItemPool> mobDropItems;
-
+    
     public TreasureHuntConfig() {
         this.mobDropItems = new HashMap<String, ItemPool>();
     }
-
+    
     @Nullable
     public ScavengerHuntConfig.ItemEntry getRandomRequiredItem(final Predicate<Item> excludedItems) {
-        return this.requiredItems.pool.copyFiltered(entry -> !excludedItems.test(entry.getItem()))
-                .getRandom(TreasureHuntConfig.rand);
+        return this.requiredItems.pool.copyFiltered(entry -> !excludedItems.test(entry.getItem())).getRandom(TreasureHuntConfig.rand);
     }
-
+    
     public int getTotalRequiredItems() {
         return this.requiredItems.getRandomAmount();
     }
-
-    public List<ScavengerHuntConfig.ItemEntry> generateChestLoot(
-            final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
+    
+    public List<ScavengerHuntConfig.ItemEntry> generateChestLoot(final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
         return this.chestItems.getRandomEntries(dropFilter);
     }
-
-    public List<ScavengerHuntConfig.ItemEntry> generateTreasureLoot(
-            final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
+    
+    public List<ScavengerHuntConfig.ItemEntry> generateTreasureLoot(final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
         return this.treasureItems.getRandomEntries(dropFilter);
     }
-
-    public List<ScavengerHuntConfig.ItemEntry> generateMobDropLoot(
-            final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter, final EntityType<?> mobType) {
-        return this.mobDropItems.getOrDefault(mobType.getRegistryName().toString(), ItemPool.EMPTY)
-                .getRandomEntries(dropFilter);
+    
+    public List<ScavengerHuntConfig.ItemEntry> generateMobDropLoot(final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter, final EntityType<?> mobType) {
+        return this.mobDropItems.getOrDefault(mobType.getRegistryName().toString(), ItemPool.EMPTY).getRandomEntries(dropFilter);
     }
-
+    
     public ScavengerHuntConfig.SourceType getRequirementSource(final ItemStack stack) {
         final Item requiredItem = stack.getItem();
         for (final WeightedList.Entry<ScavengerHuntConfig.ItemEntry> entry : this.chestItems.pool) {
@@ -86,25 +85,25 @@ public class TreasureHuntConfig extends Config {
         }
         return ScavengerHuntConfig.SourceType.MOB;
     }
-
+    
     @Nullable
     public ResourceLocation getRequirementMobType(final ItemStack stack) {
         final Item requiredItem = stack.getItem();
         for (final Map.Entry<String, ItemPool> mobDropEntry : this.mobDropItems.entrySet()) {
             for (final WeightedList.Entry<ScavengerHuntConfig.ItemEntry> entry : mobDropEntry.getValue().getPool()) {
                 if (requiredItem.equals(entry.value.getItem())) {
-                    return new ResourceLocation((String) mobDropEntry.getKey());
+                    return new ResourceLocation((String)mobDropEntry.getKey());
                 }
             }
         }
         return null;
     }
-
+    
     @Override
     public String getName() {
         return "treasure_hunt";
     }
-
+    
     @Override
     protected void reset() {
         this.startTicks = 2400;
@@ -233,16 +232,17 @@ public class TreasureHuntConfig extends Config {
         this.mobDropItems.put(EntityType.SKELETON.getRegistryName().toString(), skeletonPool);
         this.mobDropItems.put(EntityType.WITHER_SKELETON.getRegistryName().toString(), skeletonPool);
     }
-
+    
     private void addRequiredItem(final ItemPool out, final Item i) {
         out.pool.add(new ScavengerHuntConfig.ItemEntry(i, 10, 15), 1);
     }
-
+    
     private void addDropItem(final ItemPool out, final Item i) {
         out.pool.add(new ScavengerHuntConfig.ItemEntry(i, 1, 1), 1);
     }
-
-    public static class ItemPool {
+    
+    public static class ItemPool
+    {
         private static final ItemPool EMPTY;
         @Expose
         private final WeightedList<ScavengerHuntConfig.ItemEntry> pool;
@@ -250,33 +250,29 @@ public class TreasureHuntConfig extends Config {
         private final int min;
         @Expose
         private final int max;
-
+        
         public ItemPool(final int min, final int max) {
             this.pool = new WeightedList<ScavengerHuntConfig.ItemEntry>();
             this.min = min;
             this.max = max;
         }
-
+        
         public List<WeightedList.Entry<ScavengerHuntConfig.ItemEntry>> getPool() {
-            return Collections
-                    .unmodifiableList((List<? extends WeightedList.Entry<ScavengerHuntConfig.ItemEntry>>) this.pool);
+            return Collections.unmodifiableList((List<? extends WeightedList.Entry<ScavengerHuntConfig.ItemEntry>>)this.pool);
         }
-
+        
         public ScavengerHuntConfig.ItemEntry getRandomEntry(final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
             return this.pool.copyFiltered(dropFilter).getRandom(Config.rand);
         }
-
+        
         public int getRandomAmount() {
             return MathUtilities.getRandomInt(this.min, this.max + 1);
         }
-
-        public List<ScavengerHuntConfig.ItemEntry> getRandomEntries(
-                final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
-            return IntStream.range(0, this.getRandomAmount()).mapToObj(index -> this.getRandomEntry(dropFilter))
-                    .filter(Objects::nonNull)
-                    .collect((Collector<? super Object, ?, List<ScavengerHuntConfig.ItemEntry>>) Collectors.toList());
+        
+        public List<ScavengerHuntConfig.ItemEntry> getRandomEntries(final Predicate<ScavengerHuntConfig.ItemEntry> dropFilter) {
+            return IntStream.range(0, this.getRandomAmount()).mapToObj(index -> this.getRandomEntry(dropFilter)).filter(Objects::nonNull).collect((Collector<? super Object, ?, List<ScavengerHuntConfig.ItemEntry>>)Collectors.toList());
         }
-
+        
         static {
             EMPTY = new ItemPool(0, 0);
         }

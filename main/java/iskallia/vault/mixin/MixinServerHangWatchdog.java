@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -12,15 +15,14 @@ import net.minecraft.server.dedicated.ServerHangWatchdog;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ ServerHangWatchdog.class })
-public class MixinServerHangWatchdog {
-    @Redirect(method = {
-            "run" }, at = @At(value = "INVOKE", target = "Ljava/lang/StringBuilder;append(Ljava/lang/Object;)Ljava/lang/StringBuilder;"))
+public class MixinServerHangWatchdog
+{
+    @Redirect(method = { "run" }, at = @At(value = "INVOKE", target = "Ljava/lang/StringBuilder;append(Ljava/lang/Object;)Ljava/lang/StringBuilder;"))
     public StringBuilder appendThreadInfo(final StringBuilder sb, final Object obj) {
         if (obj instanceof ThreadInfo) {
-            final StackTraceElement[] trace = ((ThreadInfo) obj).getStackTrace();
+            final StackTraceElement[] trace = ((ThreadInfo)obj).getStackTrace();
             final StringJoiner joiner = new StringJoiner("\n");
-            Arrays.stream(trace).map((Function<? super StackTraceElement, ?>) StackTraceElement::toString)
-                    .forEach((Consumer<? super Object>) joiner::add);
+            Arrays.stream(trace).map((Function<? super StackTraceElement, ?>)StackTraceElement::toString).forEach((Consumer<? super Object>)joiner::add);
             sb.append(obj).append("\n");
             sb.append("Full Trace:\n");
             sb.append(joiner.toString());

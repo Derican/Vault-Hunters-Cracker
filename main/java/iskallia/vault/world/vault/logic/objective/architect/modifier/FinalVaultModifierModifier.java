@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective.architect.modifier;
 
@@ -14,15 +17,16 @@ import iskallia.vault.world.vault.VaultRaid;
 import iskallia.vault.world.vault.logic.objective.architect.ArchitectObjective;
 import com.google.gson.annotations.Expose;
 
-public class FinalVaultModifierModifier extends VoteModifier {
+public class FinalVaultModifierModifier extends VoteModifier
+{
     @Expose
     private final String addedModifier;
-
+    
     public FinalVaultModifierModifier(final String name, final String description, final String addedModifier) {
         super(name, description, 0);
         this.addedModifier = addedModifier;
     }
-
+    
     @Override
     public void onApply(final ArchitectObjective objective, final VaultRaid vault, final ServerWorld world) {
         super.onApply(objective, vault, world);
@@ -30,8 +34,7 @@ public class FinalVaultModifierModifier extends VoteModifier {
         if (modifier == null) {
             return;
         }
-        final ITextComponent ct = (ITextComponent) new StringTextComponent("Added ").withStyle(TextFormatting.GRAY)
-                .append(modifier.getNameComponent());
+        final ITextComponent ct = (ITextComponent)new StringTextComponent("Added ").withStyle(TextFormatting.GRAY).append(modifier.getNameComponent());
         vault.getModifiers().addPermanentModifier(modifier);
         vault.getPlayers().forEach(vPlayer -> {
             modifier.apply(vault, vPlayer, world, world.getRandom());

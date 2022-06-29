@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.research;
 
@@ -23,33 +26,34 @@ import java.util.UUID;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class ResearchTree implements INBTSerializable<CompoundNBT> {
+public class ResearchTree implements INBTSerializable<CompoundNBT>
+{
     protected UUID playerUUID;
     protected List<String> researchesDone;
-
+    
     public ResearchTree(final UUID playerUUID) {
         this.playerUUID = playerUUID;
         this.researchesDone = new LinkedList<String>();
     }
-
+    
     public List<String> getResearchesDone() {
         return this.researchesDone;
     }
-
+    
     public boolean isResearched(final String researchName) {
         return this.researchesDone.contains(researchName);
     }
-
+    
     public void research(final String researchName) {
         this.researchesDone.add(researchName);
     }
-
+    
     public void resetAll() {
         this.researchesDone.clear();
     }
-
+    
     public int getResearchCost(final Research research) {
-        float cost = (float) research.getCost();
+        float cost = (float)research.getCost();
         final ResearchGroupConfig config = ModConfigs.RESEARCH_GROUPS;
         final ResearchGroup thisGroup = config.getResearchGroup(research);
         final String thisGroupId = config.getResearchGroupId(thisGroup);
@@ -61,7 +65,7 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         }
         return Math.max(1, Math.round(cost));
     }
-
+    
     public String restrictedBy(final Item item, final Restrictions.Type restrictionType) {
         for (final Research research : ModConfigs.RESEARCHES.getAll()) {
             if (this.researchesDone.contains(research.getName())) {
@@ -73,7 +77,7 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         }
         return null;
     }
-
+    
     public String restrictedBy(final Block block, final Restrictions.Type restrictionType) {
         for (final Research research : ModConfigs.RESEARCHES.getAll()) {
             if (this.researchesDone.contains(research.getName())) {
@@ -85,7 +89,7 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         }
         return null;
     }
-
+    
     public String restrictedBy(final EntityType<?> entityType, final Restrictions.Type restrictionType) {
         for (final Research research : ModConfigs.RESEARCHES.getAll()) {
             if (this.researchesDone.contains(research.getName())) {
@@ -97,26 +101,24 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         }
         return null;
     }
-
+    
     public void sync(final MinecraftServer server) {
-        NetcodeUtils.runIfPresent(server, this.playerUUID,
-                player -> ModNetwork.CHANNEL.sendTo((Object) new ResearchTreeMessage(this, player.getUUID()),
-                        player.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+        NetcodeUtils.runIfPresent(server, this.playerUUID, player -> ModNetwork.CHANNEL.sendTo((Object)new ResearchTreeMessage(this, player.getUUID()), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
     }
-
+    
     public CompoundNBT serializeNBT() {
         final CompoundNBT nbt = new CompoundNBT();
         nbt.putUUID("playerUUID", this.playerUUID);
         final ListNBT researches = new ListNBT();
         for (int i = 0; i < this.researchesDone.size(); ++i) {
             final CompoundNBT research = new CompoundNBT();
-            research.putString("name", (String) this.researchesDone.get(i));
-            researches.add(i, (INBT) research);
+            research.putString("name", (String)this.researchesDone.get(i));
+            researches.add(i, (INBT)research);
         }
-        nbt.put("researches", (INBT) researches);
+        nbt.put("researches", (INBT)researches);
         return nbt;
     }
-
+    
     public void deserializeNBT(final CompoundNBT nbt) {
         this.playerUUID = nbt.getUUID("playerUUID");
         final ListNBT researches = nbt.getList("researches", 10);

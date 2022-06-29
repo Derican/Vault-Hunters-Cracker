@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.builder;
 
@@ -14,17 +17,15 @@ import iskallia.vault.item.crystal.CrystalData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ServerWorld;
 
-public abstract class VaultRaidBuilder {
-    public abstract VaultRaid.Builder initializeBuilder(final ServerWorld p0, final ServerPlayerEntity p1,
-            final CrystalData p2);
-
+public abstract class VaultRaidBuilder
+{
+    public abstract VaultRaid.Builder initializeBuilder(final ServerWorld p0, final ServerPlayerEntity p1, final CrystalData p2);
+    
     protected int getVaultLevelForObjective(final ServerWorld world, final ServerPlayerEntity player) {
-        return (player == null) ? 0
-                : PlayerVaultStatsData.get(world).getVaultStats(player.getUUID()).getVaultLevel();
+        return (player == null) ? 0 : PlayerVaultStatsData.get(world).getVaultStats(player.getUUID()).getVaultLevel();
     }
-
-    protected VaultRaid.Builder getDefaultBuilder(final CrystalData crystal, final ServerWorld world,
-            final ServerPlayerEntity player) {
+    
+    protected VaultRaid.Builder getDefaultBuilder(final CrystalData crystal, final ServerWorld world, final ServerPlayerEntity player) {
         VaultObjective vObjective = null;
         if (crystal.getSelectedObjective() != null) {
             vObjective = VaultObjective.getObjective(crystal.getSelectedObjective());
@@ -34,22 +35,16 @@ public abstract class VaultRaidBuilder {
         }
         return this.getDefaultBuilder(crystal, this.getVaultLevelForObjective(world, player), vObjective);
     }
-
-    protected VaultRaid.Builder getDefaultBuilder(final CrystalData crystal, final int vaultLevel,
-            @Nullable final VaultObjective objective) {
-        return VaultRaid.builder(crystal.getType().getLogic(), vaultLevel, objective)
-                .setInitializer(this.getDefaultInitializer()).addEvents(this.getDefaultEvents())
-                .set(VaultRaid.CRYSTAL_DATA, crystal).set(VaultRaid.IDENTIFIER, UUID.randomUUID());
+    
+    protected VaultRaid.Builder getDefaultBuilder(final CrystalData crystal, final int vaultLevel, @Nullable final VaultObjective objective) {
+        return VaultRaid.builder(crystal.getType().getLogic(), vaultLevel, objective).setInitializer(this.getDefaultInitializer()).addEvents(this.getDefaultEvents()).set(VaultRaid.CRYSTAL_DATA, crystal).set(VaultRaid.IDENTIFIER, UUID.randomUUID());
     }
-
+    
     protected VaultTask getDefaultInitializer() {
-        return VaultRaid.TP_TO_START.then(VaultRaid.INIT_COW_VAULT).then(VaultRaid.INIT_GLOBAL_MODIFIERS)
-                .then(VaultRaid.ENTER_DISPLAY).then(VaultRaid.INIT_RELIC_TIME);
+        return VaultRaid.TP_TO_START.then(VaultRaid.INIT_COW_VAULT).then(VaultRaid.INIT_GLOBAL_MODIFIERS).then(VaultRaid.ENTER_DISPLAY).then(VaultRaid.INIT_RELIC_TIME);
     }
-
+    
     protected Collection<VaultEvent<?>> getDefaultEvents() {
-        return (Collection<VaultEvent<?>>) Arrays.asList(VaultRaid.SCALE_MOB, VaultRaid.SCALE_MOB_JOIN,
-                VaultRaid.BLOCK_NATURAL_SPAWNING, VaultRaid.PREVENT_ITEM_PICKUP, VaultRaid.APPLY_SCALE_MODIFIER,
-                VaultRaid.APPLY_FRENZY_MODIFIERS, VaultRaid.APPLY_INFLUENCE_MODIFIERS);
+        return (Collection<VaultEvent<?>>)Arrays.asList(VaultRaid.SCALE_MOB, VaultRaid.SCALE_MOB_JOIN, VaultRaid.BLOCK_NATURAL_SPAWNING, VaultRaid.PREVENT_ITEM_PICKUP, VaultRaid.APPLY_SCALE_MODIFIER, VaultRaid.APPLY_FRENZY_MODIFIERS, VaultRaid.APPLY_INFLUENCE_MODIFIERS);
     }
 }

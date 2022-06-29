@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -35,24 +38,23 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraft.block.Block;
 
 @Mod.EventBusSubscriber
-public class FinalVaultFrameBlock extends Block {
+public class FinalVaultFrameBlock extends Block
+{
     public static final DirectionProperty FACING;
-
+    
     public FinalVaultFrameBlock() {
-        super(AbstractBlock.Properties.of(Material.STONE).sound(SoundType.STONE)
-                .strength(2.0f, 3600000.0f).noOcclusion());
+        super(AbstractBlock.Properties.of(Material.STONE).sound(SoundType.STONE).strength(2.0f, 3600000.0f).noOcclusion());
     }
-
+    
     protected void createBlockStateDefinition(final StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(new Property[] { (Property) FinalVaultFrameBlock.FACING });
+        builder.add(new Property[] { (Property)FinalVaultFrameBlock.FACING });
     }
-
+    
     @Nullable
     public BlockState getStateForPlacement(final BlockItemUseContext context) {
-        return (BlockState) this.defaultBlockState().setValue((Property) FinalVaultFrameBlock.FACING,
-                (Comparable) context.getHorizontalDirection().getOpposite());
+        return (BlockState)this.defaultBlockState().setValue((Property)FinalVaultFrameBlock.FACING, (Comparable)context.getHorizontalDirection().getOpposite());
     }
-
+    
     @SubscribeEvent
     public static void onBlockHit(final PlayerInteractEvent.LeftClickBlock event) {
         if (!event.isCancelable()) {
@@ -62,8 +64,7 @@ public class FinalVaultFrameBlock extends Block {
         if (player.isCreative()) {
             return;
         }
-        final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader) player.level,
-                event.getPos());
+        final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader)player.level, event.getPos());
         if (tileEntity == null) {
             return;
         }
@@ -71,30 +72,28 @@ public class FinalVaultFrameBlock extends Block {
             event.setCanceled(true);
         }
     }
-
+    
     public boolean isToolEffective(final BlockState state, final ToolType tool) {
         return tool == ToolType.PICKAXE;
     }
-
+    
     @Nonnull
     public PushReaction getPistonPushReaction(@Nonnull final BlockState state) {
         return PushReaction.BLOCK;
     }
-
-    public ItemStack getPickBlock(final BlockState state, final RayTraceResult target, final IBlockReader world,
-            final BlockPos pos, final PlayerEntity player) {
-        final ItemStack itemStack = new ItemStack((IItemProvider) this.getBlock());
+    
+    public ItemStack getPickBlock(final BlockState state, final RayTraceResult target, final IBlockReader world, final BlockPos pos, final PlayerEntity player) {
+        final ItemStack itemStack = new ItemStack((IItemProvider)this.getBlock());
         final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get(world, pos);
         final CompoundNBT entityNBT = new CompoundNBT();
         if (tileEntity != null) {
             tileEntity.writeToEntityTag(entityNBT);
         }
-        itemStack.getOrCreateTag().put("BlockEntityTag", (INBT) entityNBT);
+        itemStack.getOrCreateTag().put("BlockEntityTag", (INBT)entityNBT);
         return itemStack;
     }
-
-    public void setPlacedBy(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final BlockState state,
-            @Nullable final LivingEntity placer, @Nonnull final ItemStack stack) {
+    
+    public void setPlacedBy(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final BlockState state, @Nullable final LivingEntity placer, @Nonnull final ItemStack stack) {
         if (world.isClientSide()) {
             return;
         }
@@ -102,41 +101,39 @@ public class FinalVaultFrameBlock extends Block {
         if (tag == null) {
             return;
         }
-        final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader) world, pos);
+        final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader)world, pos);
         if (tileEntity == null) {
             return;
         }
         tileEntity.loadFromNBT(tag);
         super.setPlacedBy(world, pos, state, placer, stack);
     }
-
-    public void playerWillDestroy(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final BlockState state,
-            @Nonnull final PlayerEntity player) {
+    
+    public void playerWillDestroy(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final BlockState state, @Nonnull final PlayerEntity player) {
         if (!world.isClientSide && !player.isCreative()) {
-            final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader) world, pos);
+            final FinalVaultFrameTileEntity tileEntity = FinalVaultFrameTileEntity.get((IBlockReader)world, pos);
             if (tileEntity != null) {
-                final ItemStack itemStack = new ItemStack((IItemProvider) this.getBlock());
+                final ItemStack itemStack = new ItemStack((IItemProvider)this.getBlock());
                 final CompoundNBT entityNBT = new CompoundNBT();
                 tileEntity.writeToEntityTag(entityNBT);
-                itemStack.getOrCreateTag().put("BlockEntityTag", (INBT) entityNBT);
-                final ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5,
-                        pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
+                itemStack.getOrCreateTag().put("BlockEntityTag", (INBT)entityNBT);
+                final ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
                 itemEntity.setDefaultPickUpDelay();
-                world.addFreshEntity((Entity) itemEntity);
+                world.addFreshEntity((Entity)itemEntity);
             }
         }
         super.playerWillDestroy(world, pos, state, player);
     }
-
+    
     public boolean hasTileEntity(final BlockState state) {
         return true;
     }
-
+    
     @Nullable
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
         return ModBlocks.FINAL_VAULT_FRAME_TILE_ENTITY.create();
     }
-
+    
     static {
         FACING = HorizontalBlock.FACING;
     }

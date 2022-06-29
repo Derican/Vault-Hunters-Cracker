@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.item;
 
@@ -25,34 +28,30 @@ import net.minecraft.block.Block;
 import iskallia.vault.util.flag.ExplosionImmune;
 import net.minecraft.item.BlockItem;
 
-public class FinalVaultFrameBlockItem extends BlockItem implements ExplosionImmune {
+public class FinalVaultFrameBlockItem extends BlockItem implements ExplosionImmune
+{
     public FinalVaultFrameBlockItem(final Block blockIn) {
         super(blockIn, new Item.Properties().tab(ModItems.VAULT_MOD_GROUP).fireResistant().stacksTo(1));
     }
-
+    
     @Nonnull
     public Rarity getRarity(@Nonnull final ItemStack stack) {
         return Rarity.EPIC;
     }
-
-    public void appendHoverText(@Nonnull final ItemStack stack, @Nullable final World worldIn,
-            final List<ITextComponent> tooltip, final ITooltipFlag flagIn) {
+    
+    public void appendHoverText(@Nonnull final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip, final ITooltipFlag flagIn) {
         final CompoundNBT blockEntityTag = stack.getOrCreateTagElement("BlockEntityTag");
         final String stringUUID = blockEntityTag.getString("OwnerUUID");
         final UUID ownerUUID = stringUUID.isEmpty() ? new UUID(0L, 0L) : UUID.fromString(stringUUID);
         final String ownerNickname = blockEntityTag.getString("OwnerNickname");
-        final String displayNickname = McClientHelper.getOnlineProfile(ownerUUID)
-                .map((Function<? super GameProfile, ? extends String>) GameProfile::getName).orElse(ownerNickname);
-        final IFormattableTextComponent ownerText = new StringTextComponent("Owner:")
-                .withStyle(TextFormatting.GOLD);
-        final IFormattableTextComponent displayText = new StringTextComponent(displayNickname)
-                .withStyle(TextFormatting.GOLD).withStyle(TextFormatting.BOLD);
-        tooltip.add((ITextComponent) ownerText.append((ITextComponent) displayText));
-        super.appendHoverText(stack, worldIn, (List) tooltip, flagIn);
+        final String displayNickname = McClientHelper.getOnlineProfile(ownerUUID).map((Function<? super GameProfile, ? extends String>)GameProfile::getName).orElse(ownerNickname);
+        final IFormattableTextComponent ownerText = new StringTextComponent("Owner:").withStyle(TextFormatting.GOLD);
+        final IFormattableTextComponent displayText = new StringTextComponent(displayNickname).withStyle(TextFormatting.GOLD).withStyle(TextFormatting.BOLD);
+        tooltip.add((ITextComponent)ownerText.append((ITextComponent)displayText));
+        super.appendHoverText(stack, worldIn, (List)tooltip, flagIn);
     }
-
-    public void inventoryTick(@Nonnull final ItemStack itemStack, final World world, @Nonnull final Entity entity,
-            final int itemSlot, final boolean isSelected) {
+    
+    public void inventoryTick(@Nonnull final ItemStack itemStack, final World world, @Nonnull final Entity entity, final int itemSlot, final boolean isSelected) {
         if (world.isClientSide) {
             return;
         }
@@ -63,15 +62,15 @@ public class FinalVaultFrameBlockItem extends BlockItem implements ExplosionImmu
         if (blockEntityTag.contains("OwnerUUID")) {
             return;
         }
-        final ServerPlayerEntity player = (ServerPlayerEntity) entity;
+        final ServerPlayerEntity player = (ServerPlayerEntity)entity;
         writeToItemStack(itemStack, player);
         super.inventoryTick(itemStack, world, entity, itemSlot, isSelected);
     }
-
+    
     public static void writeToItemStack(final ItemStack itemStack, final ServerPlayerEntity owner) {
         writeToItemStack(itemStack, owner.getUUID(), owner.getName().getString());
     }
-
+    
     public static void writeToItemStack(final ItemStack itemStack, final UUID ownerUUID, final String ownerNickname) {
         final CompoundNBT blockEntityTag = itemStack.getOrCreateTagElement("BlockEntityTag");
         blockEntityTag.putString("OwnerUUID", ownerUUID.toString());

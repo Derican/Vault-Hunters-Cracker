@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.gen.piece;
 
@@ -19,82 +22,81 @@ import iskallia.vault.nbt.VListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
-public class VaultRoom extends VaultPiece {
+public class VaultRoom extends VaultPiece
+{
     public static final ResourceLocation ID;
     private boolean cakeEaten;
     private BlockPos cakePos;
     private VListNBT<UUID, StringNBT> sandIds;
-
+    
     protected VaultRoom(final ResourceLocation id) {
         super(id);
         this.cakeEaten = false;
         this.cakePos = null;
         this.sandIds = VListNBT.ofUUID();
     }
-
+    
     public VaultRoom() {
         this(VaultRoom.ID);
     }
-
-    protected VaultRoom(final ResourceLocation id, final ResourceLocation template,
-            final MutableBoundingBox boundingBox, final Rotation rotation) {
+    
+    protected VaultRoom(final ResourceLocation id, final ResourceLocation template, final MutableBoundingBox boundingBox, final Rotation rotation) {
         super(id, template, boundingBox, rotation);
         this.cakeEaten = false;
         this.cakePos = null;
         this.sandIds = VListNBT.ofUUID();
     }
-
+    
     public VaultRoom(final ResourceLocation template, final MutableBoundingBox boundingBox, final Rotation rotation) {
         this(VaultRoom.ID, template, boundingBox, rotation);
     }
-
+    
     @Override
     public void tick(final ServerWorld world, final VaultRaid vault) {
     }
-
+    
     public void setCakeEaten(final boolean cakeEaten) {
         this.cakeEaten = cakeEaten;
     }
-
+    
     public boolean isCakeEaten() {
         return this.cakeEaten;
     }
-
+    
     public void setCakePos(final BlockPos cakePos) {
         this.cakePos = cakePos;
     }
-
+    
     public List<UUID> getSandId() {
         return this.sandIds;
     }
-
+    
     public void addSandId(final UUID sandId) {
         this.sandIds.add(sandId);
     }
-
+    
     @Nullable
     public BlockPos getCakePos() {
         return this.cakePos;
     }
-
+    
     public BlockPos getTunnelConnectorPos(final Direction dir) {
         final Vector3i center = this.getCenter();
         final BlockPos size = new BlockPos(this.getBoundingBox().getLength()).offset(2, 2, 2);
-        return new BlockPos(center).offset(dir.getStepX() * size.getX(), 0,
-                dir.getStepZ() * size.getZ());
+        return new BlockPos(center).offset(dir.getStepX() * size.getX(), 0, dir.getStepZ() * size.getZ());
     }
-
+    
     @Override
     public CompoundNBT serializeNBT() {
         final CompoundNBT tag = super.serializeNBT();
         tag.putBoolean("cakeEaten", this.cakeEaten);
         if (this.cakePos != null) {
-            tag.put("cakePos", (INBT) NBTHelper.serializeBlockPos(this.cakePos));
+            tag.put("cakePos", (INBT)NBTHelper.serializeBlockPos(this.cakePos));
         }
-        tag.put("sandIds", (INBT) this.sandIds.serializeNBT());
+        tag.put("sandIds", (INBT)this.sandIds.serializeNBT());
         return tag;
     }
-
+    
     @Override
     public void deserializeNBT(final CompoundNBT tag) {
         super.deserializeNBT(tag);
@@ -104,7 +106,7 @@ public class VaultRoom extends VaultPiece {
         }
         this.sandIds.deserializeNBT(tag.getList("sandIds", 8));
     }
-
+    
     static {
         ID = Vault.id("room");
     }

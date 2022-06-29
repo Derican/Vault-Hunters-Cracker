@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability;
 
@@ -13,35 +16,36 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.skill.ability.effect.AbilityEffect;
 import iskallia.vault.skill.ability.config.AbilityConfig;
 
-public abstract class AbilityGroup<T extends AbilityConfig, E extends AbilityEffect<T>> {
+public abstract class AbilityGroup<T extends AbilityConfig, E extends AbilityEffect<T>>
+{
     @Expose
     private final String name;
     @Expose
     private final List<T> levelConfiguration;
     private final BiMap<Integer, String> nameCache;
-
+    
     protected AbilityGroup(final String name) {
         this.levelConfiguration = new ArrayList<T>();
-        this.nameCache = (BiMap<Integer, String>) HashBiMap.create();
+        this.nameCache = (BiMap<Integer, String>)HashBiMap.create();
         this.name = name;
     }
-
+    
     public int getMaxLevel() {
         return this.levelConfiguration.size();
     }
-
+    
     protected void addLevel(final T config) {
         this.levelConfiguration.add(config);
     }
-
+    
     public String getParentName() {
         return this.name;
     }
-
+    
     String getName(final int level) {
-        return (String) this.getNameCache().get((Object) level);
+        return (String)this.getNameCache().get((Object)level);
     }
-
+    
     public T getAbilityConfig(@Nullable final String specialization, int level) {
         if (level < 0) {
             return this.getDefaultConfig(0);
@@ -55,44 +59,44 @@ public abstract class AbilityGroup<T extends AbilityConfig, E extends AbilityEff
         }
         return this.getDefaultConfig(level);
     }
-
+    
     public boolean hasSpecialization(final String specialization) {
         return this.getSubConfig(specialization, 0) != null;
     }
-
+    
     protected abstract T getSubConfig(final String p0, final int p1);
-
+    
     public abstract String getSpecializationName(final String p0);
-
+    
     private T getDefaultConfig(final int level) {
         return this.levelConfiguration.get(MathHelper.clamp(level, 0, this.getMaxLevel() - 1));
     }
-
+    
     @Nullable
     public E getAbility(@Nullable final String specialization) {
-        return (E) AbilityRegistry.getAbility((specialization == null) ? this.getParentName() : specialization);
+        return (E)AbilityRegistry.getAbility((specialization == null) ? this.getParentName() : specialization);
     }
-
+    
     public int learningCost() {
         return this.getDefaultConfig(0).getLearningCost();
     }
-
+    
     public int levelUpCost(@Nullable final String specialization, final int toLevel) {
         if (toLevel > this.getMaxLevel()) {
             return -1;
         }
         return this.getAbilityConfig(specialization, toLevel - 1).getLearningCost();
     }
-
+    
     private BiMap<Integer, String> getNameCache() {
         if (this.nameCache.isEmpty()) {
             for (int i = 1; i <= this.getMaxLevel(); ++i) {
-                this.nameCache.put((Object) i, (Object) (this.getParentName() + " " + RomanNumber.toRoman(i)));
+                this.nameCache.put((Object)i, (Object)(this.getParentName() + " " + RomanNumber.toRoman(i)));
             }
         }
         return this.nameCache;
     }
-
+    
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -101,10 +105,10 @@ public abstract class AbilityGroup<T extends AbilityConfig, E extends AbilityEff
         if (o == null || this.getClass() != o.getClass()) {
             return false;
         }
-        final AbilityGroup<?, ?> that = (AbilityGroup<?, ?>) o;
+        final AbilityGroup<?, ?> that = (AbilityGroup<?, ?>)o;
         return Objects.equals(this.name, that.name);
     }
-
+    
     @Override
     public int hashCode() {
         return Objects.hash(this.name);

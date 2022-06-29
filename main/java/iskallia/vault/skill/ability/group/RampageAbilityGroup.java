@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -12,21 +15,22 @@ import iskallia.vault.skill.ability.effect.RampageAbility;
 import iskallia.vault.skill.ability.config.RampageConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class RampageAbilityGroup extends AbilityGroup<RampageConfig, RampageAbility<RampageConfig>> {
+public class RampageAbilityGroup extends AbilityGroup<RampageConfig, RampageAbility<RampageConfig>>
+{
     @Expose
     private final List<RampageDotConfig> dotLevelConfiguration;
     @Expose
     private final List<RampageTimeConfig> timeLevelConfiguration;
     @Expose
     private final List<RampageLeechConfig> leechLevelConfiguration;
-
+    
     private RampageAbilityGroup() {
         super("Rampage");
         this.dotLevelConfiguration = new ArrayList<RampageDotConfig>();
         this.timeLevelConfiguration = new ArrayList<RampageTimeConfig>();
         this.leechLevelConfiguration = new ArrayList<RampageLeechConfig>();
     }
-
+    
     @Override
     protected RampageConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -44,7 +48,7 @@ public class RampageAbilityGroup extends AbilityGroup<RampageConfig, RampageAbil
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -62,18 +66,18 @@ public class RampageAbilityGroup extends AbilityGroup<RampageConfig, RampageAbil
             }
         }
     }
-
+    
     public static RampageAbilityGroup defaultConfig() {
         final RampageAbilityGroup group = new RampageAbilityGroup();
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(1, 1.0f, 100, 100));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(2, 2.0f, 200, 200));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(3, 3.0f, 300, 300));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(4, 4.0f, 400, 400));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(5, 5.0f, 500, 500));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(6, 6.0f, 600, 600));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(7, 7.0f, 700, 700));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(8, 8.0f, 800, 800));
-        ((AbilityGroup<RampageConfig, E>) group).addLevel(new RampageConfig(9, 9.0f, 900, 900));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(1, 1.0f, 100, 100));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(2, 2.0f, 200, 200));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(3, 3.0f, 300, 300));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(4, 4.0f, 400, 400));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(5, 5.0f, 500, 500));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(6, 6.0f, 600, 600));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(7, 7.0f, 700, 700));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(8, 8.0f, 800, 800));
+        ((AbilityGroup<RampageConfig, E>)group).addLevel(new RampageConfig(9, 9.0f, 900, 900));
         group.dotLevelConfiguration.add(new RampageDotConfig(1, 1, 100, 100, 5));
         group.dotLevelConfiguration.add(new RampageDotConfig(2, 2, 200, 200, 5));
         group.dotLevelConfiguration.add(new RampageDotConfig(3, 3, 300, 300, 5));

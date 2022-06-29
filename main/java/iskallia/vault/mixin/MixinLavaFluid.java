@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -13,10 +16,10 @@ import net.minecraft.fluid.LavaFluid;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ LavaFluid.class })
-public class MixinLavaFluid {
+public class MixinLavaFluid
+{
     @Inject(method = { "randomTick" }, at = { @At("HEAD") }, cancellable = true)
-    public void onRandomTick(final World world, final BlockPos pos, final FluidState state, final Random random,
-            final CallbackInfo ci) {
+    public void onRandomTick(final World world, final BlockPos pos, final FluidState state, final Random random, final CallbackInfo ci) {
         if (world.dimension() == Vault.VAULT_KEY) {
             ci.cancel();
         }

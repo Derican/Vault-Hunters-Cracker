@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.modifier;
 
@@ -9,35 +12,33 @@ import net.minecraft.util.ResourceLocation;
 import java.util.Map;
 import com.google.gson.annotations.Expose;
 
-public class LootableModifier extends TexturedVaultModifier {
+public class LootableModifier extends TexturedVaultModifier
+{
     @Expose
     private final String pool;
     @Expose
     private final Map<String, Float> resultMultipliers;
-
-    public LootableModifier(final String name, final ResourceLocation icon, final String affectedPool,
-            final Map<String, Float> resultMultipliers) {
+    
+    public LootableModifier(final String name, final ResourceLocation icon, final String affectedPool, final Map<String, Float> resultMultipliers) {
         super(name, icon);
         this.resultMultipliers = new HashMap<String, Float>();
         this.pool = affectedPool;
         this.resultMultipliers.putAll(resultMultipliers);
     }
-
-    public RandomListAccess<String> adjustLootWeighting(final String pool,
-            final RandomListAccess<String> weightedList) {
+    
+    public RandomListAccess<String> adjustLootWeighting(final String pool, final RandomListAccess<String> weightedList) {
         if (pool.equalsIgnoreCase(this.pool)) {
             final WeightedDoubleList<String> resultList = new WeightedDoubleList<String>();
-            weightedList.forEach((entry, weight) -> resultList.add(entry,
-                    weight.doubleValue() * this.resultMultipliers.getOrDefault(entry, 1.0f)));
+            weightedList.forEach((entry, weight) -> resultList.add(entry, weight.doubleValue() * this.resultMultipliers.getOrDefault(entry, 1.0f)));
             return resultList;
         }
         return weightedList;
     }
-
+    
     public float getAverageMultiplier() {
-        return (float) this.resultMultipliers.values().stream().mapToDouble(Float::doubleValue).average().orElse(1.0);
+        return (float)this.resultMultipliers.values().stream().mapToDouble(Float::doubleValue).average().orElse(1.0);
     }
-
+    
     public static Map<String, Float> getDefaultOreModifiers(final float multiplier) {
         final Map<String, Float> oreResults = new HashMap<String, Float>();
         oreResults.put(ModBlocks.BENITOITE_ORE.getRegistryName().toString(), multiplier);

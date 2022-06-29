@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.event;
 
@@ -36,13 +39,14 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class RegistryEvents {
+public class RegistryEvents
+{
     @SubscribeEvent
     public static void onBlockRegister(final RegistryEvent.Register<Block> event) {
         ModConfigs.registerCompressionConfigs();
         ModBlocks.registerBlocks(event);
     }
-
+    
     @SubscribeEvent
     public static void onItemRegister(final RegistryEvent.Register<Item> event) {
         ModConfigs.registerCompressionConfigs();
@@ -51,7 +55,7 @@ public class RegistryEvents {
         RelicSet.register();
         ModAbilities.init();
     }
-
+    
     @SubscribeEvent
     public static void onModelRegister(final ModelRegistryEvent event) {
         ModModels.setupRenderLayers();
@@ -60,60 +64,59 @@ public class RegistryEvents {
         ModModels.SpecialGearModel.register();
         ModModels.SpecialSwordModel.register();
     }
-
+    
     @SubscribeEvent
     public static void onSoundRegister(final RegistryEvent.Register<SoundEvent> event) {
         ModSounds.registerSounds(event);
         ModSounds.registerSoundTypes();
     }
-
+    
     @SubscribeEvent
     public static void onStructureRegister(final RegistryEvent.Register<Structure<?>> event) {
         ModStructures.register(event);
         ModFeatures.registerStructureFeatures();
     }
-
+    
     @SubscribeEvent
     public static void onFeatureRegister(final RegistryEvent.Register<Feature<?>> event) {
         ModFeatures.registerFeatures(event);
     }
-
+    
     @SubscribeEvent
     public static void onContainerRegister(final RegistryEvent.Register<ContainerType<?>> event) {
         ModContainers.register(event);
     }
-
+    
     @SubscribeEvent
     public static void onEntityRegister(final RegistryEvent.Register<EntityType<?>> event) {
         ModEntities.register(event);
     }
-
+    
     @SubscribeEvent
     public static void onTileEntityRegister(final RegistryEvent.Register<TileEntityType<?>> event) {
         ModBlocks.registerTileEntities(event);
     }
-
+    
     @SubscribeEvent
     public static void onRecipeRegister(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
         ModRecipes.Serializer.register(event);
     }
-
+    
     @SubscribeEvent
-    public static void registerGlobalLootModifierSerializers(
-            final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
+    public static void registerGlobalLootModifierSerializers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
         ModLootModifiers.registerGlobalModifiers(event);
     }
-
+    
     @SubscribeEvent
     public static void onEffectRegister(final RegistryEvent.Register<Effect> event) {
         ModEffects.register(event);
     }
-
+    
     @SubscribeEvent
     public static void onAttributeRegister(final RegistryEvent.Register<Attribute> event) {
         final Attribute attr = Attributes.MAX_HEALTH;
         if (attr instanceof RangedAttribute) {
-            ((RangedAttribute) attr).maxValue = Double.MAX_VALUE;
+            ((RangedAttribute)attr).maxValue = Double.MAX_VALUE;
         }
         ModAttributes.register(event);
     }

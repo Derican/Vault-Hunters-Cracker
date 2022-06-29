@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective.raid;
 
@@ -69,7 +72,8 @@ import net.minecraftforge.fml.common.Mod;
 import iskallia.vault.world.vault.logic.objective.VaultObjective;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class RaidChallengeObjective extends VaultObjective {
+public class RaidChallengeObjective extends VaultObjective
+{
     private final LinkedHashMap<RaidModifier, Float> modifierValues;
     private int completedRaids;
     private int targetRaids;
@@ -77,7 +81,7 @@ public class RaidChallengeObjective extends VaultObjective {
     private double damageTaken;
     private ResourceLocation roomPool;
     private ResourceLocation tunnelPool;
-
+    
     public RaidChallengeObjective(final ResourceLocation id) {
         super(id, VaultTask.EMPTY, VaultTask.EMPTY);
         this.modifierValues = new LinkedHashMap<RaidModifier, Float>();
@@ -88,67 +92,63 @@ public class RaidChallengeObjective extends VaultObjective {
         this.roomPool = Vault.id("raid/rooms");
         this.tunnelPool = Vault.id("vault/tunnels");
     }
-
+    
     public void setRoomPool(final ResourceLocation roomPool) {
         this.roomPool = roomPool;
     }
-
+    
     public void setTunnelPool(final ResourceLocation tunnelPool) {
         this.tunnelPool = tunnelPool;
     }
-
+    
     @Nonnull
     @Override
     public BlockState getObjectiveRelevantBlock(final VaultRaid vault, final ServerWorld world, final BlockPos pos) {
         return Blocks.AIR.defaultBlockState();
     }
-
+    
     @Nonnull
     @Override
     public Supplier<? extends VaultGenerator> getVaultGenerator() {
         return VaultRaid.RAID_CHALLENGE_GENERATOR;
     }
-
+    
     @Nullable
     @Override
-    public LootTable getRewardLootTable(final VaultRaid vault,
-            final Function<ResourceLocation, LootTable> tblResolver) {
+    public LootTable getRewardLootTable(final VaultRaid vault, final Function<ResourceLocation, LootTable> tblResolver) {
         return null;
     }
-
+    
     @Override
     public boolean shouldPauseTimer(final MinecraftServer srv, final VaultRaid vault) {
         return !this.started;
     }
-
+    
     @Override
     public ITextComponent getObjectiveDisplayName() {
-        return (ITextComponent) new StringTextComponent("Raid").withStyle(TextFormatting.RED);
+        return (ITextComponent)new StringTextComponent("Raid").withStyle(TextFormatting.RED);
     }
-
+    
     @Nullable
     @Override
     public ITextComponent getObjectiveTargetDescription(final int amount) {
-        return (ITextComponent) ((amount < 0) ? null
-                : new StringTextComponent("Raids to complete: ")
-                        .append((ITextComponent) new StringTextComponent(String.valueOf(amount))
-                                .withStyle(TextFormatting.RED)));
+        return (ITextComponent)((amount < 0) ? null : new StringTextComponent("Raids to complete: ").append((ITextComponent)new StringTextComponent(String.valueOf(amount)).withStyle(TextFormatting.RED)));
     }
-
+    
     @Override
     public void setObjectiveTargetCount(final int amount) {
         this.targetRaids = amount;
     }
-
+    
     @Override
     public ITextComponent getVaultName() {
-        return (ITextComponent) new StringTextComponent("Vault Raid");
+        return (ITextComponent)new StringTextComponent("Vault Raid");
     }
-
+    
     public int getCompletedRaids() {
         return this.completedRaids;
     }
-
+    
     public void addModifier(final RaidModifier modifier, final float value) {
         if (modifier instanceof ModifierDoublingModifier) {
             this.modifierValues.forEach(this::addModifier);
@@ -163,18 +163,15 @@ public class RaidChallengeObjective extends VaultObjective {
         }
         this.modifierValues.put(modifier, value);
     }
-
+    
     public Map<RaidModifier, Float> getAllModifiers() {
-        return Collections.unmodifiableMap((Map<? extends RaidModifier, ? extends Float>) this.modifierValues);
+        return Collections.unmodifiableMap((Map<? extends RaidModifier, ? extends Float>)this.modifierValues);
     }
-
+    
     public <T extends RaidModifier> Map<T, Float> getModifiersOfType(final Class<T> modifierClass) {
-        return this.modifierValues.entrySet().stream()
-                .filter(modifierTpl -> modifierClass.isAssignableFrom(modifierTpl.getKey().getClass())).map(tpl -> tpl)
-                .collect(Collectors.toMap((Function<? super Object, ? extends T>) Map.Entry::getKey,
-                        (Function<? super Object, ? extends Float>) Map.Entry::getValue));
+        return this.modifierValues.entrySet().stream().filter(modifierTpl -> modifierClass.isAssignableFrom(modifierTpl.getKey().getClass())).map(tpl -> tpl).collect(Collectors.toMap((Function<? super Object, ? extends T>)Map.Entry::getKey, (Function<? super Object, ? extends Float>)Map.Entry::getValue));
     }
-
+    
     public LinkedHashMap<RaidModifier, Float> getModifiers(final boolean positive) {
         final LinkedHashMap<RaidModifier, Float> modifiers = new LinkedHashMap<RaidModifier, Float>();
         this.modifierValues.forEach((modifier, value) -> {
@@ -185,7 +182,7 @@ public class RaidChallengeObjective extends VaultObjective {
         });
         return modifiers;
     }
-
+    
     @Override
     public void tick(final VaultRaid vault, final PlayerFilter filter, final ServerWorld world) {
         super.tick(vault, filter, world);
@@ -196,9 +193,8 @@ public class RaidChallengeObjective extends VaultObjective {
         }
         this.sendRaidMessage(vault, filter, srv, raid);
     }
-
-    private void sendRaidMessage(final VaultRaid vault, final PlayerFilter filter, final MinecraftServer srv,
-            @Nullable final ActiveRaid raid) {
+    
+    private void sendRaidMessage(final VaultRaid vault, final PlayerFilter filter, final MinecraftServer srv, @Nullable final ActiveRaid raid) {
         final int wave = (raid == null) ? 0 : raid.getWave();
         final int totalWaves = (raid == null) ? 0 : raid.getTotalWaves();
         final int mobs = (raid == null) ? 0 : raid.getAliveEntities();
@@ -210,27 +206,24 @@ public class RaidChallengeObjective extends VaultObjective {
             final ITextComponent display = modifier.getDisplay(value);
             if (modifier.isPositive()) {
                 positives.add(display);
-            } else {
+            }
+            else {
                 negatives.add(display);
             }
             return;
         });
-        vault.getPlayers().stream().filter(vPlayer -> filter.test(vPlayer.getPlayerId()))
-                .forEach(vPlayer -> vPlayer.runIfPresent(srv, playerEntity -> {
-                    final VaultGoalMessage pkt = VaultGoalMessage.raidChallenge(wave, totalWaves, mobs, totalMobs,
-                            startDelay, this.completedRaids, this.targetRaids, positives, negatives);
-                    ModNetwork.CHANNEL.sendTo((Object) pkt, playerEntity.connection.connection,
-                            NetworkDirection.PLAY_TO_CLIENT);
-                }));
+        vault.getPlayers().stream().filter(vPlayer -> filter.test(vPlayer.getPlayerId())).forEach(vPlayer -> vPlayer.runIfPresent(srv, playerEntity -> {
+            final VaultGoalMessage pkt = VaultGoalMessage.raidChallenge(wave, totalWaves, mobs, totalMobs, startDelay, this.completedRaids, this.targetRaids, positives, negatives);
+            ModNetwork.CHANNEL.sendTo((Object)pkt, playerEntity.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        }));
     }
-
-    public void onRaidStart(final VaultRaid vault, final ServerWorld world, final ActiveRaid raid,
-            final BlockPos controller) {
+    
+    public void onRaidStart(final VaultRaid vault, final ServerWorld world, final ActiveRaid raid, final BlockPos controller) {
         final TileEntity te = world.getBlockEntity(controller);
         if (!(te instanceof VaultRaidControllerTileEntity)) {
             return;
         }
-        final VaultRaidControllerTileEntity raidController = (VaultRaidControllerTileEntity) te;
+        final VaultRaidControllerTileEntity raidController = (VaultRaidControllerTileEntity)te;
         raidController.getRaidModifiers().forEach((modifierName, value) -> {
             final RaidModifier mod = ModConfigs.RAID_MODIFIER_CONFIG.getByName(modifierName);
             if (mod != null) {
@@ -238,9 +231,8 @@ public class RaidChallengeObjective extends VaultObjective {
             }
         });
     }
-
-    public void onRaidFinish(final VaultRaid vault, final ServerWorld world, final ActiveRaid raid,
-            final BlockPos controller) {
+    
+    public void onRaidFinish(final VaultRaid vault, final ServerWorld world, final ActiveRaid raid, final BlockPos controller) {
         ++this.completedRaids;
         if (this.targetRaids >= 0 && this.completedRaids >= this.targetRaids) {
             this.setCompleted();
@@ -250,92 +242,79 @@ public class RaidChallengeObjective extends VaultObjective {
         if (this.completedRaids % 10 == 0) {
             modifier = ModConfigs.RAID_MODIFIER_CONFIG.getByName("artifactFragment");
             if (modifier != null) {
-                final boolean canGetArtifact = vault
-                        .getActiveModifiersFor(PlayerFilter.any(), InventoryRestoreModifier.class).stream()
-                        .noneMatch(InventoryRestoreModifier::preventsArtifact);
+                final boolean canGetArtifact = vault.getActiveModifiersFor(PlayerFilter.any(), InventoryRestoreModifier.class).stream().noneMatch(InventoryRestoreModifier::preventsArtifact);
                 if (canGetArtifact) {
                     this.addModifier(modifier, MathUtilities.randomFloat(0.02f, 0.05f));
                 }
             }
         }
-        final VaultRaidRoom raidRoom = vault.getGenerator().getPiecesAt(controller, VaultRaidRoom.class).stream()
-                .findFirst().orElse(null);
+        final VaultRaidRoom raidRoom = vault.getGenerator().getPiecesAt(controller, VaultRaidRoom.class).stream().findFirst().orElse(null);
         if (raidRoom == null) {
             return;
         }
         for (final Direction direction : Direction.values()) {
             if (direction.getAxis() != Direction.Axis.Y) {
                 if (VaultJigsawHelper.canExpand(vault, raidRoom, direction)) {
-                    VaultJigsawHelper.expandVault(vault, world, raidRoom, direction,
-                            VaultJigsawHelper.getRandomPiece(this.roomPool),
-                            VaultJigsawHelper.getRandomPiece(this.tunnelPool));
+                    VaultJigsawHelper.expandVault(vault, world, raidRoom, direction, VaultJigsawHelper.getRandomPiece(this.roomPool), VaultJigsawHelper.getRandomPiece(this.tunnelPool));
                 }
             }
         }
         raidRoom.setRaidFinished();
-        this.getAllModifiers()
-                .forEach((modifier, value) -> modifier.onVaultRaidFinish(vault, world, controller, raid, value));
+        this.getAllModifiers().forEach((modifier, value) -> modifier.onVaultRaidFinish(vault, world, controller, raid, value));
         final AxisAlignedBB raidBoundingBox = raid.getRaidBoundingBox();
-        final FloatingItemModifier catalystPlacement = new FloatingItemModifier("", 4,
-                new WeightedList<SingleItemEntry>()
-                        .add(new SingleItemEntry((IItemProvider) ModItems.VAULT_CATALYST_FRAGMENT), 1),
-                "");
-        vault.getActiveModifiersFor(PlayerFilter.any(), CatalystChanceModifier.class)
-                .forEach(modifier -> catalystPlacement.onVaultRaidFinish(vault, world, controller, raid, 1.0f));
+        final FloatingItemModifier catalystPlacement = new FloatingItemModifier("", 4, new WeightedList<SingleItemEntry>().add(new SingleItemEntry((IItemProvider)ModItems.VAULT_CATALYST_FRAGMENT), 1), "");
+        vault.getActiveModifiersFor(PlayerFilter.any(), CatalystChanceModifier.class).forEach(modifier -> catalystPlacement.onVaultRaidFinish(vault, world, controller, raid, 1.0f));
         final BlockPlacementModifier orePlacement = new BlockPlacementModifier("", ModBlocks.UNKNOWN_ORE, 12, "");
-        vault.getActiveModifiersFor(PlayerFilter.any(), LootableModifier.class).forEach(modifier -> orePlacement
-                .onVaultRaidFinish(vault, world, controller, raid, modifier.getAverageMultiplier()));
+        vault.getActiveModifiersFor(PlayerFilter.any(), LootableModifier.class).forEach(modifier -> orePlacement.onVaultRaidFinish(vault, world, controller, raid, modifier.getAverageMultiplier()));
         if (!vault.getProperties().exists(VaultRaid.PARENT)) {
-            BreadcrumbFeature.generateVaultBreadcrumb(vault, world,
-                    Lists.newArrayList((Object[]) new VaultPiece[] { raidRoom }));
+            BreadcrumbFeature.generateVaultBreadcrumb(vault, world, Lists.newArrayList((Object[])new VaultPiece[] { raidRoom }));
         }
     }
-
+    
     @Override
     public boolean isCompleted() {
         return super.isCompleted();
     }
-
+    
     @Override
     public boolean preventsMobSpawning() {
         return true;
     }
-
+    
     @Override
     public boolean preventsInfluences() {
         return true;
     }
-
+    
     @Override
     public boolean preventsNormalMonsterDrops() {
         return true;
     }
-
+    
     @Override
     public boolean preventsCatalystFragments() {
         return true;
     }
-
+    
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingHurt(final LivingHurtEvent event) {
         if (event.getEntityLiving() instanceof ServerPlayerEntity) {
-            final ServerPlayerEntity sPlayer = (ServerPlayerEntity) event.getEntityLiving();
+            final ServerPlayerEntity sPlayer = (ServerPlayerEntity)event.getEntityLiving();
             final VaultRaid vault = VaultRaidData.get(sPlayer.getLevel()).getActiveFor(sPlayer);
             if (vault != null) {
-                vault.getActiveObjective(RaidChallengeObjective.class)
-                        .ifPresent(objective -> objective.addDamageTaken(event.getAmount()));
+                vault.getActiveObjective(RaidChallengeObjective.class).ifPresent(objective -> objective.addDamageTaken(event.getAmount()));
             }
         }
     }
-
+    
     public void addDamageTaken(final double damageTaken) {
         this.damageTaken = MathHelper.clamp(this.damageTaken + damageTaken, 0.0, 3000.0);
     }
-
+    
     public double getDamageTaken() {
         return this.damageTaken;
     }
-
+    
     @Override
     public CompoundNBT serializeNBT() {
         final CompoundNBT tag = super.serializeNBT();
@@ -343,11 +322,11 @@ public class RaidChallengeObjective extends VaultObjective {
         this.modifierValues.forEach((modifier, value) -> {
             final CompoundNBT nbt = new CompoundNBT();
             nbt.putString("name", modifier.getName());
-            nbt.putFloat("value", (float) value);
-            modifiers.add((Object) nbt);
+            nbt.putFloat("value", (float)value);
+            modifiers.add((Object)nbt);
             return;
         });
-        tag.put("raidModifiers", (INBT) modifiers);
+        tag.put("raidModifiers", (INBT)modifiers);
         tag.putInt("completedRaids", this.completedRaids);
         tag.putDouble("damageTaken", this.damageTaken);
         if (this.targetRaids >= 0) {
@@ -358,7 +337,7 @@ public class RaidChallengeObjective extends VaultObjective {
         tag.putString("tunnelPool", this.tunnelPool.toString());
         return tag;
     }
-
+    
     @Override
     public void deserializeNBT(final CompoundNBT nbt) {
         super.deserializeNBT(nbt);

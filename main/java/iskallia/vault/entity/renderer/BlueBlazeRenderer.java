@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.renderer;
 
@@ -10,23 +13,23 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.renderer.entity.BlazeRenderer;
 
-public class BlueBlazeRenderer extends BlazeRenderer {
+public class BlueBlazeRenderer extends BlazeRenderer
+{
     public static final ResourceLocation TEXTURE;
-
+    
     public BlueBlazeRenderer(final EntityRendererManager renderManager) {
         super(renderManager);
     }
-
-    protected void preRenderCallback(final BlazeEntity entitylivingbase, final MatrixStack matrixStack,
-            final float partialTickTime) {
-        super.scale((LivingEntity) entitylivingbase, matrixStack, partialTickTime);
+    
+    protected void preRenderCallback(final BlazeEntity entitylivingbase, final MatrixStack matrixStack, final float partialTickTime) {
+        super.scale((LivingEntity)entitylivingbase, matrixStack, partialTickTime);
         matrixStack.scale(2.0f, 2.0f, 2.0f);
     }
-
+    
     public ResourceLocation getTextureLocation(final BlazeEntity entity) {
         return BlueBlazeRenderer.TEXTURE;
     }
-
+    
     static {
         TEXTURE = Vault.id("textures/entity/blue_blaze.png");
     }

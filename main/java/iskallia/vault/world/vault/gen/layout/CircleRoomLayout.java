@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.gen.layout;
 
@@ -6,24 +9,25 @@ import net.minecraft.util.math.vector.Vector3i;
 import java.awt.geom.Point2D;
 import net.minecraft.util.ResourceLocation;
 
-public class CircleRoomLayout extends ConnectedRoomGenerator {
+public class CircleRoomLayout extends ConnectedRoomGenerator
+{
     public static final ResourceLocation ID;
     private int size;
-
+    
     public CircleRoomLayout() {
         this(11);
     }
-
+    
     public CircleRoomLayout(final int size) {
         super(CircleRoomLayout.ID);
         this.size = size;
     }
-
+    
     @Override
     public void setSize(final int size) {
         this.size = size;
     }
-
+    
     @Override
     public Layout generateLayout() {
         final Layout layout = new Layout();
@@ -34,7 +38,7 @@ public class CircleRoomLayout extends ConnectedRoomGenerator {
         this.connectRooms(layout, this.size);
         return layout;
     }
-
+    
     private void calculateRooms(final Layout layout, final int size) {
         final Point2D.Float center = new Point2D.Float(0.5f, 0.5f);
         for (int halfSize = size / 2, x = -halfSize; x <= halfSize; ++x) {
@@ -46,7 +50,7 @@ public class CircleRoomLayout extends ConnectedRoomGenerator {
             }
         }
     }
-
+    
     static {
         ID = Vault.id("circle");
     }

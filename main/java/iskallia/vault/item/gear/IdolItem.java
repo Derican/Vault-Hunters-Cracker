@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item.gear;
 
@@ -30,101 +33,91 @@ import iskallia.vault.world.data.PlayerFavourData;
 import java.util.UUID;
 import iskallia.vault.item.BasicItem;
 
-public class IdolItem extends BasicItem implements VaultGear<IdolItem> {
+public class IdolItem extends BasicItem implements VaultGear<IdolItem>
+{
     private static final UUID ATTACK_DAMAGE_MODIFIER;
     private static final UUID ATTACK_SPEED_MODIFIER;
     private final PlayerFavourData.VaultGodType type;
-
-    public IdolItem(final ResourceLocation id, final PlayerFavourData.VaultGodType type,
-            final Item.Properties properties) {
+    
+    public IdolItem(final ResourceLocation id, final PlayerFavourData.VaultGodType type, final Item.Properties properties) {
         super(id, properties);
         this.type = type;
     }
-
+    
     public PlayerFavourData.VaultGodType getType() {
         return this.type;
     }
-
+    
     @Override
     public int getModelsFor(final Rarity rarity) {
         return 1;
     }
-
+    
     @Nullable
     @Override
     public EquipmentSlotType getIntendedSlot() {
         return EquipmentSlotType.OFFHAND;
     }
-
+    
     public void fillItemCategory(final ItemGroup group, final NonNullList<ItemStack> items) {
         if (this.allowdedIn(group)) {
             this.fillItemGroup(items);
         }
     }
-
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType slot,
-            final ItemStack stack) {
+    
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType slot, final ItemStack stack) {
         if (this.isIntendedForSlot(slot)) {
-            final ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = (ImmutableMultimap.Builder<Attribute, AttributeModifier>) ImmutableMultimap
-                    .builder();
-            builder.put((Object) Attributes.ATTACK_DAMAGE,
-                    (Object) new AttributeModifier(IdolItem.ATTACK_DAMAGE_MODIFIER, "Idol modifier", 0.0,
-                            AttributeModifier.Operation.ADDITION));
-            builder.put((Object) Attributes.ATTACK_SPEED,
-                    (Object) new AttributeModifier(IdolItem.ATTACK_SPEED_MODIFIER, "Idol modifier", 0.0,
-                            AttributeModifier.Operation.ADDITION));
-            return this.getAttributeModifiers(this, slot, stack,
-                    (Multimap<Attribute, AttributeModifier>) builder.build());
+            final ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = (ImmutableMultimap.Builder<Attribute, AttributeModifier>)ImmutableMultimap.builder();
+            builder.put((Object)Attributes.ATTACK_DAMAGE, (Object)new AttributeModifier(IdolItem.ATTACK_DAMAGE_MODIFIER, "Idol modifier", 0.0, AttributeModifier.Operation.ADDITION));
+            builder.put((Object)Attributes.ATTACK_SPEED, (Object)new AttributeModifier(IdolItem.ATTACK_SPEED_MODIFIER, "Idol modifier", 0.0, AttributeModifier.Operation.ADDITION));
+            return this.getAttributeModifiers(this, slot, stack, (Multimap<Attribute, AttributeModifier>)builder.build());
         }
-        return (Multimap<Attribute, AttributeModifier>) ImmutableMultimap.of();
+        return (Multimap<Attribute, AttributeModifier>)ImmutableMultimap.of();
     }
-
+    
     public boolean isRepairable(final ItemStack stack) {
         return false;
     }
-
+    
     public boolean isDamageable(final ItemStack stack) {
         return this.isDamageable(this, stack);
     }
-
+    
     public int getMaxDamage(final ItemStack stack) {
         return this.getMaxDamage(this, stack, super.getMaxDamage(stack));
     }
-
+    
     public ITextComponent getName(final ItemStack stack) {
         return this.getDisplayName(this, stack, super.getName(stack));
     }
-
+    
     public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
-        return this.onItemRightClick(this, world, player, hand,
-                (ActionResult<ItemStack>) super.use(world, player, hand));
+        return this.onItemRightClick(this, world, player, hand, (ActionResult<ItemStack>)super.use(world, player, hand));
     }
-
-    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot,
-            final boolean isSelected) {
+    
+    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot, final boolean isSelected) {
         super.inventoryTick(stack, world, entity, itemSlot, isSelected);
         this.splitStack(this, stack, world, entity);
         if (entity instanceof ServerPlayerEntity) {
-            this.inventoryTick(this, stack, world, (ServerPlayerEntity) entity, itemSlot, isSelected);
+            this.inventoryTick(this, stack, world, (ServerPlayerEntity)entity, itemSlot, isSelected);
         }
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(final ItemStack stack, final World world, final List<ITextComponent> tooltip,
-            final ITooltipFlag flag) {
+    public void appendHoverText(final ItemStack stack, final World world, final List<ITextComponent> tooltip, final ITooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
         this.addInformation(this, stack, tooltip, Screen.hasShiftDown());
     }
-
+    
     public boolean canElytraFly(final ItemStack stack, final LivingEntity entity) {
         return this.canElytraFly(this, stack, entity);
     }
-
+    
     public boolean elytraFlightTick(final ItemStack stack, final LivingEntity entity, final int flightTicks) {
         return this.elytraFlightTick(this, stack, entity, flightTicks);
     }
-
+    
     static {
         ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-2C13A33D1234");
         ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-4CCE97851234");

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.entity;
 
@@ -18,27 +21,27 @@ import iskallia.vault.init.ModBlocks;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.tileentity.TileEntity;
 
-public class VaultCharmControllerTileEntity extends TileEntity implements INamedContainerProvider {
+public class VaultCharmControllerTileEntity extends TileEntity implements INamedContainerProvider
+{
     public VaultCharmControllerTileEntity() {
-        super((TileEntityType) ModBlocks.VAULT_CHARM_CONTROLLER_TILE_ENTITY);
+        super((TileEntityType)ModBlocks.VAULT_CHARM_CONTROLLER_TILE_ENTITY);
     }
-
+    
     @Nonnull
     public ITextComponent getDisplayName() {
-        return (ITextComponent) new StringTextComponent("Vault Charm Inscription Table");
+        return (ITextComponent)new StringTextComponent("Vault Charm Inscription Table");
     }
-
+    
     @Nullable
-    public Container createMenu(final int windowId, final PlayerInventory playerInventory,
-            final PlayerEntity playerEntity) {
+    public Container createMenu(final int windowId, final PlayerInventory playerInventory, final PlayerEntity playerEntity) {
         if (!(this.getLevel() instanceof ServerWorld)) {
             return null;
         }
-        final ServerWorld world = (ServerWorld) this.getLevel();
+        final ServerWorld world = (ServerWorld)this.getLevel();
         if (!(playerEntity instanceof ServerPlayerEntity)) {
             return null;
         }
-        final ServerPlayerEntity player = (ServerPlayerEntity) playerEntity;
+        final ServerPlayerEntity player = (ServerPlayerEntity)playerEntity;
         final CompoundNBT inventoryNbt = VaultCharmData.get(world).getInventory(player).serializeNBT();
         return new VaultCharmControllerContainer(windowId, playerInventory, inventoryNbt);
     }

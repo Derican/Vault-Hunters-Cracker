@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.entity;
 
@@ -45,7 +48,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-public class StatueCauldronTileEntity extends TileEntity implements ITickableTileEntity {
+public class StatueCauldronTileEntity extends TileEntity implements ITickableTileEntity
+{
     private final ItemStackHandler itemHandler;
     private final LazyOptional<IItemHandler> handler;
     private final Predicate<ItemEntity> itemPredicate;
@@ -53,52 +57,50 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
     private int statueCount;
     private int requiredAmount;
     private List<String> names;
-
+    
     public List<String> getNames() {
         return this.names;
     }
-
+    
     public StatueCauldronTileEntity() {
-        super((TileEntityType) ModBlocks.STATUE_CAULDRON_TILE_ENTITY);
+        super((TileEntityType)ModBlocks.STATUE_CAULDRON_TILE_ENTITY);
         this.itemHandler = this.createHandler();
-        this.handler = (LazyOptional<IItemHandler>) LazyOptional.of(() -> this.itemHandler);
+        this.handler = (LazyOptional<IItemHandler>)LazyOptional.of(() -> this.itemHandler);
         this.itemPredicate = (itemEntity -> itemEntity.getItem().getItem() instanceof LootStatueBlockItem);
         this.names = new ArrayList<String>();
     }
-
+    
     public void setOwner(final UUID owner) {
         this.owner = owner;
     }
-
+    
     public UUID getOwner() {
         return this.owner;
     }
-
+    
     public void setStatueCount(final int statueCount) {
         this.statueCount = statueCount;
     }
-
+    
     public int getStatueCount() {
         return this.statueCount;
     }
-
+    
     public void setRequiredAmount(final int requiredAmount) {
         this.requiredAmount = requiredAmount;
     }
-
+    
     public int getRequiredAmount() {
         return this.requiredAmount;
     }
-
+    
     public void addName(final String name) {
         this.names.add(name);
     }
-
+    
     public void tick() {
         if (this.level != null && !this.level.isClientSide) {
-            final List<ItemEntity> statues = this.level.getLoadedEntitiesOfClass((Class) ItemEntity.class,
-                    new AxisAlignedBB(this.getBlockPos()).inflate(1.0, 1.0, 1.0),
-                    (Predicate) this.itemPredicate);
+            final List<ItemEntity> statues = this.level.getLoadedEntitiesOfClass((Class)ItemEntity.class, new AxisAlignedBB(this.getBlockPos()).inflate(1.0, 1.0, 1.0), (Predicate)this.itemPredicate);
             for (final ItemEntity e : statues) {
                 this.handler.ifPresent(h -> {
                     if (h.insertItem(0, e.getItem(), true).isEmpty()) {
@@ -116,60 +118,47 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
                     name = "iGoodie";
                 }
                 final ItemStack statue = LootStatueBlockItem.getStatueBlockItem(name, StatueType.OMEGA);
-                final ItemEntity itemEntity = new ItemEntity(this.level,
-                        this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1.2,
-                        this.getBlockPos().getZ() + 0.5, statue);
-                this.level.addFreshEntity((Entity) itemEntity);
-                this.level.setBlockAndUpdate(this.getBlockPos(), (BlockState) ModBlocks.STATUE_CAULDRON
-                        .defaultBlockState().setValue((Property) StatueCauldronBlock.LEVEL, (Comparable) 0));
+                final ItemEntity itemEntity = new ItemEntity(this.level, this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1.2, this.getBlockPos().getZ() + 0.5, statue);
+                this.level.addFreshEntity((Entity)itemEntity);
+                this.level.setBlockAndUpdate(this.getBlockPos(), (BlockState)ModBlocks.STATUE_CAULDRON.defaultBlockState().setValue((Property)StatueCauldronBlock.LEVEL, (Comparable)0));
                 this.statueCount = 0;
                 this.names.clear();
                 this.sendUpdates();
             }
         }
     }
-
+    
     private void bubbleCauldron(final ServerWorld world) {
         final int particleCount = 100;
-        world.playSound((PlayerEntity) null, (double) this.worldPosition.getX(),
-                (double) this.worldPosition.getY(), (double) this.worldPosition.getZ(),
-                ModSounds.CAULDRON_BUBBLES_SFX, SoundCategory.MASTER, 1.0f, (float) Math.random());
-        world.sendParticles((IParticleData) ParticleTypes.WITCH, this.worldPosition.getX() + 0.5,
-                this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, particleCount,
-                0.0, 0.0, 0.0, 3.141592653589793);
+        world.playSound((PlayerEntity)null, (double)this.worldPosition.getX(), (double)this.worldPosition.getY(), (double)this.worldPosition.getZ(), ModSounds.CAULDRON_BUBBLES_SFX, SoundCategory.MASTER, 1.0f, (float)Math.random());
+        world.sendParticles((IParticleData)ParticleTypes.WITCH, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, particleCount, 0.0, 0.0, 0.0, 3.141592653589793);
     }
-
+    
     private ItemStackHandler createHandler() {
         return new ItemStackHandler(64) {
             protected void onContentsChanged(final int slot) {
                 StatueCauldronTileEntity.this.sendUpdates();
             }
-
+            
             public boolean isItemValid(final int slot, @Nonnull final ItemStack stack) {
-                if ((int) StatueCauldronTileEntity.this.getBlockState()
-                        .getValue((Property) CauldronBlock.LEVEL) != 3) {
+                if ((int)StatueCauldronTileEntity.this.getBlockState().getValue((Property)CauldronBlock.LEVEL) != 3) {
                     return false;
                 }
-                if (StatueCauldronTileEntity.this.getStatueCount() >= StatueCauldronTileEntity.this
-                        .getRequiredAmount()) {
+                if (StatueCauldronTileEntity.this.getStatueCount() >= StatueCauldronTileEntity.this.getRequiredAmount()) {
                     return false;
                 }
                 if (stack.getItem() instanceof LootStatueBlockItem) {
-                    final StatueType type = MiscUtils.getEnumEntry(StatueType.class,
-                            stack.getOrCreateTag().getCompound("BlockEntityTag").getInt("StatueType"));
+                    final StatueType type = MiscUtils.getEnumEntry(StatueType.class, stack.getOrCreateTag().getCompound("BlockEntityTag").getInt("StatueType"));
                     return type.doesStatueCauldronAccept();
                 }
                 return false;
             }
-
+            
             @Nonnull
             public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate) {
                 if (simulate && this.isItemValid(slot, stack)) {
-                    final int amount = ModConfigs.STATUE_RECYCLING
-                            .getItemValue(stack.getItem().getRegistryName().toString());
-                    StatueCauldronTileEntity.this.statueCount = Math.min(
-                            StatueCauldronTileEntity.this.statueCount + amount,
-                            StatueCauldronTileEntity.this.requiredAmount);
+                    final int amount = ModConfigs.STATUE_RECYCLING.getItemValue(stack.getItem().getRegistryName().toString());
+                    StatueCauldronTileEntity.this.statueCount = Math.min(StatueCauldronTileEntity.this.statueCount + amount, StatueCauldronTileEntity.this.requiredAmount);
                     final CompoundNBT tag = stack.getOrCreateTag();
                     final CompoundNBT blockData = tag.getCompound("BlockEntityTag");
                     final String name = blockData.getString("PlayerNickname");
@@ -178,10 +167,8 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
                             StatueCauldronTileEntity.this.addName(name);
                         }
                     }
-                    if (StatueCauldronTileEntity.this.level != null
-                            && !StatueCauldronTileEntity.this.level.isClientSide) {
-                        StatueCauldronTileEntity.this
-                                .bubbleCauldron((ServerWorld) StatueCauldronTileEntity.this.level);
+                    if (StatueCauldronTileEntity.this.level != null && !StatueCauldronTileEntity.this.level.isClientSide) {
+                        StatueCauldronTileEntity.this.bubbleCauldron((ServerWorld)StatueCauldronTileEntity.this.level);
                     }
                     StatueCauldronTileEntity.this.sendUpdates();
                     return ItemStack.EMPTY;
@@ -190,15 +177,15 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
             }
         };
     }
-
+    
     @Nonnull
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (LazyOptional<T>) this.handler.cast();
+            return (LazyOptional<T>)this.handler.cast();
         }
-        return (LazyOptional<T>) super.getCapability((Capability) cap, side);
+        return (LazyOptional<T>)super.getCapability((Capability)cap, side);
     }
-
+    
     public CompoundNBT save(final CompoundNBT compound) {
         if (this.owner != null) {
             compound.putUUID("Owner", this.owner);
@@ -209,15 +196,15 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
             for (final String name : this.names) {
                 final CompoundNBT nameNbt = new CompoundNBT();
                 nameNbt.putString("name" + i++, name);
-                nameList.add((Object) nameNbt);
+                nameList.add((Object)nameNbt);
             }
         }
-        compound.put("NameList", (INBT) nameList);
+        compound.put("NameList", (INBT)nameList);
         compound.putInt("StatueCount", this.statueCount);
         compound.putInt("RequiredAmount", this.requiredAmount);
         return super.save(compound);
     }
-
+    
     public void load(final BlockState state, final CompoundNBT nbt) {
         if (nbt.contains("Owner", 11)) {
             this.owner = nbt.getUUID("Owner");
@@ -226,13 +213,13 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
         int i = 0;
         this.names.clear();
         for (final INBT nameNbt : nameList) {
-            this.names.add(((CompoundNBT) nameNbt).getString("name" + i++));
+            this.names.add(((CompoundNBT)nameNbt).getString("name" + i++));
         }
         this.statueCount = nbt.getInt("StatueCount");
         this.requiredAmount = nbt.getInt("RequiredAmount");
         super.load(state, nbt);
     }
-
+    
     public CompoundNBT getUpdateTag() {
         final CompoundNBT compound = super.getUpdateTag();
         if (this.owner != null) {
@@ -244,40 +231,40 @@ public class StatueCauldronTileEntity extends TileEntity implements ITickableTil
             for (final String name : this.names) {
                 final CompoundNBT nameNbt = new CompoundNBT();
                 nameNbt.putString("name" + i++, name);
-                nameList.add((Object) nameNbt);
+                nameList.add((Object)nameNbt);
             }
         }
-        compound.put("NameList", (INBT) nameList);
+        compound.put("NameList", (INBT)nameList);
         compound.putInt("StatueCount", this.statueCount);
         compound.putInt("RequiredAmount", this.requiredAmount);
         return compound;
     }
-
+    
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag) {
         this.load(state, tag);
     }
-
+    
     @Nullable
     public SUpdateTileEntityPacket getUpdatePacket() {
         return new SUpdateTileEntityPacket(this.worldPosition, 1, this.getUpdateTag());
     }
-
+    
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
         final CompoundNBT tag = pkt.getTag();
         this.handleUpdateTag(this.getBlockState(), tag);
     }
-
+    
     public void sendUpdates() {
         this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 11);
         this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
         this.setChanged();
     }
-
+    
     public void setNames(final ListNBT nameList) {
         this.names.clear();
         int i = 0;
         for (final INBT nameNbt : nameList) {
-            this.names.add(((CompoundNBT) nameNbt).getString("name" + i++));
+            this.names.add(((CompoundNBT)nameNbt).getString("name" + i++));
         }
     }
 }

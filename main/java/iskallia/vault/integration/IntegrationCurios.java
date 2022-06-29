@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.integration;
 
@@ -16,7 +19,8 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.Collection;
 import net.minecraft.entity.player.PlayerEntity;
 
-public class IntegrationCurios {
+public class IntegrationCurios
+{
     public static Collection<CompoundNBT> getSerializedCuriosItemStacks(final PlayerEntity player) {
         return player.getCapability(CuriosCapability.INVENTORY).map(inv -> {
             final List<CompoundNBT> stacks = new ArrayList<CompoundNBT>();
@@ -32,9 +36,8 @@ public class IntegrationCurios {
             return stacks;
         }).orElse(Collections.emptyList());
     }
-
-    public static CompoundNBT getMappedSerializedCuriosItemStacks(final PlayerEntity player,
-            final BiPredicate<PlayerEntity, ItemStack> stackFilter, final boolean removeSnapshotItems) {
+    
+    public static CompoundNBT getMappedSerializedCuriosItemStacks(final PlayerEntity player, final BiPredicate<PlayerEntity, ItemStack> stackFilter, final boolean removeSnapshotItems) {
         return player.getCapability(CuriosCapability.INVENTORY).map(inv -> {
             final CompoundNBT tag = new CompoundNBT();
             inv.getCurios().forEach((key, handle) -> {
@@ -44,22 +47,21 @@ public class IntegrationCurios {
                     final ItemStack stack = stackHandler.getStackInSlot(slot);
                     if (!(!stackFilter.test(player, stack))) {
                         if (!stack.isEmpty()) {
-                            keyMap.put(String.valueOf(slot), (INBT) stack.serializeNBT());
+                            keyMap.put(String.valueOf(slot), (INBT)stack.serializeNBT());
                             if (removeSnapshotItems) {
                                 stackHandler.setStackInSlot(slot, ItemStack.EMPTY);
                             }
                         }
                     }
                 }
-                tag.put(key, (INBT) keyMap);
+                tag.put(key, (INBT)keyMap);
                 return;
             });
             return tag;
         }).orElse(new CompoundNBT());
     }
-
-    public static List<ItemStack> applyMappedSerializedCuriosItemStacks(final PlayerEntity player,
-            final CompoundNBT tag, final boolean replaceExisting) {
+    
+    public static List<ItemStack> applyMappedSerializedCuriosItemStacks(final PlayerEntity player, final CompoundNBT tag, final boolean replaceExisting) {
         return player.getCapability(CuriosCapability.INVENTORY).map(inv -> {
             final List<ItemStack> filledItems = new ArrayList<ItemStack>();
             for (final String handlerKey : tag.getAllKeys()) {
@@ -73,17 +75,20 @@ public class IntegrationCurios {
                         int slot;
                         try {
                             slot = Integer.parseInt(strSlot);
-                        } catch (final NumberFormatException exc) {
+                        }
+                        catch (final NumberFormatException exc) {
                             continue;
                         }
                         if (slot >= 0) {
                             if (slot >= stackHandler.getSlots()) {
                                 continue;
-                            } else {
+                            }
+                            else {
                                 final ItemStack stack = ItemStack.of(handlerKeyMap.getCompound(strSlot));
                                 if (replaceExisting || stackHandler.getStackInSlot(slot).isEmpty()) {
                                     stackHandler.setStackInSlot(slot, stack);
-                                } else {
+                                }
+                                else {
                                     filledItems.add(stack);
                                 }
                             }

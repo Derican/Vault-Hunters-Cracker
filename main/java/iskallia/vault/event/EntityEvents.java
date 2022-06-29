@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.event;
 
@@ -96,34 +99,35 @@ import java.util.Random;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class EntityEvents {
+public class EntityEvents
+{
     private static final Random rand;
-
+    
     @SubscribeEvent
     public static void onTradesLoad(final VillagerTradesEvent event) {
         for (final List<VillagerTrades.ITrade> trades : event.getTrades().values()) {
             trades.removeIf(trade -> {
                 try {
-                    final MerchantOffer offer = trade.getOffer((Entity) null, EntityEvents.rand);
+                    final MerchantOffer offer = trade.getOffer((Entity)null, EntityEvents.rand);
                     final ItemStack output = offer.assemble();
                     final Item outItem = output.getItem();
                     if (outItem instanceof ShieldItem) {
                         return true;
-                    } else if (outItem instanceof TippedArrowItem
-                            && PotionUtils.getPotion(output).equals(Potions.REGENERATION)) {
+                    }
+                    else if (outItem instanceof TippedArrowItem && PotionUtils.getPotion(output).equals(Potions.REGENERATION)) {
                         return true;
                     }
-                } catch (final Exception ex) {
                 }
+                catch (final Exception ex) {}
                 return false;
             });
         }
     }
-
+    
     @SubscribeEvent
     public static void onBlockBreak(final BlockEvent.BreakEvent event) {
         final PlayerEntity player = event.getPlayer();
-        final ModifiableAttributeInstance reachAttr = player.getAttribute((Attribute) ForgeMod.REACH_DISTANCE.get());
+        final ModifiableAttributeInstance reachAttr = player.getAttribute((Attribute)ForgeMod.REACH_DISTANCE.get());
         if (reachAttr == null) {
             return;
         }
@@ -133,12 +137,11 @@ public class EntityEvents {
             return;
         }
         final double reach = reachAttr.getValue();
-        if (player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5,
-                pos.getZ() + 0.5) >= reach * reach) {
+        if (player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) >= reach * reach) {
             event.setCanceled(true);
         }
     }
-
+    
     @SubscribeEvent
     public static void onEffectImmune(final LivingEvent.LivingUpdateEvent event) {
         if (event.getEntity().getCommandSenderWorld().isClientSide()) {
@@ -147,10 +150,10 @@ public class EntityEvents {
         if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
-        final LivingEntity livingEntity = (LivingEntity) event.getEntity();
+        final LivingEntity livingEntity = (LivingEntity)event.getEntity();
         EffectTalent.getImmunities(livingEntity).forEach(livingEntity::removeEffect);
     }
-
+    
     @SubscribeEvent
     public static void onPlayerFallDamage(final LivingHurtEvent event) {
         if (event.getEntity().level.isClientSide) {
@@ -162,19 +165,18 @@ public class EntityEvents {
         if (event.getSource() != DamageSource.FALL) {
             return;
         }
-        final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+        final ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
         float totalReduction = 0.0f;
         for (final EquipmentSlotType slot : EquipmentSlotType.values()) {
             final ItemStack stack = player.getItemBySlot(slot);
-            totalReduction += ModAttributes.FEATHER_FEET.get(stack).map(attribute -> attribute.getValue(stack))
-                    .orElse(0.0f);
+            totalReduction += ModAttributes.FEATHER_FEET.get(stack).map(attribute -> attribute.getValue(stack)).orElse(0.0f);
         }
         event.setAmount(event.getAmount() * (1.0f - Math.min(totalReduction, 1.0f)));
         if (event.getAmount() <= 1.0E-4) {
             event.setCanceled(true);
         }
     }
-
+    
     @SubscribeEvent
     public static void onPlayerMobHit(final LivingHurtEvent event) {
         final World world = event.getEntity().getCommandSenderWorld();
@@ -185,41 +187,37 @@ public class EntityEvents {
             return;
         }
         final LivingEntity attacked = event.getEntityLiving();
-        final LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
-        final boolean doEffectClouds = !ActiveFlags.IS_AOE_ATTACKING.isSet() && !ActiveFlags.IS_DOT_ATTACKING.isSet()
-                && !ActiveFlags.IS_REFLECT_ATTACKING.isSet();
+        final LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
+        final boolean doEffectClouds = !ActiveFlags.IS_AOE_ATTACKING.isSet() && !ActiveFlags.IS_DOT_ATTACKING.isSet() && !ActiveFlags.IS_REFLECT_ATTACKING.isSet();
         if (doEffectClouds) {
             for (final EquipmentSlotType slot : EquipmentSlotType.values()) {
                 final ItemStack stack = attacker.getItemBySlot(slot);
-                if (!(stack.getItem() instanceof VaultGear)
-                        || ((VaultGear) stack.getItem()).isIntendedForSlot(slot)) {
-                    final List<EffectCloudEntity.Config> configs = ModAttributes.EFFECT_CLOUD
-                            .getOrDefault(stack, new ArrayList<EffectCloudEntity.Config>()).getValue(stack);
+                if (!(stack.getItem() instanceof VaultGear) || ((VaultGear)stack.getItem()).isIntendedForSlot(slot)) {
+                    final List<EffectCloudEntity.Config> configs = ModAttributes.EFFECT_CLOUD.getOrDefault(stack, new ArrayList<EffectCloudEntity.Config>()).getValue(stack);
                     for (final EffectCloudEntity.Config config : configs) {
                         if (world.random.nextFloat() >= config.getChance()) {
                             continue;
                         }
-                        final EffectCloudEntity cloud = EffectCloudEntity.fromConfig(attacked.level, attacker,
-                                attacked.getX(), attacked.getY(), attacked.getZ(),
-                                config);
-                        world.addFreshEntity((Entity) cloud);
+                        final EffectCloudEntity cloud = EffectCloudEntity.fromConfig(attacked.level, attacker, attacked.getX(), attacked.getY(), attacked.getZ(), config);
+                        world.addFreshEntity((Entity)cloud);
                     }
                 }
             }
         }
-        float incDamage = VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.DAMAGE_INCREASE,
-                ModAttributes.DAMAGE_INCREASE_2);
+        float incDamage = VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.DAMAGE_INCREASE, ModAttributes.DAMAGE_INCREASE_2);
         final CreatureAttribute creatureType = attacked.getMobType();
         if (creatureType == CreatureAttribute.UNDEAD) {
             incDamage += VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.DAMAGE_UNDEAD);
-        } else if (creatureType == CreatureAttribute.ARTHROPOD) {
+        }
+        else if (creatureType == CreatureAttribute.ARTHROPOD) {
             incDamage += VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.DAMAGE_SPIDERS);
-        } else if (creatureType == CreatureAttribute.ILLAGER) {
+        }
+        else if (creatureType == CreatureAttribute.ILLAGER) {
             incDamage += VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.DAMAGE_ILLAGERS);
         }
         event.setAmount(event.getAmount() * (1.0f + incDamage));
     }
-
+    
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPlayerMobHitAfter(final LivingHurtEvent event) {
         final World world = event.getEntity().getCommandSenderWorld();
@@ -230,27 +228,24 @@ public class EntityEvents {
             return;
         }
         final LivingEntity attacked = event.getEntityLiving();
-        final LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
+        final LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
         if (ActiveFlags.IS_DOT_ATTACKING.isSet() || ActiveFlags.IS_REFLECT_ATTACKING.isSet()) {
             return;
         }
         boolean mayChainAttack = true;
         if (attacker instanceof PlayerEntity) {
-            mayChainAttack = !PlayerActiveFlags.isSet((PlayerEntity) attacker, PlayerActiveFlags.Flag.CHAINING_AOE);
+            mayChainAttack = !PlayerActiveFlags.isSet((PlayerEntity)attacker, PlayerActiveFlags.Flag.CHAINING_AOE);
         }
         if (mayChainAttack) {
-            final int additionalChains = VaultGearHelper.getAttributeValueOnGearSumInt(attacker,
-                    ModAttributes.ON_HIT_CHAIN);
+            final int additionalChains = VaultGearHelper.getAttributeValueOnGearSumInt(attacker, ModAttributes.ON_HIT_CHAIN);
             if (additionalChains > 0) {
                 ActiveFlags.IS_AOE_ATTACKING.runIfNotSet(() -> {
-                    final List<MobEntity> nearby = EntityHelper.getNearby((IWorld) world,
-                            (Vector3i) attacked.blockPosition(), 5.0f, MobEntity.class);
+                    final List<MobEntity> nearby = EntityHelper.getNearby((IWorld)world, (Vector3i)attacked.blockPosition(), 5.0f, MobEntity.class);
                     nearby.remove(attacked);
                     nearby.remove(attacker);
-                    nearby.removeIf(mob -> (attacker instanceof EternalEntity || attacker instanceof PlayerEntity)
-                            && mob instanceof EternalEntity);
+                    nearby.removeIf(mob -> (attacker instanceof EternalEntity || attacker instanceof PlayerEntity) && mob instanceof EternalEntity);
                     if (!nearby.isEmpty()) {
-                        nearby.sort((Comparator) Comparator.comparing(e -> e.distanceToSqr((Entity) attacked)));
+                        nearby.sort((Comparator)Comparator.comparing(e -> e.distanceToSqr((Entity)attacked)));
                         final List nearby2 = nearby.subList(0, Math.min(additionalChains, nearby.size()));
                         float multiplier = 0.5f;
                         nearby2.iterator();
@@ -264,24 +259,22 @@ public class EntityEvents {
                     return;
                 });
                 if (attacker instanceof PlayerEntity) {
-                    PlayerActiveFlags.set((PlayerEntity) attacker, PlayerActiveFlags.Flag.CHAINING_AOE, 2);
+                    PlayerActiveFlags.set((PlayerEntity)attacker, PlayerActiveFlags.Flag.CHAINING_AOE, 2);
                 }
             }
         }
         boolean mayAoeAttack = true;
         if (attacker instanceof PlayerEntity) {
-            mayAoeAttack = !PlayerActiveFlags.isSet((PlayerEntity) attacker, PlayerActiveFlags.Flag.ATTACK_AOE);
+            mayAoeAttack = !PlayerActiveFlags.isSet((PlayerEntity)attacker, PlayerActiveFlags.Flag.ATTACK_AOE);
         }
         if (mayAoeAttack) {
             final int blockAoE = VaultGearHelper.getAttributeValueOnGearSumInt(attacker, ModAttributes.ON_HIT_AOE);
             if (blockAoE > 0) {
                 ActiveFlags.IS_AOE_ATTACKING.runIfNotSet(() -> {
-                    final List<MobEntity> nearby3 = EntityHelper.getNearby((IWorld) world,
-                            (Vector3i) attacked.blockPosition(), (float) blockAoE, MobEntity.class);
+                    final List<MobEntity> nearby3 = EntityHelper.getNearby((IWorld)world, (Vector3i)attacked.blockPosition(), (float)blockAoE, MobEntity.class);
                     nearby3.remove(attacked);
                     nearby3.remove(attacker);
-                    nearby3.removeIf(mob -> (attacker instanceof EternalEntity || attacker instanceof PlayerEntity)
-                            && mob instanceof EternalEntity);
+                    nearby3.removeIf(mob -> (attacker instanceof EternalEntity || attacker instanceof PlayerEntity) && mob instanceof EternalEntity);
                     if (!nearby3.isEmpty()) {
                         nearby3.iterator();
                         final Iterator iterator2;
@@ -294,7 +287,7 @@ public class EntityEvents {
                 });
             }
             if (attacker instanceof PlayerEntity) {
-                PlayerActiveFlags.set((PlayerEntity) attacker, PlayerActiveFlags.Flag.ATTACK_AOE, 2);
+                PlayerActiveFlags.set((PlayerEntity)attacker, PlayerActiveFlags.Flag.ATTACK_AOE, 2);
             }
         }
         final float stunChance = VaultGearHelper.getAttributeValueOnGearSumFloat(attacker, ModAttributes.ON_HIT_STUN);
@@ -303,7 +296,7 @@ public class EntityEvents {
             attacked.addEffect(new EffectInstance(Effects.DIG_SLOWDOWN, 40, 9));
         }
     }
-
+    
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onDamageTotem(final LivingHurtEvent event) {
         final World world = event.getEntity().getCommandSenderWorld();
@@ -316,38 +309,32 @@ public class EntityEvents {
         if (event.getSource().isBypassArmor()) {
             return;
         }
-        final ServerWorld sWorld = (ServerWorld) world;
+        final ServerWorld sWorld = (ServerWorld)world;
         final ItemStack offHand = event.getEntityLiving().getOffhandItem();
         if (!(offHand.getItem() instanceof IdolItem)) {
             return;
         }
-        final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+        final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
         float damage = Math.max(1.0f, event.getAmount() / 5.0f);
         final VaultRaid vault = VaultRaidData.get(sWorld).getAt(sWorld, player.blockPosition());
         if (vault != null) {
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.DURABILITY_DAMAGE
-                        && !influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.DURABILITY_DAMAGE && !influence.isMultiplicative()) {
                     damage += influence.getValue();
                 }
             }
-            for (final DurabilityDamageModifier modifier : vault.getActiveModifiersFor(PlayerFilter.of(player),
-                    DurabilityDamageModifier.class)) {
+            for (final DurabilityDamageModifier modifier : vault.getActiveModifiersFor(PlayerFilter.of(player), DurabilityDamageModifier.class)) {
                 damage *= modifier.getDurabilityDamageTakenMultiplier();
             }
-            for (final VaultAttributeInfluence influence : vault.getInfluences()
-                    .getInfluences(VaultAttributeInfluence.class)) {
-                if (influence.getType() == VaultAttributeInfluence.Type.DURABILITY_DAMAGE
-                        && influence.isMultiplicative()) {
+            for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+                if (influence.getType() == VaultAttributeInfluence.Type.DURABILITY_DAMAGE && influence.isMultiplicative()) {
                     damage += influence.getValue();
                 }
             }
         }
-        offHand.hurtAndBreak((int) damage, event.getEntityLiving(),
-                entity -> entity.broadcastBreakEvent(EquipmentSlotType.OFFHAND));
+        offHand.hurtAndBreak((int)damage, event.getEntityLiving(), entity -> entity.broadcastBreakEvent(EquipmentSlotType.OFFHAND));
     }
-
+    
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityDrops(final LivingDropsEvent event) {
         final World world = event.getEntity().level;
@@ -362,7 +349,7 @@ public class EntityEvents {
             return;
         }
         final BlockPos pos = entity.blockPosition();
-        final ServerWorld sWorld = (ServerWorld) world;
+        final ServerWorld sWorld = (ServerWorld)world;
         final VaultRaid vault = VaultRaidData.get(sWorld).getAt(sWorld, pos);
         if (vault == null) {
             event.setCanceled(true);
@@ -381,14 +368,11 @@ public class EntityEvents {
         addedDrops |= addSubFighterDrops(world, entity, vault, event.getDrops());
         Entity killerEntity = killingSrc.getEntity();
         if (killerEntity instanceof EternalEntity) {
-            killerEntity = ((EternalEntity) killerEntity).getOwner().right().orElse(null);
+            killerEntity = ((EternalEntity)killerEntity).getOwner().right().orElse(null);
         }
         if (killerEntity instanceof ServerPlayerEntity) {
-            final ServerPlayerEntity killer = (ServerPlayerEntity) killerEntity;
-            if (MiscUtils.inventoryContains((IInventory) killer.inventory,
-                    stack -> stack.getItem() instanceof ItemShardPouch)
-                    && vault.getActiveObjectives().stream()
-                            .noneMatch(objective -> objective.shouldPauseTimer(sWorld.getServer(), vault))) {
+            final ServerPlayerEntity killer = (ServerPlayerEntity)killerEntity;
+            if (MiscUtils.inventoryContains((IInventory)killer.inventory, stack -> stack.getItem() instanceof ItemShardPouch) && vault.getActiveObjectives().stream().noneMatch(objective -> objective.shouldPauseTimer(sWorld.getServer(), vault))) {
                 addedDrops |= addShardDrops(world, entity, killer, vault, event.getDrops());
             }
         }
@@ -396,29 +380,27 @@ public class EntityEvents {
             event.setCanceled(true);
         }
     }
-
+    
     private static boolean shouldDropDefaultInVault(final Entity entity) {
         return entity instanceof VaultGuardianEntity || entity instanceof TreasureGoblinEntity;
     }
-
-    private static boolean addScavengerDrops(final World world, final Entity killed, final VaultRaid vault,
-            final Collection<ItemEntity> drops) {
+    
+    private static boolean addScavengerDrops(final World world, final Entity killed, final VaultRaid vault, final Collection<ItemEntity> drops) {
         final Optional<ScavengerHuntObjective> objectiveOpt = vault.getActiveObjective(ScavengerHuntObjective.class);
         if (!objectiveOpt.isPresent()) {
             return false;
         }
         final ScavengerHuntObjective objective = objectiveOpt.get();
-        final List<ScavengerHuntConfig.ItemEntry> specialDrops = ModConfigs.SCAVENGER_HUNT
-                .generateMobDropLoot(objective.getGenerationDropFilter(), (EntityType<?>) killed.getType());
+        final List<ScavengerHuntConfig.ItemEntry> specialDrops = ModConfigs.SCAVENGER_HUNT.generateMobDropLoot(objective.getGenerationDropFilter(), (EntityType<?>)killed.getType());
         return !specialDrops.isEmpty() && vault.getProperties().getBase(VaultRaid.IDENTIFIER).map(identifier -> {
             specialDrops.forEach(entry -> {
                 final ItemStack stack = entry.createItemStack();
                 if (stack.isEmpty()) {
                     return;
-                } else {
+                }
+                else {
                     BasicScavengerItem.setVaultIdentifier(stack, identifier);
-                    final ItemEntity itemEntity = new ItemEntity(world, killed.getX(),
-                            killed.getY(), killed.getZ(), stack);
+                    final ItemEntity itemEntity = new ItemEntity(world, killed.getX(), killed.getY(), killed.getZ(), stack);
                     itemEntity.setDefaultPickUpDelay();
                     drops.add(itemEntity);
                     return;
@@ -427,9 +409,8 @@ public class EntityEvents {
             return true;
         }).orElse(false);
     }
-
-    private static boolean addSubFighterDrops(final World world, final Entity killed, final VaultRaid vault,
-            final Collection<ItemEntity> drops) {
+    
+    private static boolean addSubFighterDrops(final World world, final Entity killed, final VaultRaid vault, final Collection<ItemEntity> drops) {
         if (!(killed instanceof VaultFighterEntity)) {
             return false;
         }
@@ -442,19 +423,16 @@ public class EntityEvents {
         if (name.isEmpty()) {
             return false;
         }
-        final ItemStack raffleSeal = new ItemStack((IItemProvider) ModItems.CRYSTAL_SEAL_RAFFLE);
+        final ItemStack raffleSeal = new ItemStack((IItemProvider)ModItems.CRYSTAL_SEAL_RAFFLE);
         ItemVaultRaffleSeal.setPlayerName(raffleSeal, name);
-        final ItemEntity itemEntity = new ItemEntity(world, killed.getX(), killed.getY(),
-                killed.getZ(), raffleSeal);
+        final ItemEntity itemEntity = new ItemEntity(world, killed.getX(), killed.getY(), killed.getZ(), raffleSeal);
         itemEntity.setDefaultPickUpDelay();
         drops.add(itemEntity);
         return true;
     }
-
-    private static boolean addShardDrops(final World world, final Entity killed, final ServerPlayerEntity killer,
-            final VaultRaid vault, final Collection<ItemEntity> drops) {
-        final List<TalentNode<SoulShardTalent>> shardNodes = PlayerTalentsData.get(killer.getLevel())
-                .getTalents((PlayerEntity) killer).getLearnedNodes(SoulShardTalent.class);
+    
+    private static boolean addShardDrops(final World world, final Entity killed, final ServerPlayerEntity killer, final VaultRaid vault, final Collection<ItemEntity> drops) {
+        final List<TalentNode<SoulShardTalent>> shardNodes = PlayerTalentsData.get(killer.getLevel()).getTalents((PlayerEntity)killer).getLearnedNodes(SoulShardTalent.class);
         if (shardNodes.isEmpty()) {
             return false;
         }
@@ -463,11 +441,10 @@ public class EntityEvents {
                 return false;
             }
         }
-        int shardCount = ModConfigs.SOUL_SHARD.getRandomShards((EntityType<?>) killed.getType());
-        for (final VaultAttributeInfluence influence : vault.getInfluences()
-                .getInfluences(VaultAttributeInfluence.class)) {
+        int shardCount = ModConfigs.SOUL_SHARD.getRandomShards((EntityType<?>)killed.getType());
+        for (final VaultAttributeInfluence influence : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
             if (influence.getType() == VaultAttributeInfluence.Type.SOUL_SHARD_DROPS && !influence.isMultiplicative()) {
-                shardCount += (int) influence.getValue();
+                shardCount += (int)influence.getValue();
             }
         }
         if (shardCount <= 0) {
@@ -483,38 +460,35 @@ public class EntityEvents {
         if (EntityEvents.rand.nextFloat() < decimal) {
             ++shardCount;
         }
-        for (final VaultAttributeInfluence influence2 : vault.getInfluences()
-                .getInfluences(VaultAttributeInfluence.class)) {
-            if (influence2.getType() == VaultAttributeInfluence.Type.SOUL_SHARD_DROPS
-                    && influence2.isMultiplicative()) {
-                shardCount *= (int) influence2.getValue();
+        for (final VaultAttributeInfluence influence2 : vault.getInfluences().getInfluences(VaultAttributeInfluence.class)) {
+            if (influence2.getType() == VaultAttributeInfluence.Type.SOUL_SHARD_DROPS && influence2.isMultiplicative()) {
+                shardCount *= (int)influence2.getValue();
             }
         }
-        final ItemStack shards = new ItemStack((IItemProvider) ModItems.SOUL_SHARD, shardCount);
-        final ItemEntity itemEntity = new ItemEntity(world, killed.getX(), killed.getY(),
-                killed.getZ(), shards);
+        final ItemStack shards = new ItemStack((IItemProvider)ModItems.SOUL_SHARD, shardCount);
+        final ItemEntity itemEntity = new ItemEntity(world, killed.getX(), killed.getY(), killed.getZ(), shards);
         itemEntity.setDefaultPickUpDelay();
         drops.add(itemEntity);
         return true;
     }
-
+    
     @SubscribeEvent
     public static void onEntitySpawn(final LivingSpawnEvent.CheckSpawn event) {
         if (event.getEntity().getCommandSenderWorld().dimension() == Vault.VAULT_KEY && !event.isSpawner()) {
             event.setResult(Event.Result.DENY);
         }
     }
-
+    
     @SubscribeEvent
     public static void onDamageArmorHit(final LivingDamageEvent event) {
         final LivingEntity damaged = event.getEntityLiving();
         if (!(damaged instanceof PlayerEntity) || damaged.getCommandSenderWorld().isClientSide()) {
             return;
         }
-        final PlayerEntity player = (PlayerEntity) damaged;
+        final PlayerEntity player = (PlayerEntity)damaged;
         final Entity trueSrc = event.getSource().getEntity();
         if (trueSrc instanceof LivingEntity) {
-            double chance = ((LivingEntity) trueSrc).getAttributeValue(ModAttributes.BREAK_ARMOR_CHANCE);
+            double chance = ((LivingEntity)trueSrc).getAttributeValue(ModAttributes.BREAK_ARMOR_CHANCE);
             while (chance > 0.0) {
                 if (EntityEvents.rand.nextFloat() > chance) {
                     break;
@@ -524,7 +498,7 @@ public class EntityEvents {
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void onCurseOnHit(final LivingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity)) {
@@ -534,15 +508,14 @@ public class EntityEvents {
         if (!(damaged instanceof ServerPlayerEntity)) {
             return;
         }
-        final ServerPlayerEntity sPlayer = (ServerPlayerEntity) damaged;
+        final ServerPlayerEntity sPlayer = (ServerPlayerEntity)damaged;
         final ServerWorld sWorld = sPlayer.getLevel();
         final VaultRaid vault = VaultRaidData.get(sWorld).getAt(sWorld, sPlayer.blockPosition());
         if (vault != null) {
-            vault.getActiveModifiersFor(PlayerFilter.any(), CurseOnHitModifier.class)
-                    .forEach(modifier -> modifier.applyCurse(sPlayer));
+            vault.getActiveModifiersFor(PlayerFilter.any(), CurseOnHitModifier.class).forEach(modifier -> modifier.applyCurse(sPlayer));
         }
     }
-
+    
     @SubscribeEvent
     public static void onVaultGuardianDamage(final LivingDamageEvent event) {
         final LivingEntity entityLiving = event.getEntityLiving();
@@ -552,18 +525,18 @@ public class EntityEvents {
         if (entityLiving instanceof VaultGuardianEntity) {
             final Entity trueSource = event.getSource().getEntity();
             if (trueSource instanceof LivingEntity) {
-                final LivingEntity attacker = (LivingEntity) trueSource;
-                attacker.hurt(DamageSource.thorns((Entity) entityLiving), event.getAmount() * 0.2f);
+                final LivingEntity attacker = (LivingEntity)trueSource;
+                attacker.hurt(DamageSource.thorns((Entity)entityLiving), event.getAmount() * 0.2f);
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void onLivingHurtCrit(final LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity)) {
             return;
         }
-        final LivingEntity source = (LivingEntity) event.getSource().getEntity();
+        final LivingEntity source = (LivingEntity)event.getSource().getEntity();
         if (source.level.isClientSide) {
             return;
         }
@@ -572,15 +545,13 @@ public class EntityEvents {
             if (source.getAttributes().hasAttribute(ModAttributes.CRIT_MULTIPLIER)) {
                 final double multiplier = source.getAttributeValue(ModAttributes.CRIT_MULTIPLIER);
                 if (source.level.random.nextDouble() < chance) {
-                    source.level.playSound((PlayerEntity) null, source.getX(),
-                            source.getY(), source.getZ(), SoundEvents.PLAYER_ATTACK_CRIT,
-                            source.getSoundSource(), 1.0f, 1.0f);
-                    event.setAmount((float) (event.getAmount() * multiplier));
+                    source.level.playSound((PlayerEntity)null, source.getX(), source.getY(), source.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, source.getSoundSource(), 1.0f, 1.0f);
+                    event.setAmount((float)(event.getAmount() * multiplier));
                 }
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void onLivingHurtTp(final LivingHurtEvent event) {
         if (event.getEntityLiving().level.isClientSide) {
@@ -594,28 +565,22 @@ public class EntityEvents {
                 if (event.getEntityLiving().level.random.nextDouble() < chance) {
                     for (int i = 0; i < 64; ++i) {
                         if (teleportRandomly(event.getEntityLiving(), range)) {
-                            event.getEntityLiving().level.playSound((PlayerEntity) null,
-                                    event.getEntityLiving().xo, event.getEntityLiving().yo,
-                                    event.getEntityLiving().zo, ModSounds.BOSS_TP_SFX,
-                                    event.getEntityLiving().getSoundSource(), 1.0f, 1.0f);
+                            event.getEntityLiving().level.playSound((PlayerEntity)null, event.getEntityLiving().xo, event.getEntityLiving().yo, event.getEntityLiving().zo, ModSounds.BOSS_TP_SFX, event.getEntityLiving().getSoundSource(), 1.0f, 1.0f);
                             event.setCanceled(true);
                             return;
                         }
                     }
                 }
             }
-        } else if (!direct
-                && event.getEntityLiving().getAttributes().hasAttribute(ModAttributes.TP_INDIRECT_CHANCE)) {
+        }
+        else if (!direct && event.getEntityLiving().getAttributes().hasAttribute(ModAttributes.TP_INDIRECT_CHANCE)) {
             final double chance = event.getEntityLiving().getAttributeValue(ModAttributes.TP_INDIRECT_CHANCE);
             if (event.getEntityLiving().getAttributes().hasAttribute(ModAttributes.TP_RANGE)) {
                 final double range = event.getEntityLiving().getAttributeValue(ModAttributes.TP_RANGE);
                 if (event.getEntityLiving().level.random.nextDouble() < chance) {
                     for (int i = 0; i < 64; ++i) {
                         if (teleportRandomly(event.getEntityLiving(), range)) {
-                            event.getEntityLiving().level.playSound((PlayerEntity) null,
-                                    event.getEntityLiving().xo, event.getEntityLiving().yo,
-                                    event.getEntityLiving().zo, ModSounds.BOSS_TP_SFX,
-                                    event.getEntityLiving().getSoundSource(), 1.0f, 1.0f);
+                            event.getEntityLiving().level.playSound((PlayerEntity)null, event.getEntityLiving().xo, event.getEntityLiving().yo, event.getEntityLiving().zo, ModSounds.BOSS_TP_SFX, event.getEntityLiving().getSoundSource(), 1.0f, 1.0f);
                             event.setCanceled(true);
                             return;
                         }
@@ -624,27 +589,24 @@ public class EntityEvents {
             }
         }
     }
-
+    
     private static boolean teleportRandomly(final LivingEntity entity, final double range) {
         if (!entity.level.isClientSide() && entity.isAlive()) {
-            final double d0 = entity.getX()
-                    + (entity.level.random.nextDouble() - 0.5) * (range * 2.0);
-            final double d2 = entity.getY()
-                    + (entity.level.random.nextInt((int) (range * 2.0)) - range);
-            final double d3 = entity.getZ()
-                    + (entity.level.random.nextDouble() - 0.5) * (range * 2.0);
+            final double d0 = entity.getX() + (entity.level.random.nextDouble() - 0.5) * (range * 2.0);
+            final double d2 = entity.getY() + (entity.level.random.nextInt((int)(range * 2.0)) - range);
+            final double d3 = entity.getZ() + (entity.level.random.nextDouble() - 0.5) * (range * 2.0);
             return entity.randomTeleport(d0, d2, d3, true);
         }
         return false;
     }
-
+    
     @SubscribeEvent
     public static void onEntityDestroy(final LivingDestroyBlockEvent event) {
         if (event.getState().getBlock() instanceof VaultDoorBlock) {
             event.setCanceled(true);
         }
     }
-
+    
     static {
         rand = new Random();
     }

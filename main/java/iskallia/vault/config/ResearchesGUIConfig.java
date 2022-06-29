@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -6,19 +9,20 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.config.entry.SkillStyle;
 import java.util.HashMap;
 
-public class ResearchesGUIConfig extends Config {
+public class ResearchesGUIConfig extends Config
+{
     @Expose
     private HashMap<String, SkillStyle> styles;
-
+    
     @Override
     public String getName() {
         return "researches_gui_styles";
     }
-
+    
     public HashMap<String, SkillStyle> getStyles() {
         return this.styles;
     }
-
+    
     @Override
     protected void reset() {
         this.styles = new HashMap<String, SkillStyle>();

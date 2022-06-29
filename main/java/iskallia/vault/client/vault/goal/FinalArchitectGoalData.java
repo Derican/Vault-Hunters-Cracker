@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.vault.goal;
 
@@ -9,14 +12,15 @@ import iskallia.vault.network.message.VaultGoalMessage;
 import iskallia.vault.world.vault.logic.objective.architect.VotingSession;
 import net.minecraft.util.text.ITextComponent;
 
-public class FinalArchitectGoalData extends VaultGoalData {
+public class FinalArchitectGoalData extends VaultGoalData
+{
     private ITextComponent message;
     private int killedBosses;
     private int totalKilledBossesNeeded;
     private int knowledge;
     private int totalKnowledgeNeeded;
     private VotingSession activeSession;
-
+    
     public FinalArchitectGoalData() {
         this.message = null;
         this.killedBosses = 0;
@@ -25,11 +29,11 @@ public class FinalArchitectGoalData extends VaultGoalData {
         this.totalKnowledgeNeeded = 0;
         this.activeSession = null;
     }
-
+    
     @Override
     public void receive(final VaultGoalMessage pkt) {
         final CompoundNBT tag = pkt.payload;
-        this.message = (ITextComponent) ITextComponent.Serializer.fromJson(tag.getString("message"));
+        this.message = (ITextComponent)ITextComponent.Serializer.fromJson(tag.getString("message"));
         this.killedBosses = tag.getInt("killedBosses");
         this.totalKilledBossesNeeded = tag.getInt("totalBosses");
         this.knowledge = tag.getInt("knowledge");
@@ -38,34 +42,34 @@ public class FinalArchitectGoalData extends VaultGoalData {
             this.activeSession = VotingSession.deserialize(tag.getCompound("votingSession"));
         }
     }
-
+    
     @Nullable
     @Override
     public BossBarOverlay getBossBarOverlay() {
         return new FinalArchitectBossGoalOverlay(this);
     }
-
+    
     @Nullable
     public VotingSession getActiveSession() {
         return this.activeSession;
     }
-
+    
     public ITextComponent getMessage() {
         return this.message;
     }
-
+    
     public int getKilledBosses() {
         return this.killedBosses;
     }
-
+    
     public int getTotalKilledBossesNeeded() {
         return this.totalKilledBossesNeeded;
     }
-
+    
     public int getKnowledge() {
         return this.knowledge;
     }
-
+    
     public int getTotalKnowledgeNeeded() {
         return this.totalKnowledgeNeeded;
     }

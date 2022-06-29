@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -15,24 +18,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import java.util.List;
 
-public class BasicTooltipItem extends BasicItem {
+public class BasicTooltipItem extends BasicItem
+{
     private final List<ITextComponent> components;
-
-    public BasicTooltipItem(final ResourceLocation id, final Item.Properties properties,
-            final ITextComponent... components) {
+    
+    public BasicTooltipItem(final ResourceLocation id, final Item.Properties properties, final ITextComponent... components) {
         this(id, properties, Arrays.asList(components));
     }
-
-    public BasicTooltipItem(final ResourceLocation id, final Item.Properties properties,
-            final List<ITextComponent> components) {
+    
+    public BasicTooltipItem(final ResourceLocation id, final Item.Properties properties, final List<ITextComponent> components) {
         super(id, properties);
         this.components = components;
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip,
-            final ITooltipFlag flagIn) {
+    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip, final ITooltipFlag flagIn) {
         tooltip.add(StringTextComponent.EMPTY);
         tooltip.addAll(this.components);
     }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -13,7 +16,8 @@ import iskallia.vault.skill.ability.effect.VeinMinerAbility;
 import iskallia.vault.skill.ability.config.VeinMinerConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMinerAbility<VeinMinerConfig>> {
+public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMinerAbility<VeinMinerConfig>>
+{
     @Expose
     private final List<VeinMinerDurabilityConfig> durabilityLevelConfiguration;
     @Expose
@@ -22,7 +26,7 @@ public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMin
     private final List<VeinMinerSizeDurabilityConfig> sizeLevelConfiguration;
     @Expose
     private final List<VeinMinerVoidConfig> voidLevelConfigruation;
-
+    
     private VeinMinerAbilityGroup() {
         super("Vein Miner");
         this.durabilityLevelConfiguration = new ArrayList<VeinMinerDurabilityConfig>();
@@ -30,7 +34,7 @@ public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMin
         this.sizeLevelConfiguration = new ArrayList<VeinMinerSizeDurabilityConfig>();
         this.voidLevelConfigruation = new ArrayList<VeinMinerVoidConfig>();
     }
-
+    
     @Override
     protected VeinMinerConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -51,7 +55,7 @@ public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMin
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -72,14 +76,14 @@ public class VeinMinerAbilityGroup extends AbilityGroup<VeinMinerConfig, VeinMin
             }
         }
     }
-
+    
     public static VeinMinerAbilityGroup defaultConfig() {
         final VeinMinerAbilityGroup group = new VeinMinerAbilityGroup();
-        ((AbilityGroup<VeinMinerConfig, E>) group).addLevel(new VeinMinerConfig(1, 4));
-        ((AbilityGroup<VeinMinerConfig, E>) group).addLevel(new VeinMinerConfig(1, 8));
-        ((AbilityGroup<VeinMinerConfig, E>) group).addLevel(new VeinMinerConfig(1, 16));
-        ((AbilityGroup<VeinMinerConfig, E>) group).addLevel(new VeinMinerConfig(2, 32));
-        ((AbilityGroup<VeinMinerConfig, E>) group).addLevel(new VeinMinerConfig(2, 64));
+        ((AbilityGroup<VeinMinerConfig, E>)group).addLevel(new VeinMinerConfig(1, 4));
+        ((AbilityGroup<VeinMinerConfig, E>)group).addLevel(new VeinMinerConfig(1, 8));
+        ((AbilityGroup<VeinMinerConfig, E>)group).addLevel(new VeinMinerConfig(1, 16));
+        ((AbilityGroup<VeinMinerConfig, E>)group).addLevel(new VeinMinerConfig(2, 32));
+        ((AbilityGroup<VeinMinerConfig, E>)group).addLevel(new VeinMinerConfig(2, 64));
         group.durabilityLevelConfiguration.add(new VeinMinerDurabilityConfig(1, 4, 0.1f));
         group.durabilityLevelConfiguration.add(new VeinMinerDurabilityConfig(1, 8, 0.06f));
         group.durabilityLevelConfiguration.add(new VeinMinerDurabilityConfig(1, 16, 0.04f));

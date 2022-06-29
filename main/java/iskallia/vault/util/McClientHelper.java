@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util;
 
@@ -10,7 +13,8 @@ import com.mojang.authlib.GameProfile;
 import java.util.Optional;
 import java.util.UUID;
 
-public class McClientHelper {
+public class McClientHelper
+{
     public static Optional<GameProfile> getOnlineProfile(final UUID uuid) {
         if (uuid == null) {
             return Optional.empty();
@@ -20,9 +24,7 @@ public class McClientHelper {
             return Optional.empty();
         }
         final Collection<NetworkPlayerInfo> playerInfoMap = connection.getOnlinePlayers();
-        final GameProfile gameProfile = playerInfoMap.stream()
-                .map((Function<? super NetworkPlayerInfo, ? extends GameProfile>) NetworkPlayerInfo::getProfile)
-                .filter(profile -> profile.getId().equals(uuid)).findFirst().orElse(null);
+        final GameProfile gameProfile = playerInfoMap.stream().map((Function<? super NetworkPlayerInfo, ? extends GameProfile>)NetworkPlayerInfo::getProfile).filter(profile -> profile.getId().equals(uuid)).findFirst().orElse(null);
         return Optional.ofNullable(gameProfile);
     }
 }

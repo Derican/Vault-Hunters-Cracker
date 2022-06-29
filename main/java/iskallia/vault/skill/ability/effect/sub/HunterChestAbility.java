@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -13,15 +16,15 @@ import net.minecraft.world.World;
 import iskallia.vault.skill.ability.config.sub.HunterChestsConfig;
 import iskallia.vault.skill.ability.effect.HunterAbility;
 
-public class HunterChestAbility extends HunterAbility<HunterChestsConfig> {
+public class HunterChestAbility extends HunterAbility<HunterChestsConfig>
+{
     @Override
-    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterChestsConfig config, final World world,
-            final PlayerEntity player) {
+    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterChestsConfig config, final World world, final PlayerEntity player) {
         final List<Tuple<BlockPos, Color>> entityPositions = new ArrayList<Tuple<BlockPos, Color>>();
         final Color c = new Color(config.getColor(), false);
         this.forEachTileEntity(config, world, player, (pos, tile) -> {
             if (config.shouldHighlightTileEntity(tile)) {
-                entityPositions.add(new Tuple((Object) pos, (Object) c));
+                entityPositions.add(new Tuple((Object)pos, (Object)c));
             }
             return;
         });

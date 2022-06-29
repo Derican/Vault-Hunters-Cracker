@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -21,7 +24,8 @@ import iskallia.vault.skill.ability.group.DashAbilityGroup;
 import com.google.gson.annotations.Expose;
 import iskallia.vault.skill.ability.group.CleanseAbilityGroup;
 
-public class AbilitiesConfig extends Config {
+public class AbilitiesConfig extends Config
+{
     @Expose
     public CleanseAbilityGroup CLEANSE;
     @Expose
@@ -42,34 +46,31 @@ public class AbilitiesConfig extends Config {
     public VeinMinerAbilityGroup VEIN_MINER;
     @Expose
     public HunterAbilityGroup HUNTER;
-
+    
     @Override
     public String getName() {
         return "abilities";
     }
-
+    
     public List<AbilityGroup<?, ?>> getAll() {
-        return (List<AbilityGroup<?, ?>>) Arrays.asList(this.VEIN_MINER, this.DASH, this.MEGA_JUMP, this.GHOST_WALK,
-                this.RAMPAGE, this.CLEANSE, this.TANK, this.EXECUTE, this.SUMMON_ETERNAL, this.HUNTER);
+        return (List<AbilityGroup<?, ?>>)Arrays.asList(this.VEIN_MINER, this.DASH, this.MEGA_JUMP, this.GHOST_WALK, this.RAMPAGE, this.CLEANSE, this.TANK, this.EXECUTE, this.SUMMON_ETERNAL, this.HUNTER);
     }
-
+    
     public AbilityGroup<?, ?> getAbilityGroupByName(final String name) {
-        return this.getAll().stream().filter(group -> group.getParentName().equals(name)).findFirst()
-                .orElseThrow(() -> {
-                    new IllegalStateException("Unknown ability with name " + name);
-                    return;
-                });
+        return this.getAll().stream().filter(group -> group.getParentName().equals(name)).findFirst().orElseThrow(() -> {
+            new IllegalStateException("Unknown ability with name " + name);
+            return;
+        });
     }
-
+    
     public Optional<AbilityGroup<?, ?>> getAbility(final String name) {
         return this.getAll().stream().filter(group -> group.getParentName().equals(name)).findFirst();
     }
-
+    
     public int getCooldown(final AbilityNode<?, ?> abilityNode, final ServerPlayerEntity player) {
-        return VaultGear.getCooldownReduction(player, abilityNode.getGroup(),
-                ((AbilityConfig) abilityNode.getAbilityConfig()).getCooldown());
+        return VaultGear.getCooldownReduction(player, abilityNode.getGroup(), ((AbilityConfig)abilityNode.getAbilityConfig()).getCooldown());
     }
-
+    
     @Override
     protected void reset() {
         this.CLEANSE = CleanseAbilityGroup.defaultConfig();

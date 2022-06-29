@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective;
 
@@ -53,14 +56,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = "the_vault", bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class SummonAndKillAllBossesObjective extends VaultObjective {
+public class SummonAndKillAllBossesObjective extends VaultObjective
+{
     protected int progressCount;
     protected int bossesCount;
     protected int targetCount;
     private ResourceLocation roomPool;
     private ResourceLocation tunnelPool;
     protected VListNBT<UUID, StringNBT> bosses;
-
+    
     public SummonAndKillAllBossesObjective(final ResourceLocation id) {
         super(id, VaultTask.EMPTY, VaultTask.EMPTY);
         this.targetCount = 10;
@@ -68,27 +72,27 @@ public class SummonAndKillAllBossesObjective extends VaultObjective {
         this.tunnelPool = Vault.id("vault/tunnels");
         this.bosses = VListNBT.ofUUID();
     }
-
+    
     public boolean allObelisksClicked() {
         return this.progressCount >= this.targetCount;
     }
-
+    
     public boolean allBossesDefeated() {
         return this.bossesCount >= this.targetCount;
     }
-
+    
     public void addObelisk() {
         ++this.progressCount;
     }
-
+    
     public void setRoomPool(final ResourceLocation roomPool) {
         this.roomPool = roomPool;
     }
-
+    
     public void setTunnelPool(final ResourceLocation tunnelPool) {
         this.tunnelPool = tunnelPool;
     }
-
+    
     @Nullable
     @Override
     public VaultRoomLayoutGenerator getCustomLayout() {
@@ -97,7 +101,7 @@ public class SummonAndKillAllBossesObjective extends VaultObjective {
         layout.setTunnelId(this.tunnelPool);
         return layout;
     }
-
+    
     public void completeBoss(final VaultRaid vault, final ServerWorld world, final UUID uuid) {
         if (!this.bosses.remove(uuid)) {
             return;
@@ -107,14 +111,12 @@ public class SummonAndKillAllBossesObjective extends VaultObjective {
             return;
         }
         final int level = vault.getProperties().getValue(VaultRaid.LEVEL);
-        final Set<VaultModifier> modifiers = ModConfigs.VAULT_MODIFIERS.getRandom(SummonAndKillAllBossesObjective.rand,
-                level, VaultModifiersConfig.ModifierPoolType.FINAL_TENOS_ADDS, this.getId());
+        final Set<VaultModifier> modifiers = ModConfigs.VAULT_MODIFIERS.getRandom(SummonAndKillAllBossesObjective.rand, level, VaultModifiersConfig.ModifierPoolType.FINAL_TENOS_ADDS, this.getId());
         final List<VaultModifier> modifierList = new ArrayList<VaultModifier>(modifiers);
         Collections.shuffle(modifierList);
         final VaultModifier modifier = MiscUtils.getRandomEntry(modifierList, SummonAndKillAllBossesObjective.rand);
         if (modifier != null) {
-            final ITextComponent ct = (ITextComponent) new StringTextComponent("Added ")
-                    .withStyle(TextFormatting.GRAY).append(modifier.getNameComponent());
+            final ITextComponent ct = (ITextComponent)new StringTextComponent("Added ").withStyle(TextFormatting.GRAY).append(modifier.getNameComponent());
             vault.getModifiers().addPermanentModifier(modifier);
             vault.getPlayers().forEach(vPlayer -> {
                 modifier.apply(vault, vPlayer, world, world.getRandom());
@@ -122,68 +124,63 @@ public class SummonAndKillAllBossesObjective extends VaultObjective {
             });
         }
     }
-
+    
     public void addBoss(final LivingEntity boss) {
         this.bosses.add(boss.getUUID());
     }
-
+    
     @Override
     public void setObjectiveTargetCount(final int amount) {
         this.targetCount = amount;
     }
-
+    
     @Nullable
     @Override
     public ITextComponent getObjectiveTargetDescription(final int amount) {
-        return (ITextComponent) new StringTextComponent("Find Obelisks: ").append(
-                (ITextComponent) new StringTextComponent(String.valueOf(amount)).withStyle(TextFormatting.GOLD));
+        return (ITextComponent)new StringTextComponent("Find Obelisks: ").append((ITextComponent)new StringTextComponent(String.valueOf(amount)).withStyle(TextFormatting.GOLD));
     }
-
+    
     @Nonnull
     @Override
     public BlockState getObjectiveRelevantBlock(final VaultRaid vault, final ServerWorld world, final BlockPos pos) {
         return ModBlocks.OBELISK.defaultBlockState();
     }
-
+    
     @Nullable
     @Override
-    public LootTable getRewardLootTable(final VaultRaid vault,
-            final Function<ResourceLocation, LootTable> tblResolver) {
+    public LootTable getRewardLootTable(final VaultRaid vault, final Function<ResourceLocation, LootTable> tblResolver) {
         final int level = vault.getProperties().getBase(VaultRaid.LEVEL).orElse(0);
         final LootTablesConfig.Level config = ModConfigs.LOOT_TABLES.getForLevel(level);
         return (config != null) ? tblResolver.apply(config.getBossCrate()) : LootTable.EMPTY;
     }
-
+    
     @Override
     public ITextComponent getObjectiveDisplayName() {
-        return (ITextComponent) new StringTextComponent("Kill all Bosses").withStyle(TextFormatting.GOLD);
+        return (ITextComponent)new StringTextComponent("Kill all Bosses").withStyle(TextFormatting.GOLD);
     }
-
+    
     @Override
     public void tick(final VaultRaid vault, final PlayerFilter filter, final ServerWorld world) {
         super.tick(vault, filter, world);
         if (this.isCompleted()) {
             return;
         }
-        vault.getPlayers().stream().filter(vPlayer -> filter.test(vPlayer.getPlayerId()))
-                .forEach(vPlayer -> vPlayer.runIfPresent(world.getServer(), playerEntity -> {
-                    final VaultGoalMessage pkt = this.allObelisksClicked() ? VaultGoalMessage.killBossGoal()
-                            : VaultGoalMessage.obeliskGoal(this.progressCount, this.targetCount);
-                    ModNetwork.CHANNEL.sendTo((Object) pkt, playerEntity.connection.connection,
-                            NetworkDirection.PLAY_TO_CLIENT);
-                }));
+        vault.getPlayers().stream().filter(vPlayer -> filter.test(vPlayer.getPlayerId())).forEach(vPlayer -> vPlayer.runIfPresent(world.getServer(), playerEntity -> {
+            final VaultGoalMessage pkt = this.allObelisksClicked() ? VaultGoalMessage.killBossGoal() : VaultGoalMessage.obeliskGoal(this.progressCount, this.targetCount);
+            ModNetwork.CHANNEL.sendTo((Object)pkt, playerEntity.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        }));
         if (this.allBossesDefeated()) {
             this.setCompleted();
         }
     }
-
+    
     @Override
     public void complete(final VaultRaid vault, final VaultPlayer player, final ServerWorld world) {
         super.complete(vault, player, world);
         player.sendIfPresent(world.getServer(), new BossMusicMessage(false));
         player.sendIfPresent(world.getServer(), VaultGoalMessage.clear());
     }
-
+    
     @Override
     public void complete(final VaultRaid vault, final ServerWorld world) {
         super.complete(vault, world);
@@ -192,43 +189,38 @@ public class SummonAndKillAllBossesObjective extends VaultObjective {
             player.sendIfPresent(world.getServer(), VaultGoalMessage.clear());
         });
     }
-
+    
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBossDeath(final LivingDeathEvent event) {
         if (event.getEntity().level.isClientSide()) {
             return;
         }
-        final ServerWorld world = (ServerWorld) event.getEntity().level;
+        final ServerWorld world = (ServerWorld)event.getEntity().level;
         final VaultRaid vault = VaultRaidData.get(world).getAt(world, event.getEntity().blockPosition());
         if (!VaultUtils.inVault(vault, event.getEntity())) {
             return;
         }
-        final List<SummonAndKillAllBossesObjective> matchingObjectives = vault.getPlayers().stream()
-                .map(player -> player.getActiveObjective(SummonAndKillAllBossesObjective.class))
-                .filter(Optional::isPresent).map((Function<? super Object, ?>) Optional::get)
-                .filter(o -> !o.isCompleted())
-                .collect((Collector<? super Object, ?, List<SummonAndKillAllBossesObjective>>) Collectors.toList());
+        final List<SummonAndKillAllBossesObjective> matchingObjectives = vault.getPlayers().stream().map(player -> player.getActiveObjective(SummonAndKillAllBossesObjective.class)).filter(Optional::isPresent).map((Function<? super Object, ?>)Optional::get).filter(o -> !o.isCompleted()).collect((Collector<? super Object, ?, List<SummonAndKillAllBossesObjective>>)Collectors.toList());
         if (matchingObjectives.isEmpty()) {
-            vault.getActiveObjective(SummonAndKillAllBossesObjective.class)
-                    .ifPresent(objective -> objective.completeBoss(vault, world, event.getEntity().getUUID()));
-        } else {
-            matchingObjectives
-                    .forEach(objective -> objective.completeBoss(vault, world, event.getEntity().getUUID()));
+            vault.getActiveObjective(SummonAndKillAllBossesObjective.class).ifPresent(objective -> objective.completeBoss(vault, world, event.getEntity().getUUID()));
+        }
+        else {
+            matchingObjectives.forEach(objective -> objective.completeBoss(vault, world, event.getEntity().getUUID()));
         }
     }
-
+    
     @Override
     public CompoundNBT serializeNBT() {
         final CompoundNBT nbt = super.serializeNBT();
         nbt.putInt("ProgressCount", this.progressCount);
         nbt.putInt("TargetCount", this.targetCount);
         nbt.putInt("BossesCount", this.bossesCount);
-        nbt.put("Bosses", (INBT) this.bosses.serializeNBT());
+        nbt.put("Bosses", (INBT)this.bosses.serializeNBT());
         nbt.putString("roomPool", this.roomPool.toString());
         nbt.putString("tunnelPool", this.tunnelPool.toString());
         return nbt;
     }
-
+    
     @Override
     public void deserializeNBT(final CompoundNBT nbt) {
         super.deserializeNBT(nbt);

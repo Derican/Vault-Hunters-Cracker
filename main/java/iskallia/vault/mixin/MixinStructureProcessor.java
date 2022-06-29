@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -14,21 +17,20 @@ import net.minecraft.world.gen.feature.template.StructureProcessor;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ StructureProcessor.class })
-public abstract class MixinStructureProcessor {
+public abstract class MixinStructureProcessor
+{
     @Shadow
     @Deprecated
     @Nullable
-    public abstract Template.BlockInfo processBlock(final IWorldReader p0, final BlockPos p1, final BlockPos p2,
-            final Template.BlockInfo p3, final Template.BlockInfo p4, final PlacementSettings p5);
-
+    public abstract Template.BlockInfo processBlock(final IWorldReader p0, final BlockPos p1, final BlockPos p2, final Template.BlockInfo p3, final Template.BlockInfo p4, final PlacementSettings p5);
+    
     @Inject(method = { "process" }, at = { @At("HEAD") }, cancellable = true, remap = false)
-    protected void process(final IWorldReader world, final BlockPos pos1, final BlockPos pos2,
-            final Template.BlockInfo info1, final Template.BlockInfo info2, final PlacementSettings settings,
-            @Nullable final Template template, final CallbackInfoReturnable<Template.BlockInfo> ci) {
+    protected void process(final IWorldReader world, final BlockPos pos1, final BlockPos pos2, final Template.BlockInfo info1, final Template.BlockInfo info2, final PlacementSettings settings, @Nullable final Template template, final CallbackInfoReturnable<Template.BlockInfo> ci) {
         try {
-            ci.setReturnValue((Object) this.processBlock(world, pos1, pos2, info1, info2, settings));
-        } catch (final Exception e) {
-            ci.setReturnValue((Object) null);
+            ci.setReturnValue((Object)this.processBlock(world, pos1, pos2, info1, info2, settings));
+        }
+        catch (final Exception e) {
+            ci.setReturnValue((Object)null);
         }
     }
 }

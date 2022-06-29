@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -10,12 +13,12 @@ import net.minecraft.enchantment.Enchantment;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ Enchantment.class })
-public abstract class MixinEnchantment {
+public abstract class MixinEnchantment
+{
     @Inject(method = { "canApply" }, at = { @At("HEAD") }, cancellable = true)
     private void canApply(final ItemStack stack, final CallbackInfoReturnable<Boolean> ci) {
-        if (stack.getItem() instanceof VaultGear
-                && !((VaultGear) stack.getItem()).canApply(stack, (Enchantment) this)) {
-            ci.setReturnValue((Object) false);
+        if (stack.getItem() instanceof VaultGear && !((VaultGear)stack.getItem()).canApply(stack, (Enchantment)this)) {
+            ci.setReturnValue((Object)false);
         }
     }
 }

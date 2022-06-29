@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.eternal;
 
@@ -32,19 +35,20 @@ import java.util.Map;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class ActiveEternalData {
+public class ActiveEternalData
+{
     private static final Integer ETERNAL_TIMEOUT;
     private static final ActiveEternalData INSTANCE;
     private final Map<UUID, Set<ActiveEternal>> eternals;
-
+    
     private ActiveEternalData() {
         this.eternals = new HashMap<UUID, Set<ActiveEternal>>();
     }
-
+    
     public static ActiveEternalData getInstance() {
         return ActiveEternalData.INSTANCE;
     }
-
+    
     public void updateEternal(final EternalEntity eternal) {
         final Either<UUID, ServerPlayerEntity> owner = eternal.getOwner();
         if (owner.left().isPresent()) {
@@ -81,7 +85,7 @@ public class ActiveEternalData {
             this.syncActives(ownerId, this.eternals.getOrDefault(ownerId, Collections.emptySet()));
         }
     }
-
+    
     @Nullable
     private ActiveEternal getActive(final UUID ownerId, final EternalEntity eternal) {
         final UUID eternalId = eternal.getEternalId();
@@ -93,7 +97,7 @@ public class ActiveEternalData {
         }
         return null;
     }
-
+    
     public boolean isEternalActive(final UUID eternalId) {
         for (final Set<ActiveEternal> activeEternals : this.eternals.values()) {
             for (final ActiveEternal activeEternal : activeEternals) {
@@ -104,7 +108,7 @@ public class ActiveEternalData {
         }
         return false;
     }
-
+    
     @SubscribeEvent
     public static void onTick(final TickEvent.ServerTickEvent event) {
         ActiveEternalData.INSTANCE.eternals.forEach((playerId, activeEternals) -> {
@@ -117,7 +121,7 @@ public class ActiveEternalData {
             }
         });
     }
-
+    
     @SubscribeEvent
     public static void onChangeDim(final EntityTravelToDimensionEvent event) {
         if (!(event.getEntity() instanceof ServerPlayerEntity)) {
@@ -127,13 +131,13 @@ public class ActiveEternalData {
         if (ActiveEternalData.INSTANCE.eternals.containsKey(playerId)) {
             final Set<ActiveEternal> eternals = ActiveEternalData.INSTANCE.eternals.remove(playerId);
             if (eternals != null && !eternals.isEmpty()) {
-                ActiveEternalData.INSTANCE.syncActives((ServerPlayerEntity) event.getEntity(), Collections.emptySet());
+                ActiveEternalData.INSTANCE.syncActives((ServerPlayerEntity)event.getEntity(), Collections.emptySet());
             }
         }
     }
-
+    
     private void syncActives(final UUID playerId, final Set<ActiveEternal> eternals) {
-        final MinecraftServer srv = (MinecraftServer) LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
+        final MinecraftServer srv = (MinecraftServer)LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
         if (srv == null) {
             return;
         }
@@ -143,18 +147,18 @@ public class ActiveEternalData {
         }
         this.syncActives(sPlayer, eternals);
     }
-
+    
     private void syncActives(final ServerPlayerEntity sPlayer, final Set<ActiveEternal> eternals) {
-        ModNetwork.CHANNEL.sendTo((Object) new ActiveEternalMessage(eternals), sPlayer.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT);
+        ModNetwork.CHANNEL.sendTo((Object)new ActiveEternalMessage(eternals), sPlayer.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
-
+    
     static {
         ETERNAL_TIMEOUT = 160;
         INSTANCE = new ActiveEternalData();
     }
-
-    public static class ActiveEternal {
+    
+    public static class ActiveEternal
+    {
         private final UUID eternalId;
         private final boolean ancient;
         private String eternalName;
@@ -162,9 +166,8 @@ public class ActiveEternalData {
         private float health;
         private int timeout;
         private SkinProfile skinUtil;
-
-        private ActiveEternal(final UUID eternalId, final String eternalName, final String abilityName,
-                final boolean ancient, final float health) {
+        
+        private ActiveEternal(final UUID eternalId, final String eternalName, final String abilityName, final boolean ancient, final float health) {
             this.timeout = ActiveEternalData.ETERNAL_TIMEOUT;
             this.skinUtil = null;
             this.eternalId = eternalId;
@@ -173,18 +176,15 @@ public class ActiveEternalData {
             this.ancient = ancient;
             this.health = health;
         }
-
+        
         public static ActiveEternal create(final EternalEntity eternal) {
-            return new ActiveEternal(eternal.getEternalId(), eternal.getSkinName(), eternal.getProvidedAura(),
-                    eternal.isAncient(), eternal.getHealth());
+            return new ActiveEternal(eternal.getEternalId(), eternal.getSkinName(), eternal.getProvidedAura(), eternal.isAncient(), eternal.getHealth());
         }
-
+        
         public static ActiveEternal read(final PacketBuffer buffer) {
-            return new ActiveEternal(buffer.readUUID(), buffer.readUtf(32767),
-                    buffer.readBoolean() ? buffer.readUtf(32767) : null, buffer.readBoolean(),
-                    buffer.readFloat());
+            return new ActiveEternal(buffer.readUUID(), buffer.readUtf(32767), buffer.readBoolean() ? buffer.readUtf(32767) : null, buffer.readBoolean(), buffer.readFloat());
         }
-
+        
         public void write(final PacketBuffer buffer) {
             buffer.writeUUID(this.eternalId);
             buffer.writeUtf(this.eternalName, 32767);
@@ -195,26 +195,26 @@ public class ActiveEternalData {
             buffer.writeBoolean(this.ancient);
             buffer.writeFloat(this.health);
         }
-
+        
         public String getAbilityName() {
             return this.abilityName;
         }
-
+        
         public Optional<EternalAuraConfig.AuraConfig> getAbilityConfig() {
             if (this.getAbilityName() == null) {
                 return Optional.empty();
             }
             return Optional.ofNullable(ModConfigs.ETERNAL_AURAS.getByName(this.getAbilityName()));
         }
-
+        
         public boolean isAncient() {
             return this.ancient;
         }
-
+        
         public float getHealth() {
             return this.health;
         }
-
+        
         @OnlyIn(Dist.CLIENT)
         public void updateFrom(final ActiveEternal activeEternal) {
             this.health = activeEternal.health;
@@ -226,7 +226,7 @@ public class ActiveEternalData {
                 }
             }
         }
-
+        
         @OnlyIn(Dist.CLIENT)
         public SkinProfile getSkin() {
             if (this.skinUtil == null) {
@@ -234,7 +234,7 @@ public class ActiveEternalData {
             }
             return this.skinUtil;
         }
-
+        
         @Override
         public boolean equals(final Object o) {
             if (this == o) {
@@ -243,10 +243,10 @@ public class ActiveEternalData {
             if (o == null || this.getClass() != o.getClass()) {
                 return false;
             }
-            final ActiveEternal that = (ActiveEternal) o;
+            final ActiveEternal that = (ActiveEternal)o;
             return Objects.equals(this.eternalId, that.eternalId);
         }
-
+        
         @Override
         public int hashCode() {
             return Objects.hash(this.eternalId);

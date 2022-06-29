@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.backup;
 
@@ -35,13 +38,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import java.util.regex.Pattern;
 import java.time.format.DateTimeFormatter;
 
-public class BackupManager {
+public class BackupManager
+{
     private static final DateTimeFormatter DATE_FORMAT;
     private static final Pattern DATE_FORMAT_EXTRACTOR;
-
+    
     private BackupManager() {
     }
-
+    
     public static boolean createPlayerInventorySnapshot(final ServerPlayerEntity playerEntity) {
         final MinecraftServer srv = playerEntity.getServer();
         if (srv == null) {
@@ -51,27 +55,26 @@ public class BackupManager {
         for (int index = 0; index < playerEntity.inventory.getContainerSize(); ++index) {
             final ItemStack stack = playerEntity.inventory.getItem(index);
             if (!stack.isEmpty()) {
-                list.add((Object) stack.serializeNBT());
+                list.add((Object)stack.serializeNBT());
             }
         }
         if (ModList.get().isLoaded("curios")) {
-            list.addAll((Collection) IntegrationCurios.getSerializedCuriosItemStacks((PlayerEntity) playerEntity));
+            list.addAll((Collection)IntegrationCurios.getSerializedCuriosItemStacks((PlayerEntity)playerEntity));
         }
         final CompoundNBT tag = new CompoundNBT();
-        tag.put("data", (INBT) list);
-        final File datFile = getStoredFile(srv, playerEntity.getUUID(),
-                BackupManager.DATE_FORMAT.format(LocalDateTime.now()));
+        tag.put("data", (INBT)list);
+        final File datFile = getStoredFile(srv, playerEntity.getUUID(), BackupManager.DATE_FORMAT.format(LocalDateTime.now()));
         try {
             CompressedStreamTools.write(tag, datFile);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
-
-    public static Optional<List<ItemStack>> getStoredItemStacks(final MinecraftServer server, final UUID playerUUID,
-            final String timestampRef) {
+    
+    public static Optional<List<ItemStack>> getStoredItemStacks(final MinecraftServer server, final UUID playerUUID, final String timestampRef) {
         final File storedFile = getStoredFile(server, playerUUID, timestampRef);
         if (!storedFile.exists()) {
             return Optional.empty();
@@ -79,7 +82,8 @@ public class BackupManager {
         CompoundNBT tag;
         try {
             tag = CompressedStreamTools.read(storedFile);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             e.printStackTrace();
             return Optional.empty();
         }
@@ -93,54 +97,51 @@ public class BackupManager {
         }
         return Optional.of(stacks);
     }
-
+    
     public static List<String> getMostRecentBackupFileTimestamps(final MinecraftServer server, final UUID playerUUID) {
         return getBackupFileTimestamps(server, playerUUID, 5);
     }
-
-    private static List<String> getBackupFileTimestamps(final MinecraftServer server, final UUID playerUUID,
-            final int count) {
+    
+    private static List<String> getBackupFileTimestamps(final MinecraftServer server, final UUID playerUUID, final int count) {
         final File dir = getStorageDir(server, playerUUID);
         final File[] files = dir.listFiles();
         if (files == null) {
             return Collections.emptyList();
         }
-        Comparator<? super Tuple<File, LocalDateTime>> tplTimeComparator = Comparator
-                .comparing((Function<? super Tuple<File, LocalDateTime>, ? extends Comparable>) Tuple::getB);
+        Comparator<? super Tuple<File, LocalDateTime>> tplTimeComparator = Comparator.comparing((Function<? super Tuple<File, LocalDateTime>, ? extends Comparable>)Tuple::getB);
         tplTimeComparator = tplTimeComparator.reversed();
         final long limit = (count < 0) ? Long.MAX_VALUE : count;
         return Arrays.asList(files).stream().map(file -> {
             final Matcher match = BackupManager.DATE_FORMAT_EXTRACTOR.matcher(file.getName());
             if (!match.find()) {
                 return null;
-            } else {
+            }
+            else {
                 final String dateGroup = match.group(1);
                 LocalDateTime dateTime;
                 try {
                     dateTime = LocalDateTime.parse(dateGroup, BackupManager.DATE_FORMAT);
-                } catch (final DateTimeParseException exc) {
+                }
+                catch (final DateTimeParseException exc) {
                     return null;
                 }
-                return new Tuple((Object) file, (Object) dateTime);
+                return new Tuple((Object)file, (Object)dateTime);
             }
-        }).filter(Objects::nonNull).sorted((Comparator<? super Object>) tplTimeComparator).limit(limit)
-                .map(tpl -> BackupManager.DATE_FORMAT.format((TemporalAccessor) tpl.getB()))
-                .collect((Collector<? super Object, ?, List<String>>) Collectors.toList());
+        }).filter(Objects::nonNull).sorted((Comparator<? super Object>)tplTimeComparator).limit(limit).map(tpl -> BackupManager.DATE_FORMAT.format((TemporalAccessor)tpl.getB())).collect((Collector<? super Object, ?, List<String>>)Collectors.toList());
     }
-
+    
     private static File getStoredFile(final MinecraftServer srv, final UUID playerUUID, final String timestamp) {
         return new File(getStorageDir(srv, playerUUID), timestamp + ".dat");
     }
-
+    
     private static File getStorageDir(final MinecraftServer server, final UUID playerUUID) {
-        final File dir = server.getWorldPath(FolderName.ROOT).resolve("vault_inventory_backup")
-                .resolve(playerUUID.toString()).toFile();
+        final File dir = server.getWorldPath(FolderName.ROOT).resolve("vault_inventory_backup").resolve(playerUUID.toString()).toFile();
         if (!dir.exists()) {
             dir.mkdirs();
         }
         return dir;
     }
-
+    
     static {
         DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
         DATE_FORMAT_EXTRACTOR = Pattern.compile("^(.*)\\.dat$");

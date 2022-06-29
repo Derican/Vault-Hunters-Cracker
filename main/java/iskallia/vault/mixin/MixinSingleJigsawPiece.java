@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -18,18 +21,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 
 @Mixin(value = { SingleJigsawPiece.class }, priority = 1001)
-public abstract class MixinSingleJigsawPiece extends JigsawPiece {
+public abstract class MixinSingleJigsawPiece extends JigsawPiece
+{
     @Shadow
     @Final
     protected Supplier<StructureProcessorList> processors;
-
+    
     protected MixinSingleJigsawPiece(final JigsawPattern.PlacementBehaviour projection) {
         super(projection);
     }
-
+    
     @Overwrite
-    protected PlacementSettings getSettings(final Rotation p_230379_1_, final MutableBoundingBox p_230379_2_,
-            final boolean p_230379_3_) {
+    protected PlacementSettings getSettings(final Rotation p_230379_1_, final MutableBoundingBox p_230379_2_, final boolean p_230379_3_) {
         final PlacementSettings placementsettings = new PlacementSettings();
         placementsettings.setBoundingBox(p_230379_2_);
         placementsettings.setRotation(p_230379_1_);
@@ -37,10 +40,10 @@ public abstract class MixinSingleJigsawPiece extends JigsawPiece {
         placementsettings.setIgnoreEntities(false);
         placementsettings.setFinalizeEntities(true);
         if (!p_230379_3_) {
-            placementsettings.addProcessor((StructureProcessor) JigsawReplacementStructureProcessor.INSTANCE);
+            placementsettings.addProcessor((StructureProcessor)JigsawReplacementStructureProcessor.INSTANCE);
         }
         this.processors.get().list().forEach(placementsettings::addProcessor);
-        this.getProjection().getProcessors().forEach((Consumer) placementsettings::addProcessor);
+        this.getProjection().getProcessors().forEach((Consumer)placementsettings::addProcessor);
         return placementsettings;
     }
 }

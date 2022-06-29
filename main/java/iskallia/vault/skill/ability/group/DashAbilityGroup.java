@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -12,21 +15,22 @@ import iskallia.vault.skill.ability.effect.DashAbility;
 import iskallia.vault.skill.ability.config.DashConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class DashAbilityGroup extends AbilityGroup<DashConfig, DashAbility<DashConfig>> {
+public class DashAbilityGroup extends AbilityGroup<DashConfig, DashAbility<DashConfig>>
+{
     @Expose
     private final List<DashBuffConfig> buffLevelConfiguration;
     @Expose
     private final List<DashDamageConfig> damageLevelConfiguration;
     @Expose
     private final List<DashHealConfig> healLevelConfiguration;
-
+    
     private DashAbilityGroup() {
         super("Dash");
         this.buffLevelConfiguration = new ArrayList<DashBuffConfig>();
         this.damageLevelConfiguration = new ArrayList<DashDamageConfig>();
         this.healLevelConfiguration = new ArrayList<DashHealConfig>();
     }
-
+    
     @Override
     protected DashConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -44,7 +48,7 @@ public class DashAbilityGroup extends AbilityGroup<DashConfig, DashAbility<DashC
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -62,19 +66,19 @@ public class DashAbilityGroup extends AbilityGroup<DashConfig, DashAbility<DashC
             }
         }
     }
-
+    
     public static DashAbilityGroup defaultConfig() {
         final DashAbilityGroup group = new DashAbilityGroup();
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(2, 1));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 2));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 3));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 4));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 5));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 6));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 7));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 8));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 9));
-        ((AbilityGroup<DashConfig, E>) group).addLevel(new DashConfig(1, 10));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(2, 1));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 2));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 3));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 4));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 5));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 6));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 7));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 8));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 9));
+        ((AbilityGroup<DashConfig, E>)group).addLevel(new DashConfig(1, 10));
         group.buffLevelConfiguration.add(new DashBuffConfig(2, 1, 0.1f, 140));
         group.buffLevelConfiguration.add(new DashBuffConfig(1, 2, 0.1f, 140));
         group.buffLevelConfiguration.add(new DashBuffConfig(1, 3, 0.15f, 140));

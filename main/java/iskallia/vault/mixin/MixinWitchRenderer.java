@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -12,16 +15,17 @@ import net.minecraft.client.renderer.entity.WitchRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ WitchRenderer.class })
-public class MixinWitchRenderer {
+public class MixinWitchRenderer
+{
     private static final ResourceLocation WITCHSKALL_TEXTURE;
-
+    
     @Inject(method = { "getEntityTexture" }, at = { @At("HEAD") }, cancellable = true)
     public void getEntityTexture(final WitchEntity entity, final CallbackInfoReturnable<ResourceLocation> ci) {
         if (Witchskall.isWitchskall(entity)) {
-            ci.setReturnValue((Object) MixinWitchRenderer.WITCHSKALL_TEXTURE);
+            ci.setReturnValue((Object)MixinWitchRenderer.WITCHSKALL_TEXTURE);
         }
     }
-
+    
     static {
         WITCHSKALL_TEXTURE = Vault.id("textures/entity/witchskall.png");
     }

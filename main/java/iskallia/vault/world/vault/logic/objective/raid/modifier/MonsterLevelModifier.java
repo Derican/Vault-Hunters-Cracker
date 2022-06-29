@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective.raid.modifier;
 
@@ -10,26 +13,25 @@ import net.minecraft.world.server.ServerWorld;
 import iskallia.vault.world.vault.VaultRaid;
 import net.minecraft.entity.MobEntity;
 
-public class MonsterLevelModifier extends RaidModifier {
+public class MonsterLevelModifier extends RaidModifier
+{
     public MonsterLevelModifier(final String name) {
         super(false, false, name);
     }
-
+    
     @Override
     public void affectRaidMob(final MobEntity mob, final float value) {
     }
-
+    
     @Override
-    public void onVaultRaidFinish(final VaultRaid vault, final ServerWorld world, final BlockPos controller,
-            final ActiveRaid raid, final float value) {
+    public void onVaultRaidFinish(final VaultRaid vault, final ServerWorld world, final BlockPos controller, final ActiveRaid raid, final float value) {
     }
-
+    
     @Override
     public ITextComponent getDisplay(final float value) {
-        return (ITextComponent) new StringTextComponent("+" + this.getLevelAdded(value) + " to Monster Level")
-                .withStyle(TextFormatting.RED);
+        return (ITextComponent)new StringTextComponent("+" + this.getLevelAdded(value) + " to Monster Level").withStyle(TextFormatting.RED);
     }
-
+    
     public int getLevelAdded(final float value) {
         return Math.round(value);
     }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -5,21 +8,22 @@ import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.annotations.Expose;
 
-public class VaultGearUpgradeConfig extends Config {
+public class VaultGearUpgradeConfig extends Config
+{
     @Expose
     private String defaultUpgradeRarity;
     @Expose
     private Map<String, String> upgradeMapping;
-
+    
     @Override
     public String getName() {
         return "vault_gear_upgrade";
     }
-
+    
     public String getUpgradedRarity(final String rarity) {
         return this.upgradeMapping.getOrDefault(rarity, this.defaultUpgradeRarity);
     }
-
+    
     @Override
     protected void reset() {
         this.defaultUpgradeRarity = "Scrappy";

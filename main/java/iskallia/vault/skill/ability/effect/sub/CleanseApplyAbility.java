@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -14,14 +17,13 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import iskallia.vault.skill.ability.config.sub.CleanseApplyConfig;
 import iskallia.vault.skill.ability.effect.CleanseAbility;
 
-public class CleanseApplyAbility extends CleanseAbility<CleanseApplyConfig> {
+public class CleanseApplyAbility extends CleanseAbility<CleanseApplyConfig>
+{
     @Override
-    protected void removeEffects(final CleanseApplyConfig config, final ServerPlayerEntity player,
-            final List<EffectInstance> effects) {
+    protected void removeEffects(final CleanseApplyConfig config, final ServerPlayerEntity player, final List<EffectInstance> effects) {
         super.removeEffects(config, player, effects);
         for (final EffectInstance effect : effects) {
-            final List<LivingEntity> other = EntityHelper.getNearby((IWorld) player.getCommandSenderWorld(),
-                    (Vector3i) player.blockPosition(), (float) config.getApplyRadius(), LivingEntity.class);
+            final List<LivingEntity> other = EntityHelper.getNearby((IWorld)player.getCommandSenderWorld(), (Vector3i)player.blockPosition(), (float)config.getApplyRadius(), LivingEntity.class);
             LivingEntity e = null;
             other.removeIf(e -> e instanceof PlayerEntity);
             if (!other.isEmpty()) {

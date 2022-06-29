@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -19,16 +22,15 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import iskallia.vault.skill.ability.config.sub.MegaJumpDamageConfig;
 import iskallia.vault.skill.ability.effect.MegaJumpAbility;
 
-public class MegaJumpDamageAbility extends MegaJumpAbility<MegaJumpDamageConfig> {
+public class MegaJumpDamageAbility extends MegaJumpAbility<MegaJumpDamageConfig>
+{
     @Override
     public boolean onAction(final MegaJumpDamageConfig config, final ServerPlayerEntity player, final boolean active) {
         if (super.onAction(config, player, active)) {
-            final List<LivingEntity> entities = EntityHelper.getNearby((IWorld) player.getCommandSenderWorld(),
-                    (Vector3i) player.blockPosition(), config.getRadius(), LivingEntity.class);
+            final List<LivingEntity> entities = EntityHelper.getNearby((IWorld)player.getCommandSenderWorld(), (Vector3i)player.blockPosition(), config.getRadius(), LivingEntity.class);
             entities.removeIf(e -> e instanceof PlayerEntity);
-            final float atk = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE)
-                    * config.getPercentAttackDamageDealt();
-            final DamageSource src = DamageSource.playerAttack((PlayerEntity) player);
+            final float atk = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE) * config.getPercentAttackDamageDealt();
+            final DamageSource src = DamageSource.playerAttack((PlayerEntity)player);
             for (final LivingEntity entity : entities) {
                 ActiveFlags.IS_AOE_ATTACKING.runIfNotSet(() -> {
                     if (entity.hurt(src, atk)) {
@@ -39,8 +41,7 @@ public class MegaJumpDamageAbility extends MegaJumpAbility<MegaJumpDamageConfig>
                             zDiff = (Math.random() - Math.random()) * 0.01;
                         }
                         entity.knockback(0.4f * config.getKnockbackStrengthMultiplier(), xDiff, zDiff);
-                        ServerScheduler.INSTANCE.schedule(0, () -> PlayerDamageHelper.applyMultiplier(player, 0.95f,
-                                PlayerDamageHelper.Operation.STACKING_MULTIPLY, true, config.getCooldown()));
+                        ServerScheduler.INSTANCE.schedule(0, () -> PlayerDamageHelper.applyMultiplier(player, 0.95f, PlayerDamageHelper.Operation.STACKING_MULTIPLY, true, config.getCooldown()));
                     }
                     return;
                 });

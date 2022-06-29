@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -35,25 +38,22 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.Material;
 import iskallia.vault.util.StatueType;
 
-public class OmegaVariantStatueBlock extends LootStatueBlock {
+public class OmegaVariantStatueBlock extends LootStatueBlock
+{
     public OmegaVariantStatueBlock() {
-        super(StatueType.OMEGA_VARIANT,
-                AbstractBlock.Properties.of(Material.STONE, MaterialColor.STONE)
-                        .strength(1.0f, 3600000.0f).noOcclusion());
-        this.registerDefaultState((BlockState) ((BlockState) this.getStateDefinition().any())
-                .setValue((Property) OmegaVariantStatueBlock.FACING, (Comparable) Direction.SOUTH));
+        super(StatueType.OMEGA_VARIANT, AbstractBlock.Properties.of(Material.STONE, MaterialColor.STONE).strength(1.0f, 3600000.0f).noOcclusion());
+        this.registerDefaultState((BlockState)((BlockState)this.getStateDefinition().any()).setValue((Property)OmegaVariantStatueBlock.FACING, (Comparable)Direction.SOUTH));
     }
-
+    
     @Override
-    public void setPlacedBy(final World worldIn, final BlockPos pos, final BlockState state,
-            @Nullable final LivingEntity placer, final ItemStack stack) {
+    public void setPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack) {
         if (worldIn.isClientSide || !(placer instanceof PlayerEntity)) {
             return;
         }
-        final PlayerEntity player = (PlayerEntity) placer;
+        final PlayerEntity player = (PlayerEntity)placer;
         final TileEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof LootStatueTileEntity) {
-            final LootStatueTileEntity lootStatue = (LootStatueTileEntity) tileEntity;
+            final LootStatueTileEntity lootStatue = (LootStatueTileEntity)tileEntity;
             if (stack.hasTag()) {
                 final CompoundNBT nbt = stack.getTag();
                 final CompoundNBT blockEntityTag = nbt.getCompound("BlockEntityTag");
@@ -68,27 +68,25 @@ public class OmegaVariantStatueBlock extends LootStatueBlock {
                     final ListNBT itemList = new ListNBT();
                     final List<ItemStack> options = ModConfigs.STATUE_LOOT.getOmegaOptions();
                     for (final ItemStack option : options) {
-                        itemList.add((Object) option.serializeNBT());
+                        itemList.add((Object)option.serializeNBT());
                     }
-                    data.put("Items", (INBT) itemList);
-                    data.put("Position", (INBT) NBTUtil.writeBlockPos(pos));
-                    NetworkHooks.openGui((ServerPlayerEntity) player,
-                            (INamedContainerProvider) new INamedContainerProvider() {
-                                public ITextComponent getDisplayName() {
-                                    return (ITextComponent) new StringTextComponent("Omega Statue Options");
-                                }
-
-                                @Nullable
-                                public Container createMenu(final int windowId, final PlayerInventory playerInventory,
-                                        final PlayerEntity playerEntity) {
-                                    return new OmegaStatueContainer(windowId, data);
-                                }
-                            }, buffer -> buffer.writeNbt(data));
+                    data.put("Items", (INBT)itemList);
+                    data.put("Position", (INBT)NBTUtil.writeBlockPos(pos));
+                    NetworkHooks.openGui((ServerPlayerEntity)player, (INamedContainerProvider)new INamedContainerProvider() {
+                        public ITextComponent getDisplayName() {
+                            return (ITextComponent)new StringTextComponent("Omega Statue Options");
+                        }
+                        
+                        @Nullable
+                        public Container createMenu(final int windowId, final PlayerInventory playerInventory, final PlayerEntity playerEntity) {
+                            return new OmegaStatueContainer(windowId, data);
+                        }
+                    }, buffer -> buffer.writeNbt(data));
                 }
             }
         }
     }
-
+    
     @Override
     protected void setStatueTileData(final LootStatueTileEntity lootStatue, final CompoundNBT blockEntityTag) {
         final StatueType statueType = StatueType.values()[blockEntityTag.getInt("StatueType")];
@@ -98,9 +96,9 @@ public class OmegaVariantStatueBlock extends LootStatueBlock {
         lootStatue.getSkin().updateSkin(playerNickname);
         lootStatue.setLootItem(ItemStack.of(blockEntityTag.getCompound("LootItem")));
     }
-
+    
     @Override
     protected void createBlockStateDefinition(final StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(new Property[] { (Property) OmegaVariantStatueBlock.FACING });
+        builder.add(new Property[] { (Property)OmegaVariantStatueBlock.FACING });
     }
 }

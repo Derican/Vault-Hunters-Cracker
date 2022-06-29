@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.util;
 
@@ -8,13 +11,14 @@ import net.minecraft.item.ItemStack;
 import iskallia.vault.item.gear.VaultGear;
 import net.minecraft.item.Item;
 
-public class GearItemStackBuilder {
+public class GearItemStackBuilder
+{
     int modelId;
     int specialModelId;
     int color;
     Item item;
     VaultGear.Rarity gearRarity;
-
+    
     public GearItemStackBuilder(final Item item) {
         this.modelId = -1;
         this.specialModelId = -1;
@@ -26,29 +30,29 @@ public class GearItemStackBuilder {
         }
         this.item = item;
     }
-
+    
     public GearItemStackBuilder setColor(final int color) {
         this.color = color;
         return this;
     }
-
+    
     public GearItemStackBuilder setModelId(final int modelId) {
         this.modelId = modelId;
         return this;
     }
-
+    
     public GearItemStackBuilder setSpecialModelId(final int specialModelId) {
         this.specialModelId = specialModelId;
         return this;
     }
-
+    
     public GearItemStackBuilder setGearRarity(final VaultGear.Rarity gearRarity) {
         this.gearRarity = gearRarity;
         return this;
     }
-
+    
     public ItemStack build() {
-        final ItemStack itemStack = new ItemStack((IItemProvider) this.item);
+        final ItemStack itemStack = new ItemStack((IItemProvider)this.item);
         ModAttributes.GEAR_STATE.create(itemStack, VaultGear.State.IDENTIFIED);
         ModAttributes.GEAR_RARITY.create(itemStack, this.gearRarity);
         itemStack.getOrCreateTag().remove("RollTicks");

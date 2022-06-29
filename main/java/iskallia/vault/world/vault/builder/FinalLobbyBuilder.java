@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.builder;
 
@@ -21,25 +24,21 @@ import iskallia.vault.item.crystal.CrystalData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ServerWorld;
 
-public class FinalLobbyBuilder extends VaultRaidBuilder {
+public class FinalLobbyBuilder extends VaultRaidBuilder
+{
     private static final FinalLobbyBuilder INSTANCE;
-
+    
     private FinalLobbyBuilder() {
     }
-
+    
     public static FinalLobbyBuilder getInstance() {
         return FinalLobbyBuilder.INSTANCE;
     }
-
+    
     @Override
-    public VaultRaid.Builder initializeBuilder(final ServerWorld world, final ServerPlayerEntity player,
-            final CrystalData crystal) {
+    public VaultRaid.Builder initializeBuilder(final ServerWorld world, final ServerPlayerEntity player, final CrystalData crystal) {
         final VaultRaid.Builder builder = this.getDefaultBuilder(crystal, world, player);
-        final Set<UUID> players = crystal.getFrameData().tiles.stream()
-                .filter(tile -> tile.block == ModBlocks.FINAL_VAULT_FRAME)
-                .filter(tile -> tile.data.contains("OwnerUUID", 8))
-                .map(tile -> UUID.fromString(tile.data.getString("OwnerUUID")))
-                .collect((Collector<? super Object, ?, Set<UUID>>) Collectors.toSet());
+        final Set<UUID> players = crystal.getFrameData().tiles.stream().filter(tile -> tile.block == ModBlocks.FINAL_VAULT_FRAME).filter(tile -> tile.data.contains("OwnerUUID", 8)).map(tile -> UUID.fromString(tile.data.getString("OwnerUUID"))).collect((Collector<? super Object, ?, Set<UUID>>)Collectors.toSet());
         if (!players.contains(player.getUUID())) {
             return null;
         }
@@ -49,7 +48,7 @@ public class FinalLobbyBuilder extends VaultRaidBuilder {
                 return null;
             }
         }
-        if (world.getGameRules().getBoolean((GameRules.RuleKey) ModGameRules.FINAL_VAULT_ALLOW_PARTY)) {
+        if (world.getGameRules().getBoolean((GameRules.RuleKey)ModGameRules.FINAL_VAULT_ALLOW_PARTY)) {
             final VaultPartyData data = VaultPartyData.get(world);
             for (final UUID uuid2 : new ArrayList(players)) {
                 data.getParty(uuid2).ifPresent(party -> players.addAll(party.getMembers()));
@@ -65,7 +64,7 @@ public class FinalLobbyBuilder extends VaultRaidBuilder {
         builder.setGenerator(VaultRaid.FINAL_LOBBY);
         return builder;
     }
-
+    
     static {
         INSTANCE = new FinalLobbyBuilder();
     }

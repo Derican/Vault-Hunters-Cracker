@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.util;
 
@@ -19,7 +22,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientEffectHelper {
+public class ClientEffectHelper
+{
     public static void doEffect(final EffectMessage pkt) {
         final EffectMessage.Type type = pkt.getEffectType();
         switch (type) {
@@ -33,27 +37,23 @@ public class ClientEffectHelper {
             }
         }
     }
-
+    
     private static void playClientSound(final PacketBuffer data) {
-        final SoundEvent event = (SoundEvent) Registry.SOUND_EVENT
-                .get(new ResourceLocation(data.readUtf()));
-        final SoundCategory category = (SoundCategory) data.readEnum((Class) SoundCategory.class);
+        final SoundEvent event = (SoundEvent)Registry.SOUND_EVENT.get(new ResourceLocation(data.readUtf()));
+        final SoundCategory category = (SoundCategory)data.readEnum((Class)SoundCategory.class);
         final float pitch = data.readFloat();
         final float volume = data.readFloat();
-        final PlayerEntity player = (PlayerEntity) Minecraft.getInstance().player;
+        final PlayerEntity player = (PlayerEntity)Minecraft.getInstance().player;
         if (player == null) {
             return;
         }
         final Vector3d pos = player.position();
-        player.getCommandSenderWorld().playLocalSound(pos.x, pos.y + 1.0, pos.z, event,
-                category, pitch, volume, false);
+        player.getCommandSenderWorld().playLocalSound(pos.x, pos.y + 1.0, pos.z, event, category, pitch, volume, false);
     }
-
+    
     private static void spawnColoredFirework(final Vector3d pos, final int color) {
         final ParticleManager mgr = Minecraft.getInstance().particleEngine;
-        final SimpleAnimatedParticle fwParticle = (SimpleAnimatedParticle) mgr.createParticle(
-                (IParticleData) ParticleTypes.FIREWORK, pos.x(), pos.y(),
-                pos.z(), 0.0, 0.0, 0.0);
+        final SimpleAnimatedParticle fwParticle = (SimpleAnimatedParticle)mgr.createParticle((IParticleData)ParticleTypes.FIREWORK, pos.x(), pos.y(), pos.z(), 0.0, 0.0, 0.0);
         final Color c = new Color(color);
         fwParticle.setColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f);
         fwParticle.baseGravity = 0.0f;

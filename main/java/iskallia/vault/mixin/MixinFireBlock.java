@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -13,10 +16,10 @@ import net.minecraft.block.FireBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ FireBlock.class })
-public class MixinFireBlock {
+public class MixinFireBlock
+{
     @Inject(method = { "tick" }, at = { @At("HEAD") }, cancellable = true)
-    public void onFireTick(final BlockState state, final ServerWorld world, final BlockPos pos, final Random rand,
-            final CallbackInfo ci) {
+    public void onFireTick(final BlockState state, final ServerWorld world, final BlockPos pos, final Random rand, final CallbackInfo ci) {
         if (world.dimension() == Vault.VAULT_KEY) {
             ci.cancel();
         }

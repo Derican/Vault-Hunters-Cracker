@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.gen;
 
@@ -50,20 +53,21 @@ import net.minecraft.util.ResourceLocation;
 import iskallia.vault.config.VaultSizeConfig;
 import iskallia.vault.world.vault.gen.layout.VaultRoomLayoutGenerator;
 
-public class FragmentedVaultGenerator extends VaultGenerator {
+public class FragmentedVaultGenerator extends VaultGenerator
+{
     public static final int REGION_SIZE = 8192;
     private VaultRoomLayoutGenerator layoutGenerator;
     private VaultSizeConfig.SizeLayout layout;
-
+    
     public FragmentedVaultGenerator(final ResourceLocation id) {
         super(id);
     }
-
+    
     public FragmentedVaultGenerator setLayout(final VaultSizeConfig.SizeLayout layout) {
         this.layout = layout;
         return this;
     }
-
+    
     @Nonnull
     protected VaultRoomLayoutGenerator provideLayoutGenerator(final VaultSizeConfig.SizeLayout layout) {
         VaultRoomLayoutGenerator generator = VaultRoomLayoutRegistry.getLayoutGenerator(layout.getLayout());
@@ -73,45 +77,31 @@ public class FragmentedVaultGenerator extends VaultGenerator {
         generator.setSize(layout.getSize());
         return generator;
     }
-
+    
     @Override
     public boolean generate(final ServerWorld world, final VaultRaid vault, final BlockPos.Mutable pos) {
         final MutableBoundingBox vaultBox = this.generateBoundingBox(vault, pos.immutable());
         pos.move(Direction.EAST, 8192);
         final boolean raffle = vault.getProperties().getBase(VaultRaid.IS_RAFFLE).orElse(false);
         final int level = vault.getProperties().getBase(VaultRaid.LEVEL).orElse(0);
-        final boolean generatesTreasureRooms = vault.getProperties().getBase(VaultRaid.CRYSTAL_DATA)
-                .map((Function<? super CrystalData, ? extends Boolean>) CrystalData::canGenerateTreasureRooms)
-                .orElse(true);
-        final VaultSizeConfig.SizeLayout layout = (this.layout != null) ? this.layout
-                : ModConfigs.VAULT_SIZE.getLayout(level, raffle);
+        final boolean generatesTreasureRooms = vault.getProperties().getBase(VaultRaid.CRYSTAL_DATA).map((Function<? super CrystalData, ? extends Boolean>)CrystalData::canGenerateTreasureRooms).orElse(true);
+        final VaultSizeConfig.SizeLayout layout = (this.layout != null) ? this.layout : ModConfigs.VAULT_SIZE.getLayout(level, raffle);
         if (this.layoutGenerator == null) {
-            this.layoutGenerator = vault.getAllObjectives().stream().findFirst()
-                    .map((Function<? super Object, ? extends VaultRoomLayoutGenerator>) VaultObjective::getCustomLayout)
-                    .orElse(this.provideLayoutGenerator(layout));
+            this.layoutGenerator = vault.getAllObjectives().stream().findFirst().map((Function<? super Object, ? extends VaultRoomLayoutGenerator>)VaultObjective::getCustomLayout).orElse(this.provideLayoutGenerator(layout));
         }
         final VaultRoomLayoutGenerator.Layout vaultLayout = this.layoutGenerator.generateLayout();
         this.setGuaranteedRooms(vaultLayout, vault);
         VaultRoomLevelRestrictions.addGenerationPreventions(vaultLayout, level);
         this.startChunk = new ChunkPos(new BlockPos(vaultBox.getCenter()));
-        final FragmentedJigsawGenerator gen = new FragmentedJigsawGenerator(vaultBox,
-                this.startChunk.getWorldPosition().offset(0, 19, 0), generatesTreasureRooms, this.layoutGenerator,
-                vaultLayout);
-        final StructureStart<?> start = ModFeatures.VAULT_FEATURE.generate(gen, world.registryAccess(),
-                world.getChunkSource().generator, world.getStructureManager(), 0, world.getSeed());
+        final FragmentedJigsawGenerator gen = new FragmentedJigsawGenerator(vaultBox, this.startChunk.getWorldPosition().offset(0, 19, 0), generatesTreasureRooms, this.layoutGenerator, vaultLayout);
+        final StructureStart<?> start = ModFeatures.VAULT_FEATURE.generate(gen, world.registryAccess(), world.getChunkSource().generator, world.getStructureManager(), 0, world.getSeed());
         gen.getGeneratedPieces().stream().flatMap(piece -> VaultPiece.of(piece).stream()).forEach(this.pieces::add);
         this.removeRandomObjectivePieces(vault, gen, layout.getObjectiveRoomRatio());
-        world.getChunk(this.startChunk.x, this.startChunk.z, ChunkStatus.EMPTY,
-                true).setStartForFeature((Structure) ModStructures.VAULT_STAR, (StructureStart) start);
+        world.getChunk(this.startChunk.x, this.startChunk.z, ChunkStatus.EMPTY, true).setStartForFeature((Structure)ModStructures.VAULT_STAR, (StructureStart)start);
         this.tick(world, vault);
-        return (!vault.getProperties().exists(VaultRaid.START_POS)
-                || !vault.getProperties().exists(VaultRaid.START_FACING))
-                && this.findStartPosition(world, vault, this.startChunk, () -> new PortalPlacer(
-                        (pos1, random, facing) -> ModBlocks.VAULT_PORTAL.defaultBlockState().setValue(
-                                (Property) VaultPortalBlock.AXIS, (Comparable) facing.getAxis()),
-                        (pos1, random, facing) -> Blocks.BLACKSTONE.defaultBlockState()));
+        return (!vault.getProperties().exists(VaultRaid.START_POS) || !vault.getProperties().exists(VaultRaid.START_FACING)) && this.findStartPosition(world, vault, this.startChunk, () -> new PortalPlacer((pos1, random, facing) -> ModBlocks.VAULT_PORTAL.defaultBlockState().setValue((Property)VaultPortalBlock.AXIS, (Comparable)facing.getAxis()), (pos1, random, facing) -> Blocks.BLACKSTONE.defaultBlockState()));
     }
-
+    
     private void setGuaranteedRooms(final VaultRoomLayoutGenerator.Layout vaultLayout, final VaultRaid vault) {
         final CrystalData data = vault.getProperties().getBaseOrDefault(VaultRaid.CRYSTAL_DATA, CrystalData.EMPTY);
         final Collection<VaultRoomLayoutGenerator.Room> rooms = vaultLayout.getRooms();
@@ -131,47 +121,39 @@ public class FragmentedVaultGenerator extends VaultGenerator {
             }
         });
     }
-
-    private void removeRandomObjectivePieces(final VaultRaid vault, final FragmentedJigsawGenerator generator,
-            final float objectiveRatio) {
-        final List<StructurePiece> obeliskPieces = generator.getGeneratedPieces().stream()
-                .filter((Predicate<? super Object>) this::isObjectivePiece)
-                .collect((Collector<? super Object, ?, List<StructurePiece>>) Collectors.toList());
+    
+    private void removeRandomObjectivePieces(final VaultRaid vault, final FragmentedJigsawGenerator generator, final float objectiveRatio) {
+        final List<StructurePiece> obeliskPieces = generator.getGeneratedPieces().stream().filter((Predicate<? super Object>)this::isObjectivePiece).collect((Collector<? super Object, ?, List<StructurePiece>>)Collectors.toList());
         Collections.shuffle(obeliskPieces);
         final int maxObjectives = MathHelper.floor(obeliskPieces.size() / objectiveRatio);
-        int objectiveCount = vault.getAllObjectives().stream().findFirst()
-                .map(objective -> objective.modifyObjectiveCount(maxObjectives)).orElse(maxObjectives);
-        final int requiredCount = vault.getProperties().getBaseOrDefault(VaultRaid.CRYSTAL_DATA, CrystalData.EMPTY)
-                .getTargetObjectiveCount();
+        int objectiveCount = vault.getAllObjectives().stream().findFirst().map(objective -> objective.modifyObjectiveCount(maxObjectives)).orElse(maxObjectives);
+        final int requiredCount = vault.getProperties().getBaseOrDefault(VaultRaid.CRYSTAL_DATA, CrystalData.EMPTY).getTargetObjectiveCount();
         if (requiredCount != -1) {
-            objectiveCount = vault.getAllObjectives().stream().findFirst()
-                    .map(objective -> objective.modifyMinimumObjectiveCount(maxObjectives, requiredCount))
-                    .orElse(objectiveCount);
+            objectiveCount = vault.getAllObjectives().stream().findFirst().map(objective -> objective.modifyMinimumObjectiveCount(maxObjectives, requiredCount)).orElse(objectiveCount);
         }
         for (int i = objectiveCount; i < obeliskPieces.size(); ++i) {
             generator.removePiece(obeliskPieces.get(i));
         }
     }
-
+    
     private MutableBoundingBox generateBoundingBox(final VaultRaid vault, final BlockPos pos) {
         final MutableBoundingBox box = vault.getProperties().getBase(VaultRaid.BOUNDING_BOX).orElseGet(() -> {
             final BlockPos max = pos.offset(8192, 0, 8192);
-            return new MutableBoundingBox(pos.getX(), 0, pos.getZ(), max.getX(), 256,
-                    max.getZ());
+            return new MutableBoundingBox(pos.getX(), 0, pos.getZ(), max.getX(), 256, max.getZ());
         });
         vault.getProperties().create(VaultRaid.BOUNDING_BOX, box);
         return box;
     }
-
+    
     @Override
     public CompoundNBT serializeNBT() {
         final CompoundNBT tag = super.serializeNBT();
         if (this.layoutGenerator != null) {
-            tag.put("Layout", (INBT) VaultRoomLayoutRegistry.serialize(this.layoutGenerator));
+            tag.put("Layout", (INBT)VaultRoomLayoutRegistry.serialize(this.layoutGenerator));
         }
         return tag;
     }
-
+    
     @Override
     public void deserializeNBT(final CompoundNBT nbt) {
         super.deserializeNBT(nbt);

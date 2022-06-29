@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -12,40 +15,39 @@ import iskallia.vault.item.RelicPartItem;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 
-public class VaultRelicsConfig extends Config {
+public class VaultRelicsConfig extends Config
+{
     @Expose
     private int extraTickPerSet;
     @Expose
     private List<Relic> relicDrops;
-
+    
     @Override
     public String getName() {
         return "vault_relics";
     }
-
+    
     public int getExtraTickPerSet() {
         return this.extraTickPerSet;
     }
-
+    
     public RelicPartItem getRandomPart() {
         this.relicDrops.sort(Comparator.comparingInt(a -> a.WEIGHT));
         final int totalWeight = this.relicDrops.stream().mapToInt(relic -> relic.WEIGHT).sum();
         int random = new Random().nextInt(totalWeight);
         for (final Relic relicDrop : this.relicDrops) {
             if (random < relicDrop.WEIGHT) {
-                return (RelicPartItem) Registry.ITEM.get(new ResourceLocation(relicDrop.NAME));
+                return (RelicPartItem)Registry.ITEM.get(new ResourceLocation(relicDrop.NAME));
             }
             random -= relicDrop.WEIGHT;
         }
-        return (RelicPartItem) Registry.ITEM
-                .get(new ResourceLocation(this.relicDrops.get(this.relicDrops.size() - 1).NAME));
+        return (RelicPartItem)Registry.ITEM.get(new ResourceLocation(this.relicDrops.get(this.relicDrops.size() - 1).NAME));
     }
-
+    
     @Override
     protected void reset() {
         this.extraTickPerSet = 1200;
-        (this.relicDrops = new LinkedList<Relic>())
-                .add(new Relic(ModItems.DRAGON_HEAD_RELIC.getRegistryName().toString(), 1));
+        (this.relicDrops = new LinkedList<Relic>()).add(new Relic(ModItems.DRAGON_HEAD_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.DRAGON_TAIL_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.DRAGON_FOOT_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.DRAGON_CHEST_RELIC.getRegistryName().toString(), 1));
@@ -91,13 +93,14 @@ public class VaultRelicsConfig extends Config {
         this.relicDrops.add(new Relic(ModItems.REVERENCE_EDGE_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.WINGS_OF_EQUITY_RELIC.getRegistryName().toString(), 1));
     }
-
-    public static class Relic {
+    
+    public static class Relic
+    {
         @Expose
         public String NAME;
         @Expose
         public int WEIGHT;
-
+        
         public Relic(final String name, final int weight) {
             this.NAME = name;
             this.WEIGHT = weight;

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -12,19 +15,20 @@ import java.util.ArrayList;
 import com.google.gson.annotations.Expose;
 import java.util.List;
 
-public class LootTablesConfig extends Config {
+public class LootTablesConfig extends Config
+{
     @Expose
     protected List<Level> LEVELS;
-
+    
     public LootTablesConfig() {
         this.LEVELS = new ArrayList<Level>();
     }
-
+    
     @Override
     public String getName() {
         return "loot_table";
     }
-
+    
     @Override
     protected void reset() {
         final Level level = new Level(0);
@@ -62,7 +66,7 @@ public class LootTablesConfig extends Config {
         level.CRYSTAL_TYPE.add(CrystalData.Type.COOP, 1);
         this.LEVELS.add(level);
     }
-
+    
     public Level getForLevel(final int level) {
         int i = 0;
         while (i < this.LEVELS.size()) {
@@ -71,7 +75,8 @@ public class LootTablesConfig extends Config {
                     break;
                 }
                 return this.LEVELS.get(i - 1);
-            } else {
+            }
+            else {
                 if (i == this.LEVELS.size() - 1) {
                     return this.LEVELS.get(i);
                 }
@@ -80,8 +85,9 @@ public class LootTablesConfig extends Config {
         }
         return null;
     }
-
-    public static class Level {
+    
+    public static class Level
+    {
         @Expose
         public int MIN_LEVEL;
         @Expose
@@ -116,7 +122,7 @@ public class LootTablesConfig extends Config {
         public float SUB_FIGHTER_RAFFLE_SEAL_CHANCE;
         @Expose
         public WeightedList<CrystalData.Type> CRYSTAL_TYPE;
-
+        
         public Level(final int minLevel) {
             this.VAULT_CHEST = new LinkedHashMap<String, String>();
             this.TREASURE_CHEST = new LinkedHashMap<String, String>();
@@ -126,63 +132,63 @@ public class LootTablesConfig extends Config {
             this.CRYSTAL_TYPE = new WeightedList<CrystalData.Type>();
             this.MIN_LEVEL = minLevel;
         }
-
+        
         public ResourceLocation getChest(final VaultRarity rarity) {
-            return new ResourceLocation((String) this.VAULT_CHEST.get(rarity.name()));
+            return new ResourceLocation((String)this.VAULT_CHEST.get(rarity.name()));
         }
-
+        
         public ResourceLocation getTreasureChest(final VaultRarity rarity) {
-            return new ResourceLocation((String) this.TREASURE_CHEST.get(rarity.name()));
+            return new ResourceLocation((String)this.TREASURE_CHEST.get(rarity.name()));
         }
-
+        
         public ResourceLocation getAltarChest(final VaultRarity rarity) {
-            return new ResourceLocation((String) this.ALTAR_CHEST.get(rarity.name()));
+            return new ResourceLocation((String)this.ALTAR_CHEST.get(rarity.name()));
         }
-
+        
         public ResourceLocation getCoopChest(final VaultRarity rarity) {
-            return new ResourceLocation((String) this.COOP_CHEST.get(rarity.name()));
+            return new ResourceLocation((String)this.COOP_CHEST.get(rarity.name()));
         }
-
+        
         public ResourceLocation getBonusChest(final VaultRarity rarity) {
-            return new ResourceLocation((String) this.BONUS_CHEST.get(rarity.name()));
+            return new ResourceLocation((String)this.BONUS_CHEST.get(rarity.name()));
         }
-
+        
         public ResourceLocation getAltar() {
             return new ResourceLocation(this.ALTAR);
         }
-
+        
         public ResourceLocation getBossCrate() {
             return new ResourceLocation(this.BOSS_CRATE);
         }
-
+        
         public ResourceLocation getScavengerCrate() {
             return new ResourceLocation(this.SCAVENGER_CRATE);
         }
-
+        
         public ResourceLocation getAncientEternalBonusBox() {
             return new ResourceLocation(this.ANCIENT_ETERNAL_BOX);
         }
-
+        
         public ResourceLocation getBossBonusCrate() {
             return new ResourceLocation(this.BOSS_BONUS_CRATE);
         }
-
+        
         public ResourceLocation getVaultFighter() {
             return new ResourceLocation(this.VAULT_FIGHTER);
         }
-
+        
         public ResourceLocation getCow() {
             return new ResourceLocation(this.COW);
         }
-
+        
         public ResourceLocation getTreasureGoblin() {
             return new ResourceLocation(this.TREASURE_GOBLIN);
         }
-
+        
         public float getArtifactChance() {
             return this.ARTIFACT_CHANCE;
         }
-
+        
         public float getSubFighterRaffleChance() {
             return this.SUB_FIGHTER_RAFFLE_SEAL_CHANCE;
         }

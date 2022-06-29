@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -40,17 +43,17 @@ import net.minecraft.item.ItemGroup;
 import java.util.Random;
 import net.minecraft.item.Item;
 
-public class VaultCatalystItem extends Item {
+public class VaultCatalystItem extends Item
+{
     private static final Random rand;
-
+    
     public VaultCatalystItem(final ItemGroup group, final ResourceLocation id) {
         super(new Item.Properties().tab(group).stacksTo(1));
         this.setRegistryName(id);
     }
-
+    
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(final ItemStack stack, @Nullable final World world, final List<ITextComponent> tooltip,
-            final ITooltipFlag flag) {
+    public void appendHoverText(final ItemStack stack, @Nullable final World world, final List<ITextComponent> tooltip, final ITooltipFlag flag) {
         getModifierRolls(stack).ifPresent(result -> {
             if (!result.isEmpty()) {
                 final String modifierDesc = String.format("Adds Modifier%s:", (result.size() <= 1) ? "" : "s");
@@ -65,14 +68,13 @@ public class VaultCatalystItem extends Item {
             }
         });
     }
-
-    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot,
-            final boolean isSelected) {
+    
+    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot, final boolean isSelected) {
         if (world.isClientSide()) {
             return;
         }
         if (world instanceof ServerWorld) {
-            final ServerPlayerEntity player = (ServerPlayerEntity) entity;
+            final ServerPlayerEntity player = (ServerPlayerEntity)entity;
             if (stack.getCount() > 1) {
                 while (stack.getCount() > 1) {
                     stack.shrink(1);
@@ -88,22 +90,21 @@ public class VaultCatalystItem extends Item {
         }
         getSeed(stack);
     }
-
+    
     public static ItemStack createRandom() {
-        final ItemStack stack = new ItemStack((IItemProvider) ModItems.VAULT_CATALYST);
+        final ItemStack stack = new ItemStack((IItemProvider)ModItems.VAULT_CATALYST);
         setModifierRolls(stack, createRandomModifiers());
         return stack;
     }
-
+    
     private static List<ModifierRollResult> createRandomModifiers() {
         final CompoundModifierOutcome randomOutcome = ModConfigs.VAULT_CRYSTAL_CATALYST.getModifiers();
         if (randomOutcome == null) {
             return Collections.emptyList();
         }
-        return randomOutcome.getRolls().stream().map(outcome -> outcome.resolve(VaultCatalystItem.rand))
-                .collect((Collector<? super Object, ?, List<ModifierRollResult>>) Collectors.toList());
+        return randomOutcome.getRolls().stream().map(outcome -> outcome.resolve(VaultCatalystItem.rand)).collect((Collector<? super Object, ?, List<ModifierRollResult>>)Collectors.toList());
     }
-
+    
     public static long getSeed(final ItemStack stack) {
         if (!(stack.getItem() instanceof VaultCatalystItem)) {
             return 0L;
@@ -114,7 +115,7 @@ public class VaultCatalystItem extends Item {
         }
         return nbt.getLong("Seed");
     }
-
+    
     @Nullable
     public static List<String> getCrystalCombinationModifiers(final ItemStack catalyst, final ItemStack crystal) {
         final CrystalData data = VaultCrystalItem.getData(crystal.copy());
@@ -133,11 +134,8 @@ public class VaultCatalystItem extends Item {
         }
         final List<String> newModifiers = new ArrayList<String>();
         for (final ModifierRollResult modifierRoll : rolls) {
-            final List<String> usedModifiers = data.getModifiers().stream()
-                    .map((Function<? super Object, ?>) CrystalData.Modifier::getModifierName)
-                    .collect((Collector<? super Object, ?, List<String>>) Collectors.toList());
-            final String availableModifier = modifierRoll.getModifier(rand,
-                    modifierStr -> usedModifiers.contains(modifierStr) || newModifiers.contains(modifierStr));
+            final List<String> usedModifiers = data.getModifiers().stream().map((Function<? super Object, ?>)CrystalData.Modifier::getModifierName).collect((Collector<? super Object, ?, List<String>>)Collectors.toList());
+            final String availableModifier = modifierRoll.getModifier(rand, modifierStr -> usedModifiers.contains(modifierStr) || newModifiers.contains(modifierStr));
             if (availableModifier == null) {
                 return null;
             }
@@ -148,27 +146,23 @@ public class VaultCatalystItem extends Item {
         }
         return newModifiers;
     }
-
+    
     public static Optional<List<ModifierRollResult>> getModifierRolls(final ItemStack stack) {
         if (!(stack.getItem() instanceof VaultCatalystItem)) {
             return Optional.empty();
         }
         final CompoundNBT tag = stack.getOrCreateTag();
-        return CodecUtils.readNBT(
-                (com.mojang.serialization.Codec<List<ModifierRollResult>>) ModifierRollResult.CODEC.listOf(),
-                (INBT) tag.getList("modifiers", 10));
+        return CodecUtils.readNBT((com.mojang.serialization.Codec<List<ModifierRollResult>>)ModifierRollResult.CODEC.listOf(), (INBT)tag.getList("modifiers", 10));
     }
-
+    
     public static void setModifierRolls(final ItemStack stack, final List<ModifierRollResult> result) {
         if (!(stack.getItem() instanceof VaultCatalystItem)) {
             return;
         }
         final CompoundNBT tag = stack.getOrCreateTag();
-        CodecUtils.writeNBT(
-                (com.mojang.serialization.Codec<List<ModifierRollResult>>) ModifierRollResult.CODEC.listOf(), result,
-                nbt -> tag.put("modifiers", nbt));
+        CodecUtils.writeNBT((com.mojang.serialization.Codec<List<ModifierRollResult>>)ModifierRollResult.CODEC.listOf(), result, nbt -> tag.put("modifiers", nbt));
     }
-
+    
     static {
         rand = new Random();
     }

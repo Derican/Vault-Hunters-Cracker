@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -15,16 +18,17 @@ import net.minecraft.inventory.container.Slot;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ Slot.class })
-public abstract class MixinSlot {
+public abstract class MixinSlot
+{
     @Shadow
     public abstract ItemStack getItem();
-
+    
     @Shadow
     public abstract boolean hasItem();
-
+    
     @Inject(method = { "canTakeStack" }, at = { @At("HEAD") }, cancellable = true)
     public void preventRestrictedTake(final PlayerEntity player, final CallbackInfoReturnable<Boolean> cir) {
-        final Slot thisSlot = (Slot) this;
+        final Slot thisSlot = (Slot)this;
         if (!(thisSlot instanceof CraftingResultSlot)) {
             return;
         }
@@ -33,10 +37,9 @@ public abstract class MixinSlot {
         }
         final ItemStack resultStack = this.getItem();
         final ResearchTree researchTree = StageManager.getResearchTree(player);
-        final String restrictedBy = researchTree.restrictedBy(resultStack.getItem(),
-                Restrictions.Type.CRAFTABILITY);
+        final String restrictedBy = researchTree.restrictedBy(resultStack.getItem(), Restrictions.Type.CRAFTABILITY);
         if (restrictedBy != null) {
-            cir.setReturnValue((Object) false);
+            cir.setReturnValue((Object)false);
         }
     }
 }

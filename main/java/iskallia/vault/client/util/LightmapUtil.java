@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.util;
 
@@ -5,7 +8,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import iskallia.vault.client.gui.helper.LightmapHelper;
 import net.minecraft.client.Minecraft;
 
-public class LightmapUtil {
+public class LightmapUtil
+{
     public static float getLightmapBrightness(final int packedLight) {
         final DynamicTexture lightTex = Minecraft.getInstance().gameRenderer.lightTexture().lightTexture;
         if (lightTex.getPixels() == null) {

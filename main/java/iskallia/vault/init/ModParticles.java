@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -19,7 +22,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = "the_vault", bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ModParticles {
+public class ModParticles
+{
     public static final DeferredRegister<ParticleType<?>> REGISTRY;
     public static final RegistryObject<BasicParticleType> GREEN_FLAME;
     public static final RegistryObject<BasicParticleType> BLUE_FLAME;
@@ -29,24 +33,20 @@ public class ModParticles {
     public static final RegistryObject<BasicParticleType> STABILIZER_CUBE;
     public static final RegistryObject<BasicParticleType> RAID_EFFECT_CUBE;
     public static final RegistryObject<BasicParticleType> EYESORE_APPEARANCE;
-
+    
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerParticles(final ParticleFactoryRegisterEvent event) {
         final ParticleManager particleManager = Minecraft.getInstance().particleEngine;
-        particleManager.register((ParticleType) ModParticles.GREEN_FLAME.get(), AltarFlameParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.BLUE_FLAME.get(), AltarFlameParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.RED_FLAME.get(), AltarFlameParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.YELLOW_FLAME.get(), AltarFlameParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.DEPTH_FIREWORK.get(),
-                DepthFireworkParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.STABILIZER_CUBE.get(),
-                StabilizerCubeParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.RAID_EFFECT_CUBE.get(),
-                RaidCubeParticle.Factory::new);
-        particleManager.register((ParticleType) ModParticles.EYESORE_APPEARANCE.get(),
-                EyesoreAppearanceParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.GREEN_FLAME.get(), AltarFlameParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.BLUE_FLAME.get(), AltarFlameParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.RED_FLAME.get(), AltarFlameParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.YELLOW_FLAME.get(), AltarFlameParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.DEPTH_FIREWORK.get(), DepthFireworkParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.STABILIZER_CUBE.get(), StabilizerCubeParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.RAID_EFFECT_CUBE.get(), RaidCubeParticle.Factory::new);
+        particleManager.register((ParticleType)ModParticles.EYESORE_APPEARANCE.get(), EyesoreAppearanceParticle.Factory::new);
     }
-
+    
     static {
         REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, "the_vault");
         GREEN_FLAME = ModParticles.REGISTRY.register("green_flame", () -> new BasicParticleType(true));

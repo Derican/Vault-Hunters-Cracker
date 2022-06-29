@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.talent.type;
 
@@ -23,69 +26,68 @@ import java.util.Set;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class StepTalent extends PlayerTalent {
+public class StepTalent extends PlayerTalent
+{
     private static final Set<UUID> stepTrackList;
     @Expose
     private final float stepHeightAddend;
-
+    
     public StepTalent(final int cost, final float stepHeightAddend) {
         super(cost);
         this.stepHeightAddend = stepHeightAddend;
     }
-
+    
     public float getStepHeightAddend() {
         return this.stepHeightAddend;
     }
-
+    
     @SubscribeEvent
     public static void onClone(final PlayerEvent.Clone event) {
-        refresh((ServerPlayerEntity) event.getOriginal());
+        refresh((ServerPlayerEntity)event.getOriginal());
     }
-
+    
     @SubscribeEvent
     public static void onTeleport(final PlayerEvent.PlayerChangedDimensionEvent event) {
-        refresh((ServerPlayerEntity) event.getPlayer());
+        refresh((ServerPlayerEntity)event.getPlayer());
     }
-
+    
     private static void refresh(final ServerPlayerEntity player) {
-        player.getServer()
-                .tell((Runnable) new TickDelayedTask(2, () -> set(player, player.maxUpStep)));
+        player.getServer().tell((Runnable)new TickDelayedTask(2, () -> set(player, player.maxUpStep)));
     }
-
+    
     @SubscribeEvent
     public static void onTick(final TickEvent.PlayerTickEvent event) {
         final PlayerEntity player = event.player;
-        if (player.getCommandSenderWorld().isClientSide() || !(player.getCommandSenderWorld() instanceof ServerWorld)
-                || !(player instanceof ServerPlayerEntity)) {
+        if (player.getCommandSenderWorld().isClientSide() || !(player.getCommandSenderWorld() instanceof ServerWorld) || !(player instanceof ServerPlayerEntity)) {
             return;
         }
-        final ServerWorld sWorld = (ServerWorld) player.getCommandSenderWorld();
-        final ServerPlayerEntity sPlayer = (ServerPlayerEntity) player;
+        final ServerWorld sWorld = (ServerWorld)player.getCommandSenderWorld();
+        final ServerPlayerEntity sPlayer = (ServerPlayerEntity)player;
         final UUID playerUUID = player.getUUID();
         final TalentTree talentTree = PlayerTalentsData.get(sWorld).getTalents(player);
-        final TalentNode<?> node = talentTree.getNodeOf((TalentGroup<?>) ModConfigs.TALENTS.STEP);
+        final TalentNode<?> node = talentTree.getNodeOf((TalentGroup<?>)ModConfigs.TALENTS.STEP);
         if (!(node.getTalent() instanceof StepTalent)) {
             return;
         }
-        final StepTalent talent = (StepTalent) node.getTalent();
+        final StepTalent talent = (StepTalent)node.getTalent();
         if (node.isLearned() && !player.isCrouching()) {
             StepTalent.stepTrackList.add(playerUUID);
             final float targetHeight = 1.0f + talent.getStepHeightAddend();
             if (sPlayer.maxUpStep < targetHeight) {
                 set(sPlayer, targetHeight);
             }
-        } else if (StepTalent.stepTrackList.contains(playerUUID)) {
+        }
+        else if (StepTalent.stepTrackList.contains(playerUUID)) {
             set(sPlayer, 1.0f);
             StepTalent.stepTrackList.remove(playerUUID);
         }
     }
-
+    
     private static void set(final ServerPlayerEntity player, final float stepHeight) {
-        ModNetwork.CHANNEL.sendTo((Object) new StepHeightMessage(stepHeight - 0.4f),
-                player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        ModNetwork.CHANNEL.sendTo((Object)new StepHeightMessage(stepHeight - 0.4f), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         player.maxUpStep = stepHeight;
     }
-
+    
     static {
         stepTrackList = new HashSet<UUID>();
     }

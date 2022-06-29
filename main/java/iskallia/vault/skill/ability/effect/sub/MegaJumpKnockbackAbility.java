@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -14,13 +17,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import iskallia.vault.skill.ability.config.sub.MegaJumpKnockbackConfig;
 import iskallia.vault.skill.ability.effect.MegaJumpAbility;
 
-public class MegaJumpKnockbackAbility extends MegaJumpAbility<MegaJumpKnockbackConfig> {
+public class MegaJumpKnockbackAbility extends MegaJumpAbility<MegaJumpKnockbackConfig>
+{
     @Override
-    public boolean onAction(final MegaJumpKnockbackConfig config, final ServerPlayerEntity player,
-            final boolean active) {
+    public boolean onAction(final MegaJumpKnockbackConfig config, final ServerPlayerEntity player, final boolean active) {
         if (super.onAction(config, player, active)) {
-            final List<LivingEntity> entities = EntityHelper.getNearby((IWorld) player.getCommandSenderWorld(),
-                    (Vector3i) player.blockPosition(), config.getRadius(), LivingEntity.class);
+            final List<LivingEntity> entities = EntityHelper.getNearby((IWorld)player.getCommandSenderWorld(), (Vector3i)player.blockPosition(), config.getRadius(), LivingEntity.class);
             entities.removeIf(e -> e instanceof PlayerEntity);
             for (final LivingEntity entity : entities) {
                 double xDiff = player.getX() - entity.getX();

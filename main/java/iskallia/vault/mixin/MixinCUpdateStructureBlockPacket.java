@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -18,7 +21,8 @@ import net.minecraft.network.play.client.CUpdateStructureBlockPacket;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ CUpdateStructureBlockPacket.class })
-public class MixinCUpdateStructureBlockPacket {
+public class MixinCUpdateStructureBlockPacket
+{
     @Shadow
     private BlockPos pos;
     @Shadow
@@ -47,24 +51,19 @@ public class MixinCUpdateStructureBlockPacket {
     private boolean showAir;
     @Shadow
     private boolean showBoundingBox;
-
+    
     @Overwrite
     public void read(final PacketBuffer buf) throws IOException {
         this.pos = buf.readBlockPos();
-        this.updateType = (StructureBlockTileEntity.UpdateCommand) buf
-                .readEnum((Class) StructureBlockTileEntity.UpdateCommand.class);
-        this.mode = (StructureMode) buf.readEnum((Class) StructureMode.class);
+        this.updateType = (StructureBlockTileEntity.UpdateCommand)buf.readEnum((Class)StructureBlockTileEntity.UpdateCommand.class);
+        this.mode = (StructureMode)buf.readEnum((Class)StructureMode.class);
         this.name = buf.readUtf(32767);
         final int i = 48;
         final int j = 48;
-        this.offset = new BlockPos(MathHelper.clamp(buf.readVarInt(), -48, 48),
-                MathHelper.clamp(buf.readVarInt(), -48, 48),
-                MathHelper.clamp(buf.readVarInt(), -48, 48));
-        this.size = new BlockPos(MathHelper.clamp(buf.readVarInt(), 0, 528),
-                MathHelper.clamp(buf.readVarInt(), 0, 528),
-                MathHelper.clamp(buf.readVarInt(), 0, 528));
-        this.mirror = (Mirror) buf.readEnum((Class) Mirror.class);
-        this.rotation = (Rotation) buf.readEnum((Class) Rotation.class);
+        this.offset = new BlockPos(MathHelper.clamp(buf.readVarInt(), -48, 48), MathHelper.clamp(buf.readVarInt(), -48, 48), MathHelper.clamp(buf.readVarInt(), -48, 48));
+        this.size = new BlockPos(MathHelper.clamp(buf.readVarInt(), 0, 528), MathHelper.clamp(buf.readVarInt(), 0, 528), MathHelper.clamp(buf.readVarInt(), 0, 528));
+        this.mirror = (Mirror)buf.readEnum((Class)Mirror.class);
+        this.rotation = (Rotation)buf.readEnum((Class)Rotation.class);
         this.data = buf.readUtf(12);
         this.integrity = MathHelper.clamp(buf.readFloat(), 0.0f, 1.0f);
         this.seed = buf.readVarLong();
@@ -73,11 +72,10 @@ public class MixinCUpdateStructureBlockPacket {
         this.showAir = ((k & 0x2) != 0x0);
         this.showBoundingBox = ((k & 0x4) != 0x0);
     }
-
-    @Redirect(method = {
-            "writePacketData" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;writeByte(I)Lio/netty/buffer/ByteBuf;"))
+    
+    @Redirect(method = { "writePacketData" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;writeByte(I)Lio/netty/buffer/ByteBuf;"))
     private ByteBuf writePacketData(final PacketBuffer buf, int value) {
         buf.writeVarInt(value);
-        return (ByteBuf) buf;
+        return (ByteBuf)buf;
     }
 }

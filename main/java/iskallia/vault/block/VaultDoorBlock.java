@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -27,48 +30,40 @@ import net.minecraft.item.Item;
 import java.util.List;
 import net.minecraft.block.DoorBlock;
 
-public class VaultDoorBlock extends DoorBlock {
+public class VaultDoorBlock extends DoorBlock
+{
     public static final List<VaultDoorBlock> VAULT_DOORS;
     protected Item keyItem;
-
+    
     public VaultDoorBlock(final Item keyItem) {
-        super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND)
-                .strength(-1.0f, 3600000.0f).sound(SoundType.METAL).noOcclusion());
-        this.registerDefaultState((BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) this
-                .getStateDefinition().any())
-                .setValue((Property) VaultDoorBlock.FACING, (Comparable) Direction.NORTH))
-                .setValue((Property) VaultDoorBlock.OPEN, (Comparable) Boolean.FALSE))
-                .setValue((Property) VaultDoorBlock.HINGE, (Comparable) DoorHingeSide.LEFT))
-                .setValue((Property) VaultDoorBlock.POWERED, (Comparable) Boolean.FALSE))
-                .setValue((Property) VaultDoorBlock.HALF, (Comparable) DoubleBlockHalf.LOWER));
+        super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND).strength(-1.0f, 3600000.0f).sound(SoundType.METAL).noOcclusion());
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.getStateDefinition().any()).setValue((Property)VaultDoorBlock.FACING, (Comparable)Direction.NORTH)).setValue((Property)VaultDoorBlock.OPEN, (Comparable)Boolean.FALSE)).setValue((Property)VaultDoorBlock.HINGE, (Comparable)DoorHingeSide.LEFT)).setValue((Property)VaultDoorBlock.POWERED, (Comparable)Boolean.FALSE)).setValue((Property)VaultDoorBlock.HALF, (Comparable)DoubleBlockHalf.LOWER));
         this.keyItem = keyItem;
         VaultDoorBlock.VAULT_DOORS.add(this);
     }
-
+    
     public Item getKeyItem() {
         return this.keyItem;
     }
-
+    
     public PushReaction getPistonPushReaction(final BlockState state) {
         return PushReaction.BLOCK;
     }
-
-    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn,
-            final BlockPos fromPos, final boolean isMoving) {
+    
+    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos, final boolean isMoving) {
     }
-
+    
     public boolean hasTileEntity(final BlockState state) {
         return true;
     }
-
+    
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
         return ModBlocks.VAULT_DOOR_TILE_ENTITY.create();
     }
-
-    public ActionResultType use(final BlockState state, final World world, final BlockPos pos,
-            final PlayerEntity player, final Hand hand, final BlockRayTraceResult hit) {
+    
+    public ActionResultType use(final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand, final BlockRayTraceResult hit) {
         final ItemStack heldStack = player.getItemInHand(hand);
-        final Boolean isOpen = (Boolean) state.getValue((Property) VaultDoorBlock.OPEN);
+        final Boolean isOpen = (Boolean)state.getValue((Property)VaultDoorBlock.OPEN);
         if (!isOpen && heldStack.getItem() == this.getKeyItem()) {
             heldStack.shrink(1);
             this.setOpen(world, state, pos, true);
@@ -76,7 +71,7 @@ public class VaultDoorBlock extends DoorBlock {
         }
         return ActionResultType.SUCCESS;
     }
-
+    
     static {
         VAULT_DOORS = new ArrayList<VaultDoorBlock>();
     }

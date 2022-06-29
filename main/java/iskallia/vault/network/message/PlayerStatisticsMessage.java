@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.network.message;
 
@@ -7,23 +10,23 @@ import java.util.function.Supplier;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 
-public class PlayerStatisticsMessage {
+public class PlayerStatisticsMessage
+{
     private final CompoundNBT statisticsData;
-
+    
     public PlayerStatisticsMessage(final CompoundNBT statisticsData) {
         this.statisticsData = statisticsData;
     }
-
+    
     public static void encode(final PlayerStatisticsMessage message, final PacketBuffer buffer) {
         buffer.writeNbt(message.statisticsData);
     }
-
+    
     public static PlayerStatisticsMessage decode(final PacketBuffer buffer) {
         return new PlayerStatisticsMessage(buffer.readNbt());
     }
-
-    public static void handle(final PlayerStatisticsMessage message,
-            final Supplier<NetworkEvent.Context> contextSupplier) {
+    
+    public static void handle(final PlayerStatisticsMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
         final NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> ClientStatisticsData.receiveUpdate(message.statisticsData));
         context.setPacketHandled(true);

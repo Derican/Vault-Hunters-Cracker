@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -9,13 +12,11 @@ import iskallia.vault.loot.LootModifierAutoSmelt;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 
-public class ModLootModifiers {
+public class ModLootModifiers
+{
     public static void registerGlobalModifiers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
-        final IForgeRegistry<GlobalLootModifierSerializer<?>> registry = (IForgeRegistry<GlobalLootModifierSerializer<?>>) event
-                .getRegistry();
-        registry.register((IForgeRegistryEntry) new LootModifierAutoSmelt.Serializer()
-                .setRegistryName(Vault.id("paxel_auto_smelt")));
-        registry.register((IForgeRegistryEntry) new LootModifierDestructive.Serializer()
-                .setRegistryName(Vault.id("paxel_destructive")));
+        final IForgeRegistry<GlobalLootModifierSerializer<?>> registry = (IForgeRegistry<GlobalLootModifierSerializer<?>>)event.getRegistry();
+        registry.register((IForgeRegistryEntry)new LootModifierAutoSmelt.Serializer().setRegistryName(Vault.id("paxel_auto_smelt")));
+        registry.register((IForgeRegistryEntry)new LootModifierDestructive.Serializer().setRegistryName(Vault.id("paxel_destructive")));
     }
 }

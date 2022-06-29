@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -26,31 +29,30 @@ import net.minecraft.block.BlockState;
 import iskallia.vault.block.entity.TimeAltarTileEntity;
 import iskallia.vault.block.base.FillableAltarBlock;
 
-public class TimeAltarBlock extends FillableAltarBlock<TimeAltarTileEntity> {
+public class TimeAltarBlock extends FillableAltarBlock<TimeAltarTileEntity>
+{
     @Override
     public TimeAltarTileEntity createTileEntity(final BlockState state, final IBlockReader world) {
-        return (TimeAltarTileEntity) ModBlocks.TIME_ALTAR_TILE_ENTITY.create();
+        return (TimeAltarTileEntity)ModBlocks.TIME_ALTAR_TILE_ENTITY.create();
     }
-
+    
     @Override
     public IParticleData getFlameParticle() {
-        return (IParticleData) ModParticles.YELLOW_FLAME.get();
+        return (IParticleData)ModParticles.YELLOW_FLAME.get();
     }
-
+    
     @Override
     public PlayerFavourData.VaultGodType getAssociatedVaultGod() {
         return PlayerFavourData.VaultGodType.TIMEKEEPER;
     }
-
+    
     @Override
-    public ActionResultType rightClicked(final BlockState state, final ServerWorld world, final BlockPos pos,
-            final TimeAltarTileEntity tileEntity, final ServerPlayerEntity player, final ItemStack heldStack) {
+    public ActionResultType rightClicked(final BlockState state, final ServerWorld world, final BlockPos pos, final TimeAltarTileEntity tileEntity, final ServerPlayerEntity player, final ItemStack heldStack) {
         if (!tileEntity.initialized()) {
             return ActionResultType.SUCCESS;
         }
         if (player.isCreative()) {
-            tileEntity.makeProgress(player, 1, sPlayer -> {
-            });
+            tileEntity.makeProgress(player, 1, sPlayer -> {});
             return ActionResultType.SUCCESS;
         }
         final VaultRaid vault = VaultRaidData.get(world).getActiveFor(player);
@@ -59,11 +61,10 @@ public class TimeAltarBlock extends FillableAltarBlock<TimeAltarTileEntity> {
         }
         tileEntity.makeProgress(player, 1, sPlayer -> {
             final PlayerFavourData data = PlayerFavourData.get(sPlayer.getLevel());
-            if (TimeAltarBlock.rand.nextFloat() < FillableAltarBlock.getFavourChance((PlayerEntity) sPlayer,
-                    PlayerFavourData.VaultGodType.TIMEKEEPER)) {
+            if (TimeAltarBlock.rand.nextFloat() < FillableAltarBlock.getFavourChance((PlayerEntity)sPlayer, PlayerFavourData.VaultGodType.TIMEKEEPER)) {
                 final PlayerFavourData.VaultGodType vg = this.getAssociatedVaultGod();
-                if (data.addFavour((PlayerEntity) sPlayer, vg, 1)) {
-                    data.addFavour((PlayerEntity) sPlayer, vg.getOther(TimeAltarBlock.rand), -1);
+                if (data.addFavour((PlayerEntity)sPlayer, vg, 1)) {
+                    data.addFavour((PlayerEntity)sPlayer, vg.getOther(TimeAltarBlock.rand), -1);
                     FillableAltarBlock.playFavourInfo(sPlayer);
                 }
             }
@@ -72,11 +73,10 @@ public class TimeAltarBlock extends FillableAltarBlock<TimeAltarTileEntity> {
         vault.getPlayers().forEach(vaultPlayer -> vaultPlayer.getTimer().addTime(new TimeAltarExtension(-1200), 0));
         return ActionResultType.SUCCESS;
     }
-
+    
     @Override
     protected BlockState getSuccessChestState(final BlockState altarState) {
         final BlockState chestState = super.getSuccessChestState(altarState);
-        return (BlockState) chestState.setValue((Property) ChestBlock.FACING,
-                (Comparable) ((Direction) chestState.getValue((Property) TimeAltarBlock.FACING)).getOpposite());
+        return (BlockState)chestState.setValue((Property)ChestBlock.FACING, (Comparable)((Direction)chestState.getValue((Property)TimeAltarBlock.FACING)).getOpposite());
     }
 }

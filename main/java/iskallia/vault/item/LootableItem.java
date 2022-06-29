@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -10,15 +13,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.ItemStack;
 import java.util.function.Supplier;
 
-public class LootableItem extends BasicItem {
+public class LootableItem extends BasicItem
+{
     private final Supplier<ItemStack> supplier;
-
-    public LootableItem(final ResourceLocation id, final Item.Properties properties,
-            final Supplier<ItemStack> supplier) {
+    
+    public LootableItem(final ResourceLocation id, final Item.Properties properties, final Supplier<ItemStack> supplier) {
         super(id, properties);
         this.supplier = supplier;
     }
-
+    
     public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
         if (!world.isClientSide) {
             final ItemStack heldStack = player.getItemInHand(hand);
@@ -33,6 +36,6 @@ public class LootableItem extends BasicItem {
             }
             heldStack.shrink(1);
         }
-        return (ActionResult<ItemStack>) super.use(world, player, hand);
+        return (ActionResult<ItemStack>)super.use(world, player, hand);
     }
 }

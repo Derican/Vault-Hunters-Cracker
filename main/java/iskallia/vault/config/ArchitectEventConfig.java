@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -22,7 +25,8 @@ import iskallia.vault.world.vault.logic.objective.architect.modifier.BlockPlacem
 import java.util.List;
 import com.google.gson.annotations.Expose;
 
-public class ArchitectEventConfig extends Config {
+public class ArchitectEventConfig extends Config
+{
     public static final String EVENT_KEY = "architect_event";
     @Expose
     private boolean enabled;
@@ -44,66 +48,50 @@ public class ArchitectEventConfig extends Config {
     private RangeEntry requiredPolls;
     @Expose
     private WeightedList<String> rolls;
-
+    
     public List<VoteModifier> getAll() {
-        final List<VoteModifier> modifiers = Stream
-                .of((List[]) new List[] { this.BLOCK_PLACEMENT, this.FLOATING_ITEM_PLACEMENT, this.TIME_MODIFIER,
-                        this.ADDITIONAL_MOB_SPAWNS, this.ROOM_SELECTION, this.RANDOM })
-                .flatMap((Function<? super List, ? extends Stream<?>>) Collection::stream)
-                .collect((Collector<? super Object, ?, List<VoteModifier>>) Collectors.toList());
+        final List<VoteModifier> modifiers = Stream.of((List[])new List[] { this.BLOCK_PLACEMENT, this.FLOATING_ITEM_PLACEMENT, this.TIME_MODIFIER, this.ADDITIONAL_MOB_SPAWNS, this.ROOM_SELECTION, this.RANDOM }).flatMap((Function<? super List, ? extends Stream<?>>)Collection::stream).collect((Collector<? super Object, ?, List<VoteModifier>>)Collectors.toList());
         modifiers.add(this.BOSS);
         return modifiers;
     }
-
+    
     @Nullable
     public VoteModifier getModifier(final String modifierName) {
         if (modifierName == null) {
             return null;
         }
-        return this.getAll().stream().filter(modifier -> modifierName.equalsIgnoreCase(modifier.getName())).findFirst()
-                .orElse(null);
+        return this.getAll().stream().filter(modifier -> modifierName.equalsIgnoreCase(modifier.getName())).findFirst().orElse(null);
     }
-
+    
     public VoteModifier getBossModifier() {
         return this.BOSS;
     }
-
+    
     @Nullable
     public VoteModifier generateRandomModifier() {
         return this.getModifier(this.rolls.getRandom(ArchitectEventConfig.rand));
     }
-
+    
     public int getRandomTotalRequiredPolls() {
         return this.requiredPolls.getRandom();
     }
-
+    
     public boolean isEnabled() {
         return this.enabled;
     }
-
+    
     @Override
     public String getName() {
         return "architect_event";
     }
-
+    
     @Override
     protected void reset() {
-        this.BLOCK_PLACEMENT = Arrays.asList(
-                new BlockPlacementModifier("Treasure", "+Gilded Chests", 30, ModBlocks.VAULT_BONUS_CHEST, 6000));
-        this.FLOATING_ITEM_PLACEMENT = Arrays.asList(
-                new FloatingItemPlacementModifier("Gems", "+Gems", 15, 4500,
-                        FloatingItemPlacementModifier.defaultGemList()),
-                new FloatingItemPlacementModifier("Prismatic", "+Catalysts", 15, 12000,
-                        FloatingItemPlacementModifier.defaultPrismaticList()),
-                new FloatingItemPlacementModifier("VaultGear", "+Vault Gear", 15, 16000,
-                        FloatingItemPlacementModifier.defaultVaultGearList()));
-        this.TIME_MODIFIER = Arrays.asList(new TimeModifyModifier("MoreTime", "+3 Minutes", 0, 3600),
-                new TimeModifyModifier("LessTime", "-3 Minutes", 0, -3600));
-        this.ADDITIONAL_MOB_SPAWNS = Arrays.asList(new MobSpawnModifier("Crowded", "+Monsters", -10, 4000),
-                new MobSpawnModifier("Chaotic", "+++Monsters", -20, 1800));
-        this.ROOM_SELECTION = Arrays.asList(new PieceSelectionModifier("OmegaRooms", "+% Omega Room", 60, 0.5f,
-                Arrays.asList("the_vault:vault/enigma/rooms/mineshaft/", "the_vault:vault/enigma/rooms/x_spot/",
-                        "the_vault:vault/enigma/rooms/digsite/")));
+        this.BLOCK_PLACEMENT = Arrays.asList(new BlockPlacementModifier("Treasure", "+Gilded Chests", 30, ModBlocks.VAULT_BONUS_CHEST, 6000));
+        this.FLOATING_ITEM_PLACEMENT = Arrays.asList(new FloatingItemPlacementModifier("Gems", "+Gems", 15, 4500, FloatingItemPlacementModifier.defaultGemList()), new FloatingItemPlacementModifier("Prismatic", "+Catalysts", 15, 12000, FloatingItemPlacementModifier.defaultPrismaticList()), new FloatingItemPlacementModifier("VaultGear", "+Vault Gear", 15, 16000, FloatingItemPlacementModifier.defaultVaultGearList()));
+        this.TIME_MODIFIER = Arrays.asList(new TimeModifyModifier("MoreTime", "+3 Minutes", 0, 3600), new TimeModifyModifier("LessTime", "-3 Minutes", 0, -3600));
+        this.ADDITIONAL_MOB_SPAWNS = Arrays.asList(new MobSpawnModifier("Crowded", "+Monsters", -10, 4000), new MobSpawnModifier("Chaotic", "+++Monsters", -20, 1800));
+        this.ROOM_SELECTION = Arrays.asList(new PieceSelectionModifier("OmegaRooms", "+% Omega Room", 60, 0.5f, Arrays.asList("the_vault:vault/enigma/rooms/mineshaft/", "the_vault:vault/enigma/rooms/x_spot/", "the_vault:vault/enigma/rooms/digsite/")));
         this.RANDOM = Arrays.asList(new RandomVoteModifier("Random", "? Random ?", -15));
         this.BOSS = new BossExitModifier("BossExit", "Summon Boss", 0, 0.1f);
         this.requiredPolls = new RangeEntry(12, 20);

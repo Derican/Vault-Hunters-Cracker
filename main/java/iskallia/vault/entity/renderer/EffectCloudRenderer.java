@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.renderer;
 
@@ -8,11 +11,12 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import iskallia.vault.entity.EffectCloudEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 
-public class EffectCloudRenderer extends EntityRenderer<EffectCloudEntity> {
+public class EffectCloudRenderer extends EntityRenderer<EffectCloudEntity>
+{
     public EffectCloudRenderer(final EntityRendererManager manager) {
         super(manager);
     }
-
+    
     public ResourceLocation getEntityTexture(final EffectCloudEntity entity) {
         return AtlasTexture.LOCATION_BLOCKS;
     }

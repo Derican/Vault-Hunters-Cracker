@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -19,20 +22,17 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import iskallia.vault.skill.ability.config.sub.DashDamageConfig;
 import iskallia.vault.skill.ability.effect.DashAbility;
 
-public class DashDamageAbility extends DashAbility<DashDamageConfig> {
+public class DashDamageAbility extends DashAbility<DashDamageConfig>
+{
     @Override
     public boolean onAction(final DashDamageConfig config, final ServerPlayerEntity player, final boolean active) {
         if (super.onAction(config, player, active)) {
-            final List<LivingEntity> other = EntityHelper.getNearby((IWorld) player.getCommandSenderWorld(),
-                    (Vector3i) player.blockPosition(), config.getRadiusOfAttack(), LivingEntity.class);
+            final List<LivingEntity> other = EntityHelper.getNearby((IWorld)player.getCommandSenderWorld(), (Vector3i)player.blockPosition(), config.getRadiusOfAttack(), LivingEntity.class);
             other.removeIf(e -> e instanceof PlayerEntity);
-            final float atk = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            final float atk = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE);
             for (final LivingEntity entity : other) {
-                ActiveFlags.IS_AOE_ATTACKING
-                        .runIfNotSet(() -> entity.hurt(DamageSource.playerAttack((PlayerEntity) player),
-                                atk * config.getAttackDamagePercentPerDash()));
-                ServerScheduler.INSTANCE.schedule(0, () -> PlayerDamageHelper.applyMultiplier(player, 0.95f,
-                        PlayerDamageHelper.Operation.STACKING_MULTIPLY, true, config.getCooldown()));
+                ActiveFlags.IS_AOE_ATTACKING.runIfNotSet(() -> entity.hurt(DamageSource.playerAttack((PlayerEntity)player), atk * config.getAttackDamagePercentPerDash()));
+                ServerScheduler.INSTANCE.schedule(0, () -> PlayerDamageHelper.applyMultiplier(player, 0.95f, PlayerDamageHelper.Operation.STACKING_MULTIPLY, true, config.getCooldown()));
             }
             return true;
         }

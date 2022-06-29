@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -8,19 +11,20 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.item.gear.VaultGear;
 import java.util.Map;
 
-public class EtchingConfig extends Config {
+public class EtchingConfig extends Config
+{
     @Expose
     public Map<VaultGear.Set, Etching> ETCHINGS;
-
+    
     @Override
     public String getName() {
         return "etching";
     }
-
+    
     public VaultGear.Set getRandomSet() {
         return this.getRandomSet(new Random());
     }
-
+    
     public VaultGear.Set getRandomSet(final Random random) {
         final WeightedList<VaultGear.Set> list = new WeightedList<VaultGear.Set>();
         this.ETCHINGS.forEach((set, etching) -> {
@@ -31,11 +35,11 @@ public class EtchingConfig extends Config {
         });
         return list.getRandom(random);
     }
-
+    
     public Etching getFor(final VaultGear.Set set) {
         return this.ETCHINGS.get(set);
     }
-
+    
     @Override
     protected void reset() {
         this.ETCHINGS = new LinkedHashMap<VaultGear.Set, Etching>();
@@ -43,8 +47,9 @@ public class EtchingConfig extends Config {
             this.ETCHINGS.put(set, new Etching(1, 1, 2, "yes", 5636095));
         }
     }
-
-    public static class Etching {
+    
+    public static class Etching
+    {
         @Expose
         public int weight;
         @Expose
@@ -55,9 +60,8 @@ public class EtchingConfig extends Config {
         public String effectText;
         @Expose
         public int color;
-
-        public Etching(final int weight, final int minValue, final int maxValue, final String effectText,
-                final int color) {
+        
+        public Etching(final int weight, final int minValue, final int maxValue, final String effectText, final int color) {
             this.weight = weight;
             this.minValue = minValue;
             this.maxValue = maxValue;

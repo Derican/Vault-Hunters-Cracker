@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.init;
 
@@ -15,7 +18,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraft.potion.Effect;
 
-public class ModEffects {
+public class ModEffects
+{
     public static final Effect GHOST_WALK;
     public static final Effect RAMPAGE;
     public static final Effect TANK;
@@ -25,14 +29,11 @@ public class ModEffects {
     public static final Effect VAULT_POWERUP;
     public static final Effect IMMUNITY;
     public static final Effect TIMER_ACCELERATION;
-
+    
     public static void register(final RegistryEvent.Register<Effect> event) {
-        event.getRegistry()
-                .registerAll((IForgeRegistryEntry[]) new Effect[] { ModEffects.GHOST_WALK, ModEffects.RAMPAGE,
-                        ModEffects.TANK, ModEffects.EXECUTE, ModEffects.TIMER_ACCELERATION, ModEffects.PARRY,
-                        ModEffects.RESISTANCE, ModEffects.VAULT_POWERUP, ModEffects.IMMUNITY });
+        event.getRegistry().registerAll((IForgeRegistryEntry[])new Effect[] { ModEffects.GHOST_WALK, ModEffects.RAMPAGE, ModEffects.TANK, ModEffects.EXECUTE, ModEffects.TIMER_ACCELERATION, ModEffects.PARRY, ModEffects.RESISTANCE, ModEffects.VAULT_POWERUP, ModEffects.IMMUNITY });
     }
-
+    
     static {
         GHOST_WALK = new GhostWalkEffect(EffectType.BENEFICIAL, Color.GRAY.getRGB(), Vault.id("ghost_walk"));
         RAMPAGE = new RampageEffect(EffectType.BENEFICIAL, Color.RED.getRGB(), Vault.id("rampage"));

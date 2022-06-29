@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.render;
 
@@ -36,30 +39,27 @@ import iskallia.vault.entity.model.StatuePlayerModel;
 import iskallia.vault.block.entity.FinalVaultFrameTileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 
-public class FinalVaultFrameRenderer extends TileEntityRenderer<FinalVaultFrameTileEntity> {
+public class FinalVaultFrameRenderer extends TileEntityRenderer<FinalVaultFrameTileEntity>
+{
     public static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL;
     private static final Map<BlockPos, Long> PARTICLE_SPAWN_TIMESTAMPS;
-
+    
     public FinalVaultFrameRenderer(final TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
-
-    public void render(@Nonnull final FinalVaultFrameTileEntity tileEntity, final float partialTicks,
-            @Nonnull final MatrixStack matrixStack, @Nonnull final IRenderTypeBuffer buffer, final int combinedLight,
-            final int combinedOverlay) {
-        final ClientWorld world = (ClientWorld) tileEntity.getLevel();
+    
+    public void render(@Nonnull final FinalVaultFrameTileEntity tileEntity, final float partialTicks, @Nonnull final MatrixStack matrixStack, @Nonnull final IRenderTypeBuffer buffer, final int combinedLight, final int combinedOverlay) {
+        final ClientWorld world = (ClientWorld)tileEntity.getLevel();
         if (world == null) {
             return;
         }
-        final boolean ownerOnline = McClientHelper.getOnlineProfile(tileEntity.getOwnerUUID())
-                .map((Function<? super GameProfile, ?>) GameProfile::getId)
-                .filter(uuid -> uuid.equals(tileEntity.getOwnerUUID())).isPresent();
+        final boolean ownerOnline = McClientHelper.getOnlineProfile(tileEntity.getOwnerUUID()).map((Function<? super GameProfile, ?>)GameProfile::getId).filter(uuid -> uuid.equals(tileEntity.getOwnerUUID())).isPresent();
         final ResourceLocation skinLocation = tileEntity.getSkin().getLocationSkin();
         final RenderType renderType = FinalVaultFrameRenderer.PLAYER_MODEL.renderType(skinLocation);
         final IVertexBuilder vertexBuilder = buffer.getBuffer(renderType);
         final BlockPos blockPos = tileEntity.getBlockPos();
         final BlockState blockState = tileEntity.getBlockState();
-        final Direction direction = (Direction) blockState.getValue((Property) FinalVaultFrameBlock.FACING);
+        final Direction direction = (Direction)blockState.getValue((Property)FinalVaultFrameBlock.FACING);
         matrixStack.pushPose();
         ShaderUtil.useShader(ShaderUtil.COLORIZE_SHADER, () -> {
             final Color color = new Color(-6646101);
@@ -81,23 +81,13 @@ public class FinalVaultFrameRenderer extends TileEntityRenderer<FinalVaultFrameT
         matrixStack.scale(headScale, headScale, 1.0f);
         matrixStack.translate(0.0, -0.25, -0.2750000059604645);
         matrixStack.scale(-1.0f, -1.0f, 1.0f);
-        FinalVaultFrameRenderer.PLAYER_MODEL.hat.render(matrixStack, vertexBuilder, combinedLight,
-                combinedOverlay, 1.0f, 1.0f, 1.0f, 1.0f);
-        FinalVaultFrameRenderer.PLAYER_MODEL.head.render(matrixStack, vertexBuilder, combinedLight,
-                combinedOverlay, 1.0f, 1.0f, 1.0f, 1.0f);
+        FinalVaultFrameRenderer.PLAYER_MODEL.hat.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1.0f, 1.0f, 1.0f, 1.0f);
+        FinalVaultFrameRenderer.PLAYER_MODEL.head.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1.0f, 1.0f, 1.0f, 1.0f);
         if (buffer instanceof IRenderTypeBuffer.Impl) {
-            ((IRenderTypeBuffer.Impl) buffer).endBatch(renderType);
+            ((IRenderTypeBuffer.Impl)buffer).endBatch(renderType);
         }
         ShaderUtil.releaseShader();
-        final boolean portalFormed = VaultPortalSize
-                .getPortalSize((IWorld) world, blockPos.north(), Direction.Axis.Z, VaultPortalBlock.FRAME)
-                .isPresent()
-                || VaultPortalSize.getPortalSize((IWorld) world, blockPos.south(), Direction.Axis.Z,
-                        VaultPortalBlock.FRAME).isPresent()
-                || VaultPortalSize.getPortalSize((IWorld) world, blockPos.west(), Direction.Axis.X,
-                        VaultPortalBlock.FRAME).isPresent()
-                || VaultPortalSize.getPortalSize((IWorld) world, blockPos.east(), Direction.Axis.X,
-                        VaultPortalBlock.FRAME).isPresent();
+        final boolean portalFormed = VaultPortalSize.getPortalSize((IWorld)world, blockPos.north(), Direction.Axis.Z, VaultPortalBlock.FRAME).isPresent() || VaultPortalSize.getPortalSize((IWorld)world, blockPos.south(), Direction.Axis.Z, VaultPortalBlock.FRAME).isPresent() || VaultPortalSize.getPortalSize((IWorld)world, blockPos.west(), Direction.Axis.X, VaultPortalBlock.FRAME).isPresent() || VaultPortalSize.getPortalSize((IWorld)world, blockPos.east(), Direction.Axis.X, VaultPortalBlock.FRAME).isPresent();
         if (portalFormed) {
             final long now = System.currentTimeMillis();
             final long prevTime = FinalVaultFrameRenderer.PARTICLE_SPAWN_TIMESTAMPS.computeIfAbsent(blockPos, p -> now);
@@ -110,9 +100,8 @@ public class FinalVaultFrameRenderer extends TileEntityRenderer<FinalVaultFrameT
         }
         matrixStack.popPose();
     }
-
-    private static void addFlameParticle(final ClientWorld world, final BlockPos blockPos, final Direction direction,
-            final float offset) {
+    
+    private static void addFlameParticle(final ClientWorld world, final BlockPos blockPos, final Direction direction, final float offset) {
         float x = blockPos.getX() + 0.5f + direction.getStepX() * 0.625f;
         final float y = blockPos.getY() + 0.8125f;
         float z = blockPos.getZ() + 0.5f + direction.getStepZ() * 0.625f;
@@ -125,10 +114,9 @@ public class FinalVaultFrameRenderer extends TileEntityRenderer<FinalVaultFrameT
         final float xSpeed = 0.0f;
         final float ySpeed = 0.01f;
         final float zSpeed = 0.0f;
-        world.addParticle((IParticleData) ParticleTypes.SOUL_FIRE_FLAME, (double) x, (double) y, (double) z,
-                (double) xSpeed, (double) ySpeed, (double) zSpeed);
+        world.addParticle((IParticleData)ParticleTypes.SOUL_FIRE_FLAME, (double)x, (double)y, (double)z, (double)xSpeed, (double)ySpeed, (double)zSpeed);
     }
-
+    
     static {
         PLAYER_MODEL = new StatuePlayerModel<PlayerEntity>(0.1f, true);
         PARTICLE_SPAWN_TIMESTAMPS = new HashMap<BlockPos, Long>();

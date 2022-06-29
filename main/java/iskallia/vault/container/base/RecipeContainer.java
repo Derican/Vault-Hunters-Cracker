@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.container.base;
 
@@ -12,40 +15,38 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 
-public abstract class RecipeContainer extends Container {
+public abstract class RecipeContainer extends Container
+{
     protected RecipeInventory internalInventory;
     protected PlayerInventory playerInventory;
-
-    protected RecipeContainer(@Nullable final ContainerType<?> containerType, final int windowId,
-            final RecipeInventory internalInventory, final PlayerEntity player) {
-        super((ContainerType) containerType, windowId);
+    
+    protected RecipeContainer(@Nullable final ContainerType<?> containerType, final int windowId, final RecipeInventory internalInventory, final PlayerEntity player) {
+        super((ContainerType)containerType, windowId);
         this.internalInventory = internalInventory;
         this.playerInventory = player.inventory;
         this.addInternalInventorySlots();
         this.addPlayerInventorySlots();
     }
-
+    
     protected abstract void addInternalInventorySlots();
-
+    
     protected void addPlayerInventorySlots() {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
-                this.addSlot(
-                        new Slot((IInventory) this.playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                this.addSlot(new Slot((IInventory)this.playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
         for (int col2 = 0; col2 < 9; ++col2) {
-            this.addSlot(new Slot((IInventory) this.playerInventory, col2, 8 + col2 * 18, 142));
+            this.addSlot(new Slot((IInventory)this.playerInventory, col2, 8 + col2 * 18, 142));
         }
     }
-
-    public ItemStack clicked(final int slotId, final int dragType, final ClickType clickTypeIn,
-            final PlayerEntity player) {
+    
+    public ItemStack clicked(final int slotId, final int dragType, final ClickType clickTypeIn, final PlayerEntity player) {
         final ItemStack result = super.clicked(slotId, dragType, clickTypeIn, player);
         this.internalInventory.updateResult();
         return result;
     }
-
+    
     public ItemStack quickMoveStack(final PlayerEntity player, final int index) {
         final Slot slot = this.slots.get(index);
         if (slot == null || !slot.hasItem()) {
@@ -62,19 +63,22 @@ public abstract class RecipeContainer extends Container {
                 return copiedStack;
             }
             return ItemStack.EMPTY;
-        } else if (this.internalInventory.isIngredientIndex(index)) {
+        }
+        else if (this.internalInventory.isIngredientIndex(index)) {
             if (this.moveItemStackTo(stackOnSlot, inventoryFirstIndex, inventoryLastIndex, false)) {
                 this.internalInventory.updateResult();
                 return copiedStack;
             }
             return ItemStack.EMPTY;
-        } else {
+        }
+        else {
             if (!this.moveItemStackTo(stackOnSlot, 0, this.internalInventory.getContainerSize() - 1, false)) {
                 return ItemStack.EMPTY;
             }
             if (stackOnSlot.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
-            } else {
+            }
+            else {
                 slot.setChanged();
             }
             if (stackOnSlot.getCount() == copiedStack.getCount()) {
@@ -83,7 +87,7 @@ public abstract class RecipeContainer extends Container {
             return copiedStack;
         }
     }
-
+    
     public void removed(final PlayerEntity player) {
         super.removed(player);
         this.internalInventory.forEachInput(index -> {
@@ -93,7 +97,7 @@ public abstract class RecipeContainer extends Container {
             }
         });
     }
-
+    
     public void onResultPicked(final PlayerEntity player, final int index) {
     }
 }

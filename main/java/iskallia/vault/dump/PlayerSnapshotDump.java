@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.dump;
 
@@ -46,26 +49,26 @@ import iskallia.vault.Vault;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import com.google.gson.Gson;
 
-public class PlayerSnapshotDump {
+public class PlayerSnapshotDump
+{
     private static final Gson GSON;
-
+    
     public static String createAndSerializeSnapshot(final ServerPlayerEntity sPlayer) {
-        return PlayerSnapshotDump.GSON.toJson((Object) createSnapshot(sPlayer));
+        return PlayerSnapshotDump.GSON.toJson((Object)createSnapshot(sPlayer));
     }
-
+    
     public static PlayerSnapshot createSnapshot(final ServerPlayerEntity sPlayer) {
         final PlayerSnapshot snapshot = new PlayerSnapshot(sPlayer);
         final ServerWorld sWorld = sPlayer.getLevel();
         snapshot.inVault = (sWorld.dimension() == Vault.VAULT_KEY);
-        final PlayerVaultStats stats = PlayerVaultStatsData.get(sWorld).getVaultStats((PlayerEntity) sPlayer);
+        final PlayerVaultStats stats = PlayerVaultStatsData.get(sWorld).getVaultStats((PlayerEntity)sPlayer);
         snapshot.vaultLevel = stats.getVaultLevel();
-        snapshot.levelPercent = stats.getExp() / (float) stats.getTnl();
+        snapshot.levelPercent = stats.getExp() / (float)stats.getTnl();
         final AttributeModifierManager mgr = sPlayer.getAttributes();
         for (final Attribute attribute : ForgeRegistries.ATTRIBUTES) {
             if (mgr.hasAttribute(attribute)) {
                 final ResourceLocation attrId = attribute.getRegistryName();
-                snapshot.attributes.put((attrId == null) ? attribute.getDescriptionId() : attrId.toString(),
-                        mgr.getValue(attribute));
+                snapshot.attributes.put((attrId == null) ? attribute.getDescriptionId() : attrId.toString(), mgr.getValue(attribute));
             }
         }
         snapshot.parry = ParryHelper.getPlayerParryChance(sPlayer);
@@ -73,8 +76,8 @@ public class PlayerSnapshotDump {
         snapshot.cooldownReduction = CooldownHelper.getCooldownMultiplier(sPlayer, null);
         snapshot.fatalStrikeChance = FatalStrikeHelper.getPlayerFatalStrikeChance(sPlayer);
         snapshot.fatalStrikeDamage = FatalStrikeHelper.getPlayerFatalStrikeDamage(sPlayer);
-        snapshot.thornsChance = ThornsHelper.getThornsChance((LivingEntity) sPlayer);
-        snapshot.thornsDamage = ThornsHelper.getThornsDamage((LivingEntity) sPlayer);
+        snapshot.thornsChance = ThornsHelper.getThornsChance((LivingEntity)sPlayer);
+        snapshot.thornsDamage = ThornsHelper.getThornsDamage((LivingEntity)sPlayer);
         Arrays.stream(EquipmentSlotType.values()).forEach(slotType -> {
             final ItemStack stack = sPlayer.getItemBySlot(slotType);
             if (!stack.isEmpty()) {
@@ -82,23 +85,21 @@ public class PlayerSnapshotDump {
             }
             return;
         });
-        final AbilityTree abilities = PlayerAbilitiesData.get(sWorld).getAbilities((PlayerEntity) sPlayer);
+        final AbilityTree abilities = PlayerAbilitiesData.get(sWorld).getAbilities((PlayerEntity)sPlayer);
         abilities.getLearnedNodes().forEach(node -> {
             if (node.getSpecialization() != null) {
-                snapshot.abilities.put(node.getGroup().getParentName() + ": " + node.getSpecializationName(),
-                        node.getLevel());
-            } else {
+                snapshot.abilities.put(node.getGroup().getParentName() + ": " + node.getSpecializationName(), node.getLevel());
+            }
+            else {
                 snapshot.abilities.put(node.getGroup().getParentName(), node.getLevel());
             }
             return;
         });
-        final TalentTree talents = PlayerTalentsData.get(sWorld).getTalents((PlayerEntity) sPlayer);
-        talents.getLearnedNodes()
-                .forEach(node -> snapshot.talents.put(node.getGroup().getParentName(), node.getLevel()));
-        final ResearchTree researches = PlayerResearchesData.get(sWorld).getResearches((PlayerEntity) sPlayer);
+        final TalentTree talents = PlayerTalentsData.get(sWorld).getTalents((PlayerEntity)sPlayer);
+        talents.getLearnedNodes().forEach(node -> snapshot.talents.put(node.getGroup().getParentName(), node.getLevel()));
+        final ResearchTree researches = PlayerResearchesData.get(sWorld).getResearches((PlayerEntity)sPlayer);
         snapshot.researches.addAll(researches.getResearchesDone());
-        final PlayerStatisticsCollector.VaultRunsSnapshot vaultRunsSnapshot = PlayerStatisticsCollector.VaultRunsSnapshot
-                .ofPlayer(sPlayer);
+        final PlayerStatisticsCollector.VaultRunsSnapshot vaultRunsSnapshot = PlayerStatisticsCollector.VaultRunsSnapshot.ofPlayer(sPlayer);
         snapshot.vaultRuns = vaultRunsSnapshot.vaultRuns;
         snapshot.vaultWins = vaultRunsSnapshot.bossKills;
         snapshot.vaultDeaths = vaultRunsSnapshot.deaths;
@@ -108,7 +109,7 @@ public class PlayerSnapshotDump {
         for (final PlayerFavourData.VaultGodType type : PlayerFavourData.VaultGodType.values()) {
             snapshot.favors.put(type.getName(), favourData.getFavour(sPlayer.getUUID(), type));
         }
-        final EternalsData.EternalGroup group = EternalsData.get(sWorld).getEternals((PlayerEntity) sPlayer);
+        final EternalsData.EternalGroup group = EternalsData.get(sWorld).getEternals((PlayerEntity)sPlayer);
         for (final EternalData eternal : group.getEternals()) {
             String auraName = null;
             if (eternal.getAbilityName() != null) {
@@ -117,8 +118,7 @@ public class PlayerSnapshotDump {
                     auraName = cfg.getDisplayName();
                 }
             }
-            final EternalInformation eternalSnapshot = new EternalInformation(eternal.getName(), eternal.getLevel(),
-                    eternal.isAncient(), auraName);
+            final EternalInformation eternalSnapshot = new EternalInformation(eternal.getName(), eternal.getLevel(), eternal.isAncient(), auraName);
             eternal.getEquipment().forEach((slot, stack) -> {
                 if (!stack.isEmpty()) {
                     eternalSnapshot.equipment.put(slot.name(), new SerializableItemStack(stack));
@@ -129,12 +129,13 @@ public class PlayerSnapshotDump {
         }
         return snapshot;
     }
-
+    
     static {
         GSON = new GsonBuilder().setPrettyPrinting().create();
     }
-
-    public static class PlayerSnapshot {
+    
+    public static class PlayerSnapshot
+    {
         protected final UUID playerUUID;
         protected final String playerNickname;
         protected final long timestamp;
@@ -160,7 +161,7 @@ public class PlayerSnapshotDump {
         protected Map<String, Integer> talents;
         protected Set<String> researches;
         protected Set<EternalInformation> eternals;
-
+        
         public PlayerSnapshot(final ServerPlayerEntity playerEntity) {
             this.inVault = false;
             this.powerLevel = 0;
@@ -178,14 +179,15 @@ public class PlayerSnapshotDump {
             this.timestamp = Instant.now().getEpochSecond();
         }
     }
-
-    public static class EternalInformation {
+    
+    public static class EternalInformation
+    {
         private final String name;
         private final int level;
         private final boolean isAncient;
         private final String auraName;
         private Map<String, SerializableItemStack> equipment;
-
+        
         public EternalInformation(final String name, final int level, final boolean isAncient, final String auraName) {
             this.equipment = new LinkedHashMap<String, SerializableItemStack>();
             this.name = name;
@@ -194,18 +196,20 @@ public class PlayerSnapshotDump {
             this.auraName = auraName;
         }
     }
-
-    public static class SerializableItemStack {
+    
+    public static class SerializableItemStack
+    {
         private final String itemKey;
         private final int count;
         private final String nbt;
-
+        
         private SerializableItemStack(final ItemStack stack) {
             this.itemKey = stack.getItem().getRegistryName().toString();
             this.count = stack.getCount();
             if (stack.hasTag()) {
                 this.nbt = stack.getTag().toString();
-            } else {
+            }
+            else {
                 this.nbt = null;
             }
         }

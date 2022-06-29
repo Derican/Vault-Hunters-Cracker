@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -9,7 +12,8 @@ import iskallia.vault.util.data.WeightedList;
 import com.google.gson.annotations.Expose;
 import java.time.LocalDateTime;
 
-public class RaidEventConfig extends Config {
+public class RaidEventConfig extends Config
+{
     private static final LocalDateTime EVENT_END_TIME;
     @Expose
     private int soulShardTradeCost;
@@ -19,36 +23,34 @@ public class RaidEventConfig extends Config {
     private float viewerVoteChance;
     @Expose
     private WeightedList<String> viewerModifiers;
-
+    
     public boolean isEnabled() {
         return LocalDateTime.now().isBefore(RaidEventConfig.EVENT_END_TIME);
     }
-
+    
     public int getSoulShardTradeCost() {
         return this.soulShardTradeCost;
     }
-
+    
     public int getTemporaryModifierMinutes() {
         return this.temporaryModifierMinutes;
     }
-
+    
     public float getViewerVoteChance() {
         return this.viewerVoteChance;
     }
-
+    
     public VaultModifier getRandomModifier() {
         VaultModifier modifier;
-        for (modifier = null; modifier == null; modifier = ModConfigs.VAULT_MODIFIERS
-                .getByName(this.viewerModifiers.getRandom(RaidEventConfig.rand))) {
-        }
+        for (modifier = null; modifier == null; modifier = ModConfigs.VAULT_MODIFIERS.getByName(this.viewerModifiers.getRandom(RaidEventConfig.rand))) {}
         return modifier;
     }
-
+    
     @Override
     public String getName() {
         return "raid_event";
     }
-
+    
     @Override
     protected void reset() {
         this.soulShardTradeCost = 750;
@@ -59,7 +61,7 @@ public class RaidEventConfig extends Config {
         this.viewerModifiers.add("Frail", 1);
         this.viewerModifiers.add("Trapped", 1);
     }
-
+    
     static {
         EVENT_END_TIME = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0, 0);
     }

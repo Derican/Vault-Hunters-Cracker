@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.effect.sub;
 
@@ -15,20 +18,20 @@ import java.util.function.Predicate;
 import iskallia.vault.skill.ability.config.sub.HunterObjectiveConfig;
 import iskallia.vault.skill.ability.effect.HunterAbility;
 
-public class HunterObjectiveAbility extends HunterAbility<HunterObjectiveConfig> {
+public class HunterObjectiveAbility extends HunterAbility<HunterObjectiveConfig>
+{
     @Override
     protected Predicate<LivingEntity> getEntityFilter() {
         return e -> e.isAlive() && !e.isSpectator() && e.getType().equals(ModEntities.TREASURE_GOBLIN);
     }
-
+    
     @Override
-    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterObjectiveConfig config, final World world,
-            final PlayerEntity player) {
+    protected List<Tuple<BlockPos, Color>> selectPositions(final HunterObjectiveConfig config, final World world, final PlayerEntity player) {
         final List<Tuple<BlockPos, Color>> entityPositions = super.selectPositions(config, world, player);
         final Color c = new Color(config.getColor(), false);
         this.forEachTileEntity(config, world, player, (pos, tile) -> {
             if (config.shouldHighlightTileEntity(tile)) {
-                entityPositions.add(new Tuple((Object) pos, (Object) c));
+                entityPositions.add(new Tuple((Object)pos, (Object)c));
             }
             return;
         });

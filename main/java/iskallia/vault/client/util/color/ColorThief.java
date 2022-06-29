@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.util.color;
 
@@ -6,10 +9,11 @@ import java.awt.image.DataBufferByte;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 
-public class ColorThief {
+public class ColorThief
+{
     private static final int DEFAULT_QUALITY = 2;
     private static final boolean DEFAULT_IGNORE_WHITE = false;
-
+    
     @Nullable
     public static int[] getColor(final BufferedImage sourceImage) {
         final int[][] palette = getPalette(sourceImage, 5);
@@ -19,7 +23,7 @@ public class ColorThief {
         final int[] dominantColor = palette[0];
         return dominantColor;
     }
-
+    
     @Nullable
     public static int[] getColor(final BufferedImage sourceImage, final int quality, final boolean ignoreWhite) {
         final int[][] palette = getPalette(sourceImage, 5, quality, ignoreWhite);
@@ -29,7 +33,7 @@ public class ColorThief {
         final int[] dominantColor = palette[0];
         return dominantColor;
     }
-
+    
     @Nullable
     public static int[][] getPalette(final BufferedImage sourceImage, final int colorCount) {
         final MMCQ.CMap cmap = getColorMap(sourceImage, colorCount);
@@ -38,25 +42,23 @@ public class ColorThief {
         }
         return cmap.palette();
     }
-
+    
     @Nullable
-    public static int[][] getPalette(final BufferedImage sourceImage, final int colorCount, final int quality,
-            final boolean ignoreWhite) {
+    public static int[][] getPalette(final BufferedImage sourceImage, final int colorCount, final int quality, final boolean ignoreWhite) {
         final MMCQ.CMap cmap = getColorMap(sourceImage, colorCount, quality, ignoreWhite);
         if (cmap == null) {
             return null;
         }
         return cmap.palette();
     }
-
+    
     @Nullable
     public static MMCQ.CMap getColorMap(final BufferedImage sourceImage, final int colorCount) {
         return getColorMap(sourceImage, colorCount, 2, false);
     }
-
+    
     @Nullable
-    public static MMCQ.CMap getColorMap(final BufferedImage sourceImage, final int colorCount, final int quality,
-            final boolean ignoreWhite) {
+    public static MMCQ.CMap getColorMap(final BufferedImage sourceImage, final int colorCount, final int quality, final boolean ignoreWhite) {
         int[][] pixelArray = null;
         switch (sourceImage.getType()) {
             case 5:
@@ -72,10 +74,9 @@ public class ColorThief {
         final MMCQ.CMap cmap = MMCQ.quantize(pixelArray, colorCount);
         return cmap;
     }
-
-    private static int[][] getPixelsFast(final BufferedImage sourceImage, final int quality,
-            final boolean ignoreWhite) {
-        final DataBufferByte imageData = (DataBufferByte) sourceImage.getRaster().getDataBuffer();
+    
+    private static int[][] getPixelsFast(final BufferedImage sourceImage, final int quality, final boolean ignoreWhite) {
+        final DataBufferByte imageData = (DataBufferByte)sourceImage.getRaster().getDataBuffer();
         final byte[] pixels = imageData.getData();
         final int pixelCount = sourceImage.getWidth() * sourceImage.getHeight();
         final int type = sourceImage.getType();
@@ -95,8 +96,7 @@ public class ColorThief {
         }
         final int expectedDataLength = pixelCount * colorDepth;
         if (expectedDataLength != pixels.length) {
-            throw new IllegalArgumentException(
-                    "(expectedDataLength = " + expectedDataLength + ") != (pixels.length = " + pixels.length + ")");
+            throw new IllegalArgumentException("(expectedDataLength = " + expectedDataLength + ") != (pixels.length = " + pixels.length + ")");
         }
         final int numRegardedPixels = (pixelCount + quality - 1) / quality;
         int numUsedPixels = 0;
@@ -135,9 +135,8 @@ public class ColorThief {
         }
         return Arrays.copyOfRange(pixelArray, 0, numUsedPixels);
     }
-
-    private static int[][] getPixelsSlow(final BufferedImage sourceImage, final int quality,
-            final boolean ignoreWhite) {
+    
+    private static int[][] getPixelsSlow(final BufferedImage sourceImage, final int quality, final boolean ignoreWhite) {
         final int width = sourceImage.getWidth();
         final int height = sourceImage.getHeight();
         final int pixelCount = width * height;

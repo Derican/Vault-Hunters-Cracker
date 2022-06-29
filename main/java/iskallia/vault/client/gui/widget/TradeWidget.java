@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.widget;
 
@@ -15,36 +18,35 @@ import iskallia.vault.vending.TraderCore;
 import iskallia.vault.client.gui.screen.VendingMachineScreen;
 import net.minecraft.client.gui.widget.Widget;
 
-public class TradeWidget extends Widget {
+public class TradeWidget extends Widget
+{
     public static final int BUTTON_WIDTH = 88;
     public static final int BUTTON_HEIGHT = 27;
     protected VendingMachineScreen parentScreen;
     protected TraderCore traderCode;
-
+    
     public TradeWidget(final int x, final int y, final TraderCore traderCode, final VendingMachineScreen parentScreen) {
-        super(x, y, 0, 0, (ITextComponent) new StringTextComponent(""));
+        super(x, y, 0, 0, (ITextComponent)new StringTextComponent(""));
         this.parentScreen = parentScreen;
         this.traderCode = traderCode;
     }
-
+    
     public TraderCore getTraderCode() {
         return this.traderCode;
     }
-
+    
     public void mouseMoved(final double mouseX, final double mouseY) {
     }
-
+    
     public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
+    
     public boolean isHovered(final int mouseX, final int mouseY) {
-        return this.x <= mouseX && mouseX <= this.x + 88 && this.y <= mouseY
-                && mouseY <= this.y + 27;
+        return this.x <= mouseX && mouseX <= this.x + 88 && this.y <= mouseY && mouseY <= this.y + 27;
     }
-
-    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY,
-            final float partialTicks) {
+    
+    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY, final float partialTicks) {
         final Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bind(VendingMachineScreen.HUD_RESOURCE);
         final Trade trade = this.traderCode.getTrade();
@@ -56,26 +58,18 @@ public class TradeWidget extends Widget {
         if (trade.getTradesLeft() == 0) {
             blit(matrixStack, this.x, this.y, 277.0f, 96.0f, 88, 27, 512, 256);
             RenderSystem.disableDepthTest();
-            itemRenderer.renderGuiItem(buy, 5 + this.x + tradeBoundaries.x,
-                    6 + this.y + tradeBoundaries.y - yOFfset);
-            itemRenderer.renderGuiItem(sell, 55 + this.x + tradeBoundaries.x,
-                    6 + this.y + tradeBoundaries.y - yOFfset);
+            itemRenderer.renderGuiItem(buy, 5 + this.x + tradeBoundaries.x, 6 + this.y + tradeBoundaries.y - yOFfset);
+            itemRenderer.renderGuiItem(sell, 55 + this.x + tradeBoundaries.x, 6 + this.y + tradeBoundaries.y - yOFfset);
             return;
         }
         final boolean isHovered = this.isHovered(mouseX, mouseY);
-        final boolean isSelected = ((VendingMachineContainer) this.parentScreen.getMenu())
-                .getSelectedTrade() == this.traderCode;
-        blit(matrixStack, this.x, this.y, 277.0f,
-                (isHovered || isSelected) ? 68.0f : 40.0f, 88, 27, 512, 256);
+        final boolean isSelected = ((VendingMachineContainer)this.parentScreen.getMenu()).getSelectedTrade() == this.traderCode;
+        blit(matrixStack, this.x, this.y, 277.0f, (isHovered || isSelected) ? 68.0f : 40.0f, 88, 27, 512, 256);
         RenderSystem.disableDepthTest();
-        itemRenderer.renderGuiItem(buy, 5 + this.x + tradeBoundaries.x,
-                6 + this.y + tradeBoundaries.y - yOFfset);
-        itemRenderer.renderGuiItem(sell, 55 + this.x + tradeBoundaries.x,
-                6 + this.y + tradeBoundaries.y - yOFfset);
-        minecraft.font.draw(matrixStack, buy.getCount() + "",
-                (float) (this.x + 23), (float) (this.y + 10), -1);
-        minecraft.font.draw(matrixStack, sell.getCount() + "",
-                (float) (this.x + 73), (float) (this.y + 10), -1);
+        itemRenderer.renderGuiItem(buy, 5 + this.x + tradeBoundaries.x, 6 + this.y + tradeBoundaries.y - yOFfset);
+        itemRenderer.renderGuiItem(sell, 55 + this.x + tradeBoundaries.x, 6 + this.y + tradeBoundaries.y - yOFfset);
+        minecraft.font.draw(matrixStack, buy.getCount() + "", (float)(this.x + 23), (float)(this.y + 10), -1);
+        minecraft.font.draw(matrixStack, sell.getCount() + "", (float)(this.x + 73), (float)(this.y + 10), -1);
         RenderSystem.enableDepthTest();
     }
 }

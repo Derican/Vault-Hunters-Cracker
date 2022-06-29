@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.entity;
 
@@ -10,35 +13,36 @@ import net.minecraft.tileentity.TileEntityType;
 import iskallia.vault.util.SkinProfile;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class SkinnableTileEntity extends TileEntity {
+public abstract class SkinnableTileEntity extends TileEntity
+{
     protected SkinProfile skin;
-
+    
     public SkinnableTileEntity(final TileEntityType<?> tileEntityTypeIn) {
-        super((TileEntityType) tileEntityTypeIn);
+        super((TileEntityType)tileEntityTypeIn);
         this.skin = new SkinProfile();
     }
-
+    
     public SkinProfile getSkin() {
         return this.skin;
     }
-
+    
     protected abstract void updateSkin();
-
+    
     public void sendUpdates() {
         this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
         this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
         this.setChanged();
     }
-
+    
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag) {
         this.load(state, tag);
     }
-
+    
     @Nullable
     public SUpdateTileEntityPacket getUpdatePacket() {
         return new SUpdateTileEntityPacket(this.worldPosition, 1, this.getUpdateTag());
     }
-
+    
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
         final CompoundNBT nbt = pkt.getTag();
         this.handleUpdateTag(this.getBlockState(), nbt);

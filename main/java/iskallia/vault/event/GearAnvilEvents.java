@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.event;
 
@@ -41,7 +44,8 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class GearAnvilEvents {
+public class GearAnvilEvents
+{
     @SubscribeEvent
     public static void onApplyT2Charm(final AnvilUpdateEvent event) {
         final ItemStack left = event.getLeft();
@@ -49,8 +53,7 @@ public class GearAnvilEvents {
             return;
         }
         if (left.getItem() instanceof VaultGear && event.getRight().getItem() == ModItems.GEAR_CHARM) {
-            if (ModAttributes.GEAR_STATE.getOrDefault(left, VaultGear.State.UNIDENTIFIED)
-                    .getValue(left) != VaultGear.State.UNIDENTIFIED) {
+            if (ModAttributes.GEAR_STATE.getOrDefault(left, VaultGear.State.UNIDENTIFIED).getValue(left) != VaultGear.State.UNIDENTIFIED) {
                 return;
             }
             if (!ModAttributes.GEAR_ROLL_TYPE.exists(left)) {
@@ -77,7 +80,7 @@ public class GearAnvilEvents {
             event.setCost(20);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyT3Charm(final AnvilUpdateEvent event) {
         final ItemStack left = event.getLeft();
@@ -85,8 +88,7 @@ public class GearAnvilEvents {
             return;
         }
         if (left.getItem() instanceof VaultGear && event.getRight().getItem() == ModItems.GEAR_CHARM_T3) {
-            if (ModAttributes.GEAR_STATE.getOrDefault(left, VaultGear.State.UNIDENTIFIED)
-                    .getValue(left) != VaultGear.State.UNIDENTIFIED) {
+            if (ModAttributes.GEAR_STATE.getOrDefault(left, VaultGear.State.UNIDENTIFIED).getValue(left) != VaultGear.State.UNIDENTIFIED) {
                 return;
             }
             if (!ModAttributes.GEAR_ROLL_TYPE.exists(left)) {
@@ -113,11 +115,10 @@ public class GearAnvilEvents {
             event.setCost(20);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyBanishedSoul(final AnvilUpdateEvent event) {
-        if (event.getLeft().getItem() instanceof IdolItem
-                && event.getRight().getItem() == ModItems.BANISHED_SOUL && event.getLeft().getDamageValue() == 0) {
+        if (event.getLeft().getItem() instanceof IdolItem && event.getRight().getItem() == ModItems.BANISHED_SOUL && event.getLeft().getDamageValue() == 0) {
             final ItemStack output = event.getLeft().copy();
             if (ModAttributes.IDOL_AUGMENTED.exists(output) || !ModAttributes.GEAR_RANDOM_SEED.exists(output)) {
                 return;
@@ -128,7 +129,7 @@ public class GearAnvilEvents {
             event.setCost(15);
         }
     }
-
+    
     @SubscribeEvent
     public static void onBreakBanishedSoul(final AnvilRepairEvent event) {
         final ItemStack result = event.getItemResult();
@@ -143,49 +144,45 @@ public class GearAnvilEvents {
                 return;
             }
             original = event.getPlayer().inventory.getItem(originalSlot);
-        } else {
+        }
+        else {
             original = event.getItemResult();
         }
-        if (original.getItem() instanceof IdolItem
-                && event.getIngredientInput().getItem() == ModItems.BANISHED_SOUL) {
+        if (original.getItem() instanceof IdolItem && event.getIngredientInput().getItem() == ModItems.BANISHED_SOUL) {
             final long seed = ModAttributes.GEAR_RANDOM_SEED.getBase(original).orElse(0L);
             final Random r = new Random(seed);
             event.setBreakChance(1.0f);
             if (r.nextFloat() <= 0.33333334f) {
                 original.setCount(0);
                 event.getPlayer().getCommandSenderWorld().levelEvent(1029, event.getPlayer().blockPosition(), 0);
-            } else {
-                ModAttributes.DURABILITY.getBase(original)
-                        .ifPresent(value -> ModAttributes.DURABILITY.create(original, value + 3000));
+            }
+            else {
+                ModAttributes.DURABILITY.getBase(original).ifPresent(value -> ModAttributes.DURABILITY.create(original, value + 3000));
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyEtching(final AnvilUpdateEvent event) {
-        if (event.getLeft().getItem() instanceof VaultArmorItem
-                && event.getRight().getItem() == ModItems.ETCHING) {
-            if (ModAttributes.GEAR_STATE.getBase(event.getRight())
-                    .orElse(VaultGear.State.UNIDENTIFIED) == VaultGear.State.UNIDENTIFIED) {
+        if (event.getLeft().getItem() instanceof VaultArmorItem && event.getRight().getItem() == ModItems.ETCHING) {
+            if (ModAttributes.GEAR_STATE.getBase(event.getRight()).orElse(VaultGear.State.UNIDENTIFIED) == VaultGear.State.UNIDENTIFIED) {
                 return;
             }
             if (event.getRight().getOrCreateTag().contains("RollTicks")) {
                 return;
             }
             final ItemStack output = event.getLeft().copy();
-            if (ModAttributes.GEAR_SET.exists(output)
-                    && ModAttributes.GEAR_SET.getBase(output).orElse(VaultGear.Set.NONE) != VaultGear.Set.NONE) {
+            if (ModAttributes.GEAR_SET.exists(output) && ModAttributes.GEAR_SET.getBase(output).orElse(VaultGear.Set.NONE) != VaultGear.Set.NONE) {
                 return;
             }
-            final VaultGear.Set set = ModAttributes.GEAR_SET.getOrDefault(event.getRight(), VaultGear.Set.NONE)
-                    .getValue(event.getRight());
+            final VaultGear.Set set = ModAttributes.GEAR_SET.getOrDefault(event.getRight(), VaultGear.Set.NONE).getValue(event.getRight());
             ModAttributes.GEAR_SET.create(output, set);
             event.setOutput(output);
             event.setMaterialCost(1);
             event.setCost(25);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyRepairCore(final AnvilUpdateEvent event) {
         if (!(event.getRight().getItem() instanceof VaultRepairCoreItem)) {
@@ -194,7 +191,7 @@ public class GearAnvilEvents {
         if (event.getLeft().getItem() instanceof VaultGear) {
             final ItemStack output = event.getLeft().copy();
             final ItemStack repairCore = event.getRight();
-            final int repairLevel = ((VaultRepairCoreItem) repairCore.getItem()).getVaultGearTier();
+            final int repairLevel = ((VaultRepairCoreItem)repairCore.getItem()).getVaultGearTier();
             if (ModAttributes.GEAR_TIER.getOrDefault(output, 0).getValue(output) != repairLevel) {
                 return;
             }
@@ -204,15 +201,14 @@ public class GearAnvilEvents {
                 return;
             }
             ModAttributes.CURRENT_REPAIRS.create(output, curRepairs + 1);
-            ModAttributes.DURABILITY.getBase(output)
-                    .ifPresent(value -> ModAttributes.DURABILITY.create(output, (int) (value * 0.75f)));
+            ModAttributes.DURABILITY.getBase(output).ifPresent(value -> ModAttributes.DURABILITY.create(output, (int)(value * 0.75f)));
             output.setDamageValue(0);
             event.setOutput(output);
             event.setMaterialCost(1);
             event.setCost(1);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyPlating(final AnvilUpdateEvent event) {
         if (!(event.getRight().getItem() instanceof VaultPlateItem)) {
@@ -221,7 +217,7 @@ public class GearAnvilEvents {
         if (event.getLeft().getItem() instanceof VaultGear) {
             final ItemStack output = event.getLeft().copy();
             final ItemStack plate = event.getRight();
-            final int plateLevel = ((VaultPlateItem) plate.getItem()).getVaultGearTier();
+            final int plateLevel = ((VaultPlateItem)plate.getItem()).getVaultGearTier();
             if (ModAttributes.GEAR_TIER.getOrDefault(output, 0).getValue(output) != plateLevel) {
                 return;
             }
@@ -233,7 +229,7 @@ public class GearAnvilEvents {
             event.setCost(decrement);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyWutaxShard(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.WUTAX_SHARD) {
@@ -242,8 +238,7 @@ public class GearAnvilEvents {
         if (event.getLeft().getItem() instanceof VaultGear) {
             final ItemStack output = event.getLeft().copy();
             ModAttributes.MIN_VAULT_LEVEL.getValue(output).ifPresent(level -> {
-                final int tier = ModAttributes.GEAR_TIER.get(event.getLeft())
-                        .map(attribute -> attribute.getValue(event.getLeft())).orElse(0);
+                final int tier = ModAttributes.GEAR_TIER.get(event.getLeft()).map(attribute -> attribute.getValue(event.getLeft())).orElse(0);
                 final int tierMinLevel = ModConfigs.VAULT_GEAR.getTierConfig(tier).getMinLevel();
                 final int maxAllowedDecrement = Math.max(0, level - tierMinLevel);
                 final int decrement = Math.min(maxAllowedDecrement, event.getRight().getCount());
@@ -254,7 +249,7 @@ public class GearAnvilEvents {
             });
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyWutaxCrystal(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.WUTAX_CRYSTAL) {
@@ -264,14 +259,14 @@ public class GearAnvilEvents {
             final ItemStack output = event.getLeft().copy();
             final float level = ModAttributes.GEAR_LEVEL.getOrDefault(output, 0.0f).getValue(output);
             final int max = ModAttributes.GEAR_MAX_LEVEL.getOrDefault(output, 0).getValue(output);
-            final int increment = Math.min(max - (int) level, event.getRight().getCount());
-            VaultGear.addLevel(output, (float) increment);
+            final int increment = Math.min(max - (int)level, event.getRight().getCount());
+            VaultGear.addLevel(output, (float)increment);
             event.setOutput(output);
             event.setMaterialCost(increment);
             event.setCost(increment);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyVoidOrb(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.VOID_ORB) {
@@ -279,7 +274,7 @@ public class GearAnvilEvents {
         }
         if (event.getLeft().getItem() instanceof VaultGear) {
             final ItemStack output = event.getLeft().copy();
-            final VaultGear<?> outputItem = (VaultGear<?>) output.getItem();
+            final VaultGear<?> outputItem = (VaultGear<?>)output.getItem();
             final int maxRepairs = ModAttributes.MAX_REPAIRS.getOrDefault(output, -1).getValue(output);
             final int curRepairs = ModAttributes.CURRENT_REPAIRS.getOrDefault(output, 0).getValue(output);
             final float level = ModAttributes.GEAR_LEVEL.getOrDefault(output, 0.0f).getValue(output);
@@ -290,15 +285,13 @@ public class GearAnvilEvents {
             if (rolls != 0) {
                 return;
             }
-            final Pair<EquipmentSlotType, VAttribute<?, ?>> predefinedRemoval = VoidOrbItem
-                    .getPredefinedRemoval(event.getRight());
+            final Pair<EquipmentSlotType, VAttribute<?, ?>> predefinedRemoval = VoidOrbItem.getPredefinedRemoval(event.getRight());
             VAttribute<?, ?> foundAttribute = null;
             if (predefinedRemoval != null) {
-                if (!outputItem.isIntendedForSlot((EquipmentSlotType) predefinedRemoval.getFirst())) {
+                if (!outputItem.isIntendedForSlot((EquipmentSlotType)predefinedRemoval.getFirst())) {
                     return;
                 }
-                final List<VAttribute<?, ?>> attributes = VaultGearHelper
-                        .getAliasAttributes(((VAttribute) predefinedRemoval.getSecond()).getId());
+                final List<VAttribute<?, ?>> attributes = VaultGearHelper.getAliasAttributes(((VAttribute)predefinedRemoval.getSecond()).getId());
                 for (final VAttribute<?, ?> attribute : attributes) {
                     if (VaultGearHelper.hasModifier(output, attribute)) {
                         foundAttribute = attribute;
@@ -321,7 +314,7 @@ public class GearAnvilEvents {
             event.setCost(1);
         }
     }
-
+    
     @SubscribeEvent
     public static void onApplyArtisanScroll(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.ARTISAN_SCROLL) {
@@ -333,7 +326,7 @@ public class GearAnvilEvents {
         if (!(event.getLeft().getItem() instanceof VaultGear)) {
             return;
         }
-        final VaultGear<?> gearItem = (VaultGear<?>) event.getLeft().getItem();
+        final VaultGear<?> gearItem = (VaultGear<?>)event.getLeft().getItem();
         final PlayerEntity playerEntity = event.getPlayer();
         if (playerEntity == null) {
             return;
@@ -344,31 +337,27 @@ public class GearAnvilEvents {
         }
         final ItemStack output = event.getLeft().copy();
         VAttribute<?, ?> attribute = null;
-        final VaultGear.Rarity rarity = ModAttributes.GEAR_RARITY.get(output)
-                .map(attribute -> attribute.getValue(output)).orElse(null);
+        final VaultGear.Rarity rarity = ModAttributes.GEAR_RARITY.get(output).map(attribute -> attribute.getValue(output)).orElse(null);
         if (rarity == null) {
             return;
         }
         final int tier = ModAttributes.GEAR_TIER.getOrDefault(output, 0).getValue(output);
-        final Pair<EquipmentSlotType, VAttribute<?, ?>> gearModifier = ArtisanScrollItem
-                .getPredefinedRoll(event.getRight());
+        final Pair<EquipmentSlotType, VAttribute<?, ?>> gearModifier = ArtisanScrollItem.getPredefinedRoll(event.getRight());
         if (ModAttributes.REFORGED.getOrDefault(output, false).getValue(output)) {
             return;
         }
-        if (ModAttributes.GEAR_STATE.getOrDefault(output, VaultGear.State.UNIDENTIFIED)
-                .getValue(output) == VaultGear.State.UNIDENTIFIED) {
+        if (ModAttributes.GEAR_STATE.getOrDefault(output, VaultGear.State.UNIDENTIFIED).getValue(output) == VaultGear.State.UNIDENTIFIED) {
             return;
         }
-        if (gearModifier != null && !VaultGearHelper.canRollModifier(output, rarity, tier,
-                (VAttribute<?, ?>) gearModifier.getSecond())) {
+        if (gearModifier != null && !VaultGearHelper.canRollModifier(output, rarity, tier, (VAttribute<?, ?>)gearModifier.getSecond())) {
             return;
         }
         VaultGearHelper.removeAllAttributes(output);
         ModAttributes.GEAR_STATE.create(output, VaultGear.State.UNIDENTIFIED);
         ModAttributes.REFORGED.create(output, true);
         if (gearModifier != null) {
-            final EquipmentSlotType slotType = (EquipmentSlotType) gearModifier.getFirst();
-            attribute = (VAttribute) gearModifier.getSecond();
+            final EquipmentSlotType slotType = (EquipmentSlotType)gearModifier.getFirst();
+            attribute = (VAttribute)gearModifier.getSecond();
             if (!gearItem.isIntendedForSlot(slotType)) {
                 return;
             }
@@ -378,28 +367,25 @@ public class GearAnvilEvents {
         event.setMaterialCost(1);
         event.setOutput(output);
     }
-
+    
     @SubscribeEvent
     public static void onCreateVoidOrb(final AnvilUpdateEvent event) {
-        if (!(event.getRight().getItem() instanceof ArtisanScrollItem)
-                || !(event.getLeft().getItem() instanceof VoidOrbItem)) {
+        if (!(event.getRight().getItem() instanceof ArtisanScrollItem) || !(event.getLeft().getItem() instanceof VoidOrbItem)) {
             return;
         }
         final ItemStack scroll = event.getRight();
         final ItemStack orb = event.getLeft();
         final Pair<EquipmentSlotType, VAttribute<?, ?>> predefinedRoll;
-        if ((predefinedRoll = ArtisanScrollItem.getPredefinedRoll(scroll)) == null
-                || VoidOrbItem.getPredefinedRemoval(orb) != null) {
+        if ((predefinedRoll = ArtisanScrollItem.getPredefinedRoll(scroll)) == null || VoidOrbItem.getPredefinedRemoval(orb) != null) {
             return;
         }
         final ItemStack output = orb.copy();
-        VoidOrbItem.setPredefinedRemoval(output, (EquipmentSlotType) predefinedRoll.getFirst(),
-                (VAttribute<?, ?>) predefinedRoll.getSecond());
+        VoidOrbItem.setPredefinedRemoval(output, (EquipmentSlotType)predefinedRoll.getFirst(), (VAttribute<?, ?>)predefinedRoll.getSecond());
         event.setCost(5);
         event.setMaterialCost(1);
         event.setOutput(output);
     }
-
+    
     @SubscribeEvent
     public static void onCreateArtisanScroll(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.FABRICATION_JEWEL) {
@@ -419,8 +405,7 @@ public class GearAnvilEvents {
         if (!ModAttributes.GEAR_RANDOM_SEED.exists(input)) {
             return;
         }
-        if (ModAttributes.GEAR_STATE.getOrDefault(input, VaultGear.State.UNIDENTIFIED)
-                .getValue(input) == VaultGear.State.UNIDENTIFIED) {
+        if (ModAttributes.GEAR_STATE.getOrDefault(input, VaultGear.State.UNIDENTIFIED).getValue(input) == VaultGear.State.UNIDENTIFIED) {
             return;
         }
         if (!VaultGearHelper.hasModifier(input)) {
@@ -428,11 +413,11 @@ public class GearAnvilEvents {
         }
         event.setCost(5);
         event.setMaterialCost(1);
-        final ItemStack result = new ItemStack((IItemProvider) ModItems.ARTISAN_SCROLL);
+        final ItemStack result = new ItemStack((IItemProvider)ModItems.ARTISAN_SCROLL);
         ArtisanScrollItem.setInitialized(result, true);
         event.setOutput(result);
     }
-
+    
     @SubscribeEvent
     public static void onCreateArtisanScroll(final AnvilRepairEvent event) {
         final ItemStack input = event.getItemInput();
@@ -449,7 +434,7 @@ public class GearAnvilEvents {
         if (!VaultGearHelper.hasModifier(input)) {
             return;
         }
-        final EquipmentSlotType slotType = ((VaultGear) input.getItem()).getIntendedSlot();
+        final EquipmentSlotType slotType = ((VaultGear)input.getItem()).getIntendedSlot();
         if (slotType == null) {
             return;
         }
@@ -459,13 +444,12 @@ public class GearAnvilEvents {
         final long seed = ModAttributes.GEAR_RANDOM_SEED.getBase(input).orElse(0L);
         final Random rand = new Random(seed);
         final VAttribute<?, ?> randomModifier = VaultGearHelper.getRandomModifier(input, rand);
-        if (randomModifier != null
-                && rand.nextFloat() < ModConfigs.VAULT_GEAR_UTILITIES.getFabricationJewelKeepModifierChance()) {
+        if (randomModifier != null && rand.nextFloat() < ModConfigs.VAULT_GEAR_UTILITIES.getFabricationJewelKeepModifierChance()) {
             ArtisanScrollItem.setPredefinedRoll(result, slotType, randomModifier);
         }
         ArtisanScrollItem.setInitialized(result, true);
     }
-
+    
     @SubscribeEvent
     public static void onApplyArtisanPearl(final AnvilUpdateEvent event) {
         if (event.getRight().getItem() != ModItems.FLAWED_RUBY) {
@@ -485,7 +469,7 @@ public class GearAnvilEvents {
             }
         }
     }
-
+    
     private static boolean hasLearnedArtisan(final PlayerEntity player) {
         if (player == null) {
             return false;
@@ -494,11 +478,11 @@ public class GearAnvilEvents {
         if (!(world instanceof ServerWorld)) {
             return false;
         }
-        final ServerWorld serverWorld = (ServerWorld) world;
+        final ServerWorld serverWorld = (ServerWorld)world;
         final TalentTree talents = PlayerTalentsData.get(serverWorld).getTalents(player);
         return talents.hasLearnedNode(ModConfigs.TALENTS.ARTISAN);
     }
-
+    
     private static boolean hasLearnedTreasureHunter(final PlayerEntity player) {
         if (player == null) {
             return false;
@@ -507,7 +491,7 @@ public class GearAnvilEvents {
         if (!(world instanceof ServerWorld)) {
             return false;
         }
-        final ServerWorld serverWorld = (ServerWorld) world;
+        final ServerWorld serverWorld = (ServerWorld)world;
         final TalentTree talents = PlayerTalentsData.get(serverWorld).getTalents(player);
         return talents.hasLearnedNode(ModConfigs.TALENTS.TREASURE_HUNTER);
     }

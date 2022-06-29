@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.command;
 
@@ -31,68 +34,60 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.CommandSource;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-public class InvRestoreCommand extends Command {
+public class InvRestoreCommand extends Command
+{
     @Override
     public String getName() {
         return "inv_restore";
     }
-
+    
     @Override
     public int getRequiredPermissionLevel() {
         return 2;
     }
-
+    
     @Override
     public void build(final LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(Commands.literal("list")
-                .then(Commands.argument("playerUUID", (ArgumentType) UUIDArgument.uuid())
-                        .executes(this::listTimestamps)));
-        builder.then(Commands.literal("restore")
-                .then(Commands.argument("playerUUID", (ArgumentType) UUIDArgument.uuid())
-                        .then(Commands.argument("target", (ArgumentType) new BackupListArgument.UUIDRef())
-                                .executes(this::restoreUUID))));
+        builder.then(Commands.literal("list").then(Commands.argument("playerUUID", (ArgumentType)UUIDArgument.uuid()).executes(this::listTimestamps)));
+        builder.then(Commands.literal("restore").then(Commands.argument("playerUUID", (ArgumentType)UUIDArgument.uuid()).then(Commands.argument("target", (ArgumentType)new BackupListArgument.UUIDRef()).executes(this::restoreUUID))));
     }
-
+    
     private int listTimestamps(final CommandContext<CommandSource> ctx) {
-        final CommandSource src = (CommandSource) ctx.getSource();
-        final UUID playerRef = UUIDArgument.getUuid((CommandContext) ctx, "playerUUID");
+        final CommandSource src = (CommandSource)ctx.getSource();
+        final UUID playerRef = UUIDArgument.getUuid((CommandContext)ctx, "playerUUID");
         final List<String> timestamps = BackupManager.getMostRecentBackupFileTimestamps(src.getServer(), playerRef);
-        src.sendSuccess((ITextComponent) new StringTextComponent("Last 5 available backups:"), true);
+        src.sendSuccess((ITextComponent)new StringTextComponent("Last 5 available backups:"), true);
         timestamps.forEach(timestamp -> {
-            final String restoreCmd = String.format("/%s %s restore %s %s", "the_vault", this.getName(),
-                    playerRef.toString(), timestamp);
+            final String restoreCmd = String.format("/%s %s restore %s %s", "the_vault", this.getName(), playerRef.toString(), timestamp);
             final ClickEvent ce = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, restoreCmd);
-            new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    (Object) new StringTextComponent("Click to get restore command!"));
+            new HoverEvent(HoverEvent.Action.SHOW_TEXT, (Object)new StringTextComponent("Click to get restore command!"));
             final HoverEvent hoverEvent;
             final HoverEvent he = hoverEvent;
             final StringTextComponent feedback = new StringTextComponent(timestamp);
             feedback.setStyle(Style.EMPTY.withClickEvent(ce).withHoverEvent(he));
-            src.sendSuccess((ITextComponent) feedback, true);
+            src.sendSuccess((ITextComponent)feedback, true);
             return;
         });
         return 0;
     }
-
+    
     private int restoreUUID(final CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        final UUID playerRef = UUIDArgument.getUuid((CommandContext) ctx, "playerUUID");
-        if (this.attemptRestore((CommandSource) ctx.getSource(), playerRef,
-                (String) ctx.getArgument("target", (Class) String.class))) {
+        final UUID playerRef = UUIDArgument.getUuid((CommandContext)ctx, "playerUUID");
+        if (this.attemptRestore((CommandSource)ctx.getSource(), playerRef, (String)ctx.getArgument("target", (Class)String.class))) {
             return 1;
         }
         return 0;
     }
-
-    private boolean attemptRestore(final CommandSource src, final UUID playerRef, final String target)
-            throws CommandSyntaxException {
+    
+    private boolean attemptRestore(final CommandSource src, final UUID playerRef, final String target) throws CommandSyntaxException {
         final ServerPlayerEntity playerSource = src.getPlayerOrException();
         final MinecraftServer srv = src.getServer();
         return BackupManager.getStoredItemStacks(srv, playerRef, target).map(stacks -> {
             if (stacks.isEmpty()) {
-                src.sendSuccess((ITextComponent) new StringTextComponent("Backup file did not contain any items!")
-                        .withStyle(TextFormatting.RED), true);
+                src.sendSuccess((ITextComponent)new StringTextComponent("Backup file did not contain any items!").withStyle(TextFormatting.RED), true);
                 return false;
-            } else {
+            }
+            else {
                 final ServerWorld world = playerSource.getLevel();
                 final BlockPos offset = playerSource.blockPosition();
                 final int chestsRequired = MathHelper.ceil(stacks.size() / 27.0f);
@@ -100,12 +95,10 @@ public class InvRestoreCommand extends Command {
                 while (i < 2 + chestsRequired) {
                     final BlockPos chestPos = offset.offset(0, 2 + i, 0);
                     if (!World.isInWorldBounds(chestPos) || !world.isEmptyBlock(chestPos)) {
-                        src.sendSuccess(
-                                (ITextComponent) new StringTextComponent("Empty space above the player is required!")
-                                        .withStyle(TextFormatting.RED),
-                                true);
+                        src.sendSuccess((ITextComponent)new StringTextComponent("Empty space above the player is required!").withStyle(TextFormatting.RED), true);
                         return false;
-                    } else {
+                    }
+                    else {
                         ++i;
                     }
                 }
@@ -117,7 +110,7 @@ public class InvRestoreCommand extends Command {
                         if (te instanceof VaultChestTileEntity) {
                             te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(inv -> {
                                 for (int index = 0; index < subStacks.size(); ++index) {
-                                    inv.insertItem(index, (ItemStack) subStacks.get(index), false);
+                                    inv.insertItem(index, (ItemStack)subStacks.get(index), false);
                                 }
                             });
                         }
@@ -126,12 +119,11 @@ public class InvRestoreCommand extends Command {
                 return true;
             }
         }).orElseGet(() -> {
-            src.sendSuccess((ITextComponent) new StringTextComponent("No such backup file found!")
-                    .withStyle(TextFormatting.RED), true);
+            src.sendSuccess((ITextComponent)new StringTextComponent("No such backup file found!").withStyle(TextFormatting.RED), true);
             return false;
         });
     }
-
+    
     @Override
     public boolean isDedicatedServerOnly() {
         return false;

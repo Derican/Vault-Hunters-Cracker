@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.data;
 
@@ -36,46 +39,46 @@ import java.util.Map;
 import java.util.Random;
 import net.minecraft.world.storage.WorldSavedData;
 
-public class SoulShardTraderData extends WorldSavedData {
+public class SoulShardTraderData extends WorldSavedData
+{
     protected static final String DATA_NAME = "the_vault_SoulShardTrader";
     private static final Random rand;
     private long nextReset;
     private long seed;
     private final Map<Integer, SelectedTrade> trades;
-
+    
     public SoulShardTraderData() {
         this("the_vault_SoulShardTrader");
     }
-
+    
     public SoulShardTraderData(final String name) {
         super(name);
         this.nextReset = 0L;
         this.seed = 0L;
         this.trades = new HashMap<Integer, SelectedTrade>();
     }
-
+    
     public void resetDailyTrades() {
         this.resetTrades();
         Vault.LOGGER.info("Reset SoulShard Trades!");
     }
-
+    
     public void resetTrades() {
         this.trades.clear();
         for (int i = 0; i < 3; ++i) {
             this.trades.put(i, new SelectedTrade(ModConfigs.SOUL_SHARD.getRandomTrade(SoulShardTraderData.rand)));
         }
         if (ModConfigs.RAID_EVENT_CONFIG.isEnabled()) {
-            final ItemStack eventSeal = new ItemStack((IItemProvider) ModItems.CRYSTAL_SEAL_RAID);
+            final ItemStack eventSeal = new ItemStack((IItemProvider)ModItems.CRYSTAL_SEAL_RAID);
             ItemVaultCrystalSeal.setEventKey(eventSeal, "raid");
-            final SelectedTrade eventTrade = new SelectedTrade(eventSeal,
-                    ModConfigs.RAID_EVENT_CONFIG.getSoulShardTradeCost());
+            final SelectedTrade eventTrade = new SelectedTrade(eventSeal, ModConfigs.RAID_EVENT_CONFIG.getSoulShardTradeCost());
             eventTrade.isInfinite = true;
             this.trades.put(0, eventTrade);
         }
         this.nextReset = System.currentTimeMillis() / 1000L + Duration.ofDays(1L).getSeconds();
         this.setDirty();
     }
-
+    
     public boolean useTrade(final int tradeId) {
         final SelectedTrade trade = this.trades.get(tradeId);
         if (trade != null && trade.isInfinite) {
@@ -85,15 +88,15 @@ public class SoulShardTraderData extends WorldSavedData {
         this.setDirty();
         return true;
     }
-
+    
     public Map<Integer, SelectedTrade> getTrades() {
-        return Collections.unmodifiableMap((Map<? extends Integer, ? extends SelectedTrade>) this.trades);
+        return Collections.unmodifiableMap((Map<? extends Integer, ? extends SelectedTrade>)this.trades);
     }
-
+    
     public long getSeed() {
         return this.seed;
     }
-
+    
     public void nextSeed() {
         final Random r = new Random(this.seed);
         for (int i = 0; i < 3; ++i) {
@@ -102,34 +105,32 @@ public class SoulShardTraderData extends WorldSavedData {
         this.seed = r.nextLong();
         this.setDirty();
     }
-
+    
     public void setDirty() {
         super.setDirty();
-        ModNetwork.CHANNEL.send(PacketDistributor.ALL.noArg(), (Object) this.getUpdatePacket());
+        ModNetwork.CHANNEL.send(PacketDistributor.ALL.noArg(), (Object)this.getUpdatePacket());
     }
-
+    
     public ShardTradeMessage getUpdatePacket() {
         return new ShardTradeMessage(ModConfigs.SOUL_SHARD.getShardTradePrice(), this.seed, this.getTrades());
     }
-
+    
     public void syncTo(final ServerPlayerEntity player) {
-        ModNetwork.CHANNEL.sendTo((Object) this.getUpdatePacket(), player.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT);
+        ModNetwork.CHANNEL.sendTo((Object)this.getUpdatePacket(), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
-
+    
     public void openTradeContainer(final ServerPlayerEntity player) {
-        NetworkHooks.openGui(player, (INamedContainerProvider) new INamedContainerProvider() {
+        NetworkHooks.openGui(player, (INamedContainerProvider)new INamedContainerProvider() {
             public ITextComponent getDisplayName() {
-                return (ITextComponent) new StringTextComponent("Soul Shard Trading");
+                return (ITextComponent)new StringTextComponent("Soul Shard Trading");
             }
-
-            public Container createMenu(final int windowId, final PlayerInventory playerInventory,
-                    final PlayerEntity player) {
-                return new ShardTradeContainer(windowId, playerInventory, (IInventory) new TraderInventory());
+            
+            public Container createMenu(final int windowId, final PlayerInventory playerInventory, final PlayerEntity player) {
+                return new ShardTradeContainer(windowId, playerInventory, (IInventory)new TraderInventory());
             }
         });
     }
-
+    
     public void load(final CompoundNBT tag) {
         this.trades.clear();
         this.seed = tag.getLong("seed");
@@ -144,47 +145,47 @@ public class SoulShardTraderData extends WorldSavedData {
             this.resetTrades();
         }
     }
-
+    
     public CompoundNBT save(final CompoundNBT tag) {
         final ListNBT list = new ListNBT();
         this.trades.forEach((index, trade) -> {
             final CompoundNBT tradeTag = new CompoundNBT();
-            tradeTag.putInt("index", (int) index);
-            tradeTag.put("trade", (INBT) trade.serialize());
-            list.add((Object) tradeTag);
+            tradeTag.putInt("index", (int)index);
+            tradeTag.put("trade", (INBT)trade.serialize());
+            list.add((Object)tradeTag);
             return;
         });
-        tag.put("trades", (INBT) list);
+        tag.put("trades", (INBT)list);
         tag.putLong("seed", this.seed);
         tag.putLong("nextReset", this.nextReset);
         return tag;
     }
-
+    
     public static SoulShardTraderData get(final ServerWorld world) {
         return get(world.getServer());
     }
-
+    
     public static SoulShardTraderData get(final MinecraftServer server) {
-        return (SoulShardTraderData) server.overworld().getDataStorage()
-                .computeIfAbsent((Supplier) SoulShardTraderData::new, "the_vault_SoulShardTrader");
+        return (SoulShardTraderData)server.overworld().getDataStorage().computeIfAbsent((Supplier)SoulShardTraderData::new, "the_vault_SoulShardTrader");
     }
-
+    
     static {
         rand = new Random();
     }
-
-    public class TraderInventory implements IInventory {
+    
+    public class TraderInventory implements IInventory
+    {
         public int getContainerSize() {
             return 4;
         }
-
+        
         public boolean isEmpty() {
             return false;
         }
-
+        
         public ItemStack getItem(final int index) {
             if (index == 0) {
-                return new ItemStack((IItemProvider) ModItems.UNKNOWN_ITEM);
+                return new ItemStack((IItemProvider)ModItems.UNKNOWN_ITEM);
             }
             final SelectedTrade trade = SoulShardTraderData.this.trades.get(index - 1);
             if (trade != null) {
@@ -192,13 +193,13 @@ public class SoulShardTraderData extends WorldSavedData {
             }
             return ItemStack.EMPTY;
         }
-
+        
         public ItemStack removeItem(final int index, final int count) {
             if (count <= 0) {
                 return ItemStack.EMPTY;
             }
             if (index == 0) {
-                return new ItemStack((IItemProvider) ModItems.UNKNOWN_ITEM);
+                return new ItemStack((IItemProvider)ModItems.UNKNOWN_ITEM);
             }
             if (count > 0) {
                 final SelectedTrade trade = SoulShardTraderData.this.trades.get(index - 1);
@@ -208,10 +209,10 @@ public class SoulShardTraderData extends WorldSavedData {
             }
             return ItemStack.EMPTY;
         }
-
+        
         public ItemStack removeItemNoUpdate(final int index) {
             if (index == 0) {
-                return new ItemStack((IItemProvider) ModItems.UNKNOWN_ITEM);
+                return new ItemStack((IItemProvider)ModItems.UNKNOWN_ITEM);
             }
             final SelectedTrade trade = SoulShardTraderData.this.trades.get(index - 1);
             if (trade != null) {
@@ -219,61 +220,62 @@ public class SoulShardTraderData extends WorldSavedData {
             }
             return ItemStack.EMPTY;
         }
-
+        
         public void setItem(final int index, final ItemStack stack) {
         }
-
+        
         public void setChanged() {
             SoulShardTraderData.this.setDirty();
         }
-
+        
         public boolean stillValid(final PlayerEntity player) {
             return true;
         }
-
+        
         public void clearContent() {
         }
     }
-
-    public static class SelectedTrade {
+    
+    public static class SelectedTrade
+    {
         private final ItemStack stack;
         private final int shardCost;
         private boolean isInfinite;
-
+        
         public SelectedTrade(final SoulShardConfig.ShardTrade trade) {
             this.isInfinite = false;
             this.stack = trade.getItem();
             this.shardCost = MathUtilities.getRandomInt(trade.getMinPrice(), trade.getMaxPrice() + 1);
         }
-
+        
         public SelectedTrade(final ItemStack stack, final int shardCost) {
             this.isInfinite = false;
             this.stack = stack;
             this.shardCost = shardCost;
         }
-
+        
         public SelectedTrade(final CompoundNBT tag) {
             this.isInfinite = false;
             this.stack = ItemStack.of(tag.getCompound("stack"));
             this.shardCost = tag.getInt("cost");
             this.isInfinite = tag.getBoolean("infinite");
         }
-
+        
         public int getShardCost() {
             return this.shardCost;
         }
-
+        
         public ItemStack getStack() {
             return this.stack.copy();
         }
-
+        
         public boolean isInfinite() {
             return this.isInfinite;
         }
-
+        
         public CompoundNBT serialize() {
             final CompoundNBT tag = new CompoundNBT();
-            tag.put("stack", (INBT) this.stack.serializeNBT());
+            tag.put("stack", (INBT)this.stack.serializeNBT());
             tag.putInt("cost", this.shardCost);
             tag.putBoolean("infinite", this.isInfinite);
             return tag;

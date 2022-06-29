@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.logic.objective.architect;
 
@@ -12,14 +15,15 @@ import java.util.Collection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 
-public class SummonAndKillBossesVotingSession extends VotingSession {
+public class SummonAndKillBossesVotingSession extends VotingSession
+{
     private Direction votedDirection;
-
+    
     SummonAndKillBossesVotingSession(final BlockPos stabilizerPos, final Collection<DirectionChoice> directions) {
         super(stabilizerPos, directions);
         this.votedDirection = null;
     }
-
+    
     SummonAndKillBossesVotingSession(final CompoundNBT tag) {
         super(tag);
         this.votedDirection = null;
@@ -27,25 +31,23 @@ public class SummonAndKillBossesVotingSession extends VotingSession {
             this.votedDirection = Direction.values()[tag.getInt("votedDirection")];
         }
     }
-
+    
     @Override
     protected void setStabilizerActive(final StabilizerTileEntity tile) {
         super.setStabilizerActive(tile);
-        tile.setHighlightDirections((Collection<Direction>) this.getDirections().stream()
-                .map((Function<? super Object, ?>) DirectionChoice::getDirection)
-                .collect((Collector<? super Object, ?, List<? super Object>>) Collectors.toList()));
+        tile.setHighlightDirections((Collection<Direction>)this.getDirections().stream().map((Function<? super Object, ?>)DirectionChoice::getDirection).collect((Collector<? super Object, ?, List<? super Object>>)Collectors.toList()));
     }
-
+    
     @Override
     public boolean isFinished() {
         return this.votedDirection != null;
     }
-
+    
     @Override
     public float getChoicePercentage(final DirectionChoice choice) {
         return 0.0f;
     }
-
+    
     public void setVotedDirection(final Direction votedDirection) {
         for (final DirectionChoice dir : this.getDirections()) {
             if (dir.getDirection() == votedDirection) {
@@ -54,7 +56,7 @@ public class SummonAndKillBossesVotingSession extends VotingSession {
             }
         }
     }
-
+    
     @Override
     public DirectionChoice getVotedDirection() {
         if (this.votedDirection != null) {
@@ -66,7 +68,7 @@ public class SummonAndKillBossesVotingSession extends VotingSession {
         }
         return super.getVotedDirection();
     }
-
+    
     @Override
     public CompoundNBT serialize() {
         final CompoundNBT nbt = super.serialize();

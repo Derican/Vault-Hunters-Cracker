@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.talent.type;
 
@@ -16,26 +19,27 @@ import com.google.gson.annotations.Expose;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class ThornsTalent extends PlayerTalent {
+public class ThornsTalent extends PlayerTalent
+{
     @Expose
     private final float thornsChance;
     @Expose
     private final float thornsDamage;
-
+    
     public ThornsTalent(final int cost, final float thornsChance, final float thornsDamage) {
         super(cost);
         this.thornsChance = thornsChance;
         this.thornsDamage = thornsDamage;
     }
-
+    
     public float getThornsChance() {
         return this.thornsChance;
     }
-
+    
     public float getThornsDamage() {
         return this.thornsDamage;
     }
-
+    
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onLivingAttack(final LivingAttackEvent event) {
         final LivingEntity hurt = event.getEntityLiving();
@@ -48,8 +52,9 @@ public class ThornsTalent extends PlayerTalent {
         }
         float thornsChance;
         if (hurt instanceof ServerPlayerEntity) {
-            thornsChance = ThornsHelper.getPlayerThornsChance((ServerPlayerEntity) hurt);
-        } else {
+            thornsChance = ThornsHelper.getPlayerThornsChance((ServerPlayerEntity)hurt);
+        }
+        else {
             thornsChance = ThornsHelper.getThornsChance(hurt);
         }
         if (ThornsTalent.rand.nextFloat() >= thornsChance) {
@@ -57,15 +62,15 @@ public class ThornsTalent extends PlayerTalent {
         }
         float thornsDamage;
         if (hurt instanceof ServerPlayerEntity) {
-            thornsDamage = ThornsHelper.getPlayerThornsDamage((ServerPlayerEntity) hurt);
-        } else {
+            thornsDamage = ThornsHelper.getPlayerThornsDamage((ServerPlayerEntity)hurt);
+        }
+        else {
             thornsDamage = ThornsHelper.getThornsDamage(hurt);
         }
         if (thornsDamage <= 0.001f) {
             return;
         }
-        final float dmg = (float) hurt.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        ServerScheduler.INSTANCE.schedule(0, () -> ActiveFlags.IS_REFLECT_ATTACKING
-                .runIfNotSet(() -> source.hurt(DamageSource.thorns((Entity) hurt), dmg * thornsDamage)));
+        final float dmg = (float)hurt.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        ServerScheduler.INSTANCE.schedule(0, () -> ActiveFlags.IS_REFLECT_ATTACKING.runIfNotSet(() -> source.hurt(DamageSource.thorns((Entity)hurt), dmg * thornsDamage)));
     }
 }

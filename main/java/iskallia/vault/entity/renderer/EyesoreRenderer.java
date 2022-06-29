@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.entity.renderer;
 
@@ -35,36 +38,33 @@ import iskallia.vault.entity.model.EyesoreModel;
 import iskallia.vault.entity.EyesoreEntity;
 import net.minecraft.client.renderer.entity.MobRenderer;
 
-public class EyesoreRenderer extends MobRenderer<EyesoreEntity, EyesoreModel> {
+public class EyesoreRenderer extends MobRenderer<EyesoreEntity, EyesoreModel>
+{
     public static final ResourceLocation DEFAULT_TEXTURE;
     public static final ResourceLocation SORE_EYE_TEXTURE;
     private static final ResourceLocation GUARDIAN_BEAM_TEXTURE;
     private static final RenderType BEAM_RENDER_TYPE;
-
+    
     public EyesoreRenderer(final EntityRendererManager rendererManager) {
-        super(rendererManager, (EntityModel) new EyesoreModel(), 0.5f);
+        super(rendererManager, (EntityModel)new EyesoreModel(), 0.5f);
     }
-
-    protected void preRenderCallback(@Nonnull final EyesoreEntity entity, @Nonnull final MatrixStack matrixStack,
-            final float partialTickTime) {
+    
+    protected void preRenderCallback(@Nonnull final EyesoreEntity entity, @Nonnull final MatrixStack matrixStack, final float partialTickTime) {
         final float f = 9.0f;
         matrixStack.scale(f, f, f);
     }
-
-    protected void renderName(final EyesoreEntity entityIn, final ITextComponent displayNameIn,
-            final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
+    
+    protected void renderName(final EyesoreEntity entityIn, final ITextComponent displayNameIn, final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
     }
-
+    
     protected boolean canRenderName(final EyesoreEntity entity) {
         return false;
     }
-
+    
     @Nonnull
     public ResourceLocation getEntityTexture(@Nonnull final EyesoreEntity entity) {
-        final UUID targetPlayer = ((Optional) entity.getEntityData()
-                .get((DataParameter) EyesoreEntity.LASER_TARGET)).orElse(null);
-        if ((targetPlayer != null && entity.level.getPlayerByUUID(targetPlayer) != null)
-                || (boolean) entity.getEntityData().get((DataParameter) EyesoreEntity.WATCH_CLIENT)) {
+        final UUID targetPlayer = ((Optional)entity.getEntityData().get((DataParameter)EyesoreEntity.LASER_TARGET)).orElse(null);
+        if ((targetPlayer != null && entity.level.getPlayerByUUID(targetPlayer) != null) || (boolean)entity.getEntityData().get((DataParameter)EyesoreEntity.WATCH_CLIENT)) {
             return EyesoreRenderer.SORE_EYE_TEXTURE;
         }
         if (entity.getState() == EyesoreEntity.State.GIVING_BIRTH) {
@@ -72,36 +72,32 @@ public class EyesoreRenderer extends MobRenderer<EyesoreEntity, EyesoreModel> {
         }
         return EyesoreRenderer.DEFAULT_TEXTURE;
     }
-
-    public void render(final EyesoreEntity entity, final float entityYaw, final float partialTicks,
-            final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final int packedLightIn) {
-        super.render((MobEntity) entity, entityYaw, partialTicks, matrixStack, buffer, packedLightIn);
-        final LivingEntity livingentity = ((Optional) entity.getEntityData()
-                .get((DataParameter) EyesoreEntity.LASER_TARGET))
-                .map(playerId -> entity.getCommandSenderWorld().getPlayerByUUID(playerId)).orElse(null);
-        ((EyesoreModel) this.model).tentaclesRemaining = entity.getTentaclesRemaining();
+    
+    public void render(final EyesoreEntity entity, final float entityYaw, final float partialTicks, final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final int packedLightIn) {
+        super.render((MobEntity)entity, entityYaw, partialTicks, matrixStack, buffer, packedLightIn);
+        final LivingEntity livingentity = ((Optional)entity.getEntityData().get((DataParameter)EyesoreEntity.LASER_TARGET)).map(playerId -> entity.getCommandSenderWorld().getPlayerByUUID(playerId)).orElse(null);
+        ((EyesoreModel)this.model).tentaclesRemaining = entity.getTentaclesRemaining();
         if (livingentity != null) {
             final float f = this.getAttackAnimationScale(entity, partialTicks);
             final float f2 = entity.level.getGameTime() + partialTicks;
             final float f3 = f2 * 0.5f % 1.0f;
             final float f4 = entity.getEyeHeight();
             matrixStack.pushPose();
-            matrixStack.translate(0.0, (double) f4, 0.0);
+            matrixStack.translate(0.0, (double)f4, 0.0);
             Vector3d vector3d = this.getPosition(livingentity, livingentity.getBbHeight() * 0.5, partialTicks);
-            Vector3d vector3d2 = this.getPosition((LivingEntity) entity, f4, partialTicks);
+            Vector3d vector3d2 = this.getPosition((LivingEntity)entity, f4, partialTicks);
             final Vector3d eyePos1 = entity.getEyePosition(partialTicks);
-            final RayTraceContext context = new RayTraceContext(eyePos1, vector3d, RayTraceContext.BlockMode.COLLIDER,
-                    RayTraceContext.FluidMode.NONE, (Entity) entity);
+            final RayTraceContext context = new RayTraceContext(eyePos1, vector3d, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, (Entity)entity);
             final BlockRayTraceResult result = entity.level.clip(context);
             vector3d2 = eyePos1;
             if (result.getType() != RayTraceResult.Type.MISS) {
                 vector3d = result.getLocation();
             }
             Vector3d vector3d3 = vector3d.subtract(vector3d2);
-            final float f5 = (float) (vector3d3.length() + 1.0);
+            final float f5 = (float)(vector3d3.length() + 1.0);
             vector3d3 = vector3d3.normalize();
-            final float f6 = (float) Math.acos(vector3d3.y);
-            final float f7 = (float) Math.atan2(vector3d3.z, vector3d3.x);
+            final float f6 = (float)Math.acos(vector3d3.y);
+            final float f7 = (float)Math.atan2(vector3d3.z, vector3d3.x);
             matrixStack.mulPose(Vector3f.YP.rotationDegrees((1.5707964f - f7) * 57.295776f));
             matrixStack.mulPose(Vector3f.XP.rotationDegrees(f6 * 57.295776f));
             final int i = 1;
@@ -136,13 +132,10 @@ public class EyesoreRenderer extends MobRenderer<EyesoreEntity, EyesoreModel> {
             final double directionLength = direction.length();
             direction = direction.normalize();
             for (int step = 0; step <= directionLength; ++step) {
-                final Vector3d pos = vector3d2.add(direction.scale((double) step));
-                entity.level.addParticle((IParticleData) RedstoneParticleData.REDSTONE,
-                        pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
+                final Vector3d pos = vector3d2.add(direction.scale((double)step));
+                entity.level.addParticle((IParticleData)RedstoneParticleData.REDSTONE, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
             }
-            final RenderType type = RenderTypeDecorator.decorate(EyesoreRenderer.BEAM_RENDER_TYPE,
-                    () -> RenderSystem.disableCull(), () -> {
-                    });
+            final RenderType type = RenderTypeDecorator.decorate(EyesoreRenderer.BEAM_RENDER_TYPE, () -> RenderSystem.disableCull(), () -> {});
             final IVertexBuilder ivertexbuilder = buffer.getBuffer(type);
             final MatrixStack.Entry matrixstack$entry = matrixStack.last();
             final Matrix4f matrix4f = matrixstack$entry.pose();
@@ -165,34 +158,26 @@ public class EyesoreRenderer extends MobRenderer<EyesoreEntity, EyesoreModel> {
             vertex(ivertexbuilder, matrix4f, matrix3f, f16, f5, f17, j, k, l, 0.5f, f32);
             matrixStack.popPose();
             if (buffer instanceof IRenderTypeBuffer.Impl) {
-                ((IRenderTypeBuffer.Impl) buffer).endBatch(type);
+                ((IRenderTypeBuffer.Impl)buffer).endBatch(type);
             }
         }
     }
-
-    private static void vertex(final IVertexBuilder builder, final Matrix4f matrix, final Matrix3f normal,
-            final float x, final float y, final float z, final int r, final int g, final int b, final float u,
-            final float v) {
-        builder.vertex(matrix, x, y, z).color(r, g, b, 255).uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880)
-                .normal(normal, 0.0f, 1.0f, 0.0f).endVertex();
+    
+    private static void vertex(final IVertexBuilder builder, final Matrix4f matrix, final Matrix3f normal, final float x, final float y, final float z, final int r, final int g, final int b, final float u, final float v) {
+        builder.vertex(matrix, x, y, z).color(r, g, b, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(normal, 0.0f, 1.0f, 0.0f).endVertex();
     }
-
+    
     public float getAttackAnimationScale(final EyesoreEntity entity, final float p_175477_1_) {
         return (entity.laserTick + p_175477_1_) / 80.0f;
     }
-
-    private Vector3d getPosition(final LivingEntity entityLivingBaseIn, final double p_177110_2_,
-            final float p_177110_4_) {
-        final double d0 = MathHelper.lerp((double) p_177110_4_, entityLivingBaseIn.xOld,
-                entityLivingBaseIn.getX());
-        final double d2 = MathHelper.lerp((double) p_177110_4_, entityLivingBaseIn.yOld,
-                entityLivingBaseIn.getY()) + p_177110_2_;
-        final double d3 = MathHelper.lerp((double) p_177110_4_, entityLivingBaseIn.zOld,
-                entityLivingBaseIn.getZ());
+    
+    private Vector3d getPosition(final LivingEntity entityLivingBaseIn, final double p_177110_2_, final float p_177110_4_) {
+        final double d0 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.xOld, entityLivingBaseIn.getX());
+        final double d2 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.yOld, entityLivingBaseIn.getY()) + p_177110_2_;
+        final double d3 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.zOld, entityLivingBaseIn.getZ());
         return new Vector3d(d0, d2, d3);
     }
-
+    
     static {
         DEFAULT_TEXTURE = Vault.id("textures/entity/eyesore/default.png");
         SORE_EYE_TEXTURE = Vault.id("textures/entity/eyesore/sore_eye.png");

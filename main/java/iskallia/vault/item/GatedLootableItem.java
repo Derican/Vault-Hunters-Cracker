@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -22,36 +25,36 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class GatedLootableItem extends BasicItem {
+public class GatedLootableItem extends BasicItem
+{
     ITextComponent[] tooltip;
-
+    
     public GatedLootableItem(final ResourceLocation id, final Item.Properties properties) {
         super(id, properties);
     }
-
-    public GatedLootableItem(final ResourceLocation id, final Item.Properties properties,
-            final ITextComponent... tooltip) {
+    
+    public GatedLootableItem(final ResourceLocation id, final Item.Properties properties, final ITextComponent... tooltip) {
         super(id, properties);
         this.tooltip = tooltip;
     }
-
+    
     public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
         if (!world.isClientSide) {
             final ItemStack heldStack = player.getItemInHand(hand);
-            final ServerWorld serverWorld = (ServerWorld) world;
+            final ServerWorld serverWorld = (ServerWorld)world;
             final ResearchTree researches = PlayerResearchesData.get(serverWorld).getResearches(player);
             List<String> unlocked;
             WeightedList<ProductEntry> list;
             String researchName;
-            for (unlocked = new ArrayList<String>(researches.getResearchesDone()), list = null; list == null
-                    && !unlocked.isEmpty(); list = ModConfigs.MOD_BOX.POOL.get(researchName)) {
+            for (unlocked = new ArrayList<String>(researches.getResearchesDone()), list = null; list == null && !unlocked.isEmpty(); list = ModConfigs.MOD_BOX.POOL.get(researchName)) {
                 researchName = unlocked.remove(world.random.nextInt(unlocked.size()));
             }
             ItemStack stack = ItemStack.EMPTY;
             ProductEntry productEntry;
             if (list == null || list.isEmpty()) {
                 productEntry = ModConfigs.MOD_BOX.POOL.get("None").getRandom(world.random);
-            } else {
+            }
+            else {
                 productEntry = list.getRandom(world.random);
             }
             if (productEntry != null) {
@@ -67,16 +70,16 @@ public class GatedLootableItem extends BasicItem {
                 }
                 heldStack.shrink(1);
                 ItemRelicBoosterPack.successEffects(world, player.position());
-            } else {
+            }
+            else {
                 ItemRelicBoosterPack.failureEffects(world, player.position());
             }
         }
-        return (ActionResult<ItemStack>) super.use(world, player, hand);
+        return (ActionResult<ItemStack>)super.use(world, player, hand);
     }
-
+    
     @Override
-    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip,
-            final ITooltipFlag flagIn) {
+    public void appendHoverText(final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip, final ITooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (this.tooltip != null) {
             tooltip.addAll(Arrays.asList(this.tooltip));

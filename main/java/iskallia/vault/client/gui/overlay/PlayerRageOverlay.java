@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.gui.overlay;
 
@@ -16,15 +19,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class PlayerRageOverlay {
+public class PlayerRageOverlay
+{
     private static final ResourceLocation OVERLAY_ICONS;
-
+    
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void setupHealthTexture(final RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             return;
         }
-        final PlayerEntity player = (PlayerEntity) Minecraft.getInstance().player;
+        final PlayerEntity player = (PlayerEntity)Minecraft.getInstance().player;
         if (player == null) {
             return;
         }
@@ -46,11 +50,10 @@ public class PlayerRageOverlay {
         final int uOffset = 0;
         final int vOffset = 64;
         mc.getTextureManager().bind(PlayerRageOverlay.OVERLAY_ICONS);
-        AbstractGui.blit(matrixStack, offsetX, offsetY, 0, (float) uOffset, (float) vOffset, width, height,
-                256, 256);
+        AbstractGui.blit(matrixStack, offsetX, offsetY, 0, (float)uOffset, (float)vOffset, width, height, 256, 256);
         mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
     }
-
+    
     static {
         OVERLAY_ICONS = Vault.id("textures/gui/overlay_icons.png");
     }

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.talent.type.archetype;
 
@@ -18,34 +21,35 @@ import java.util.Map;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class FrenzyTalent extends ArchetypeTalent {
+public class FrenzyTalent extends ArchetypeTalent
+{
     private static final Map<UUID, PlayerDamageHelper.DamageMultiplier> multiplierMap;
     @Expose
     protected float threshold;
     @Expose
     protected float damageMultiplier;
-
+    
     public FrenzyTalent(final int cost, final float threshold, final float damageMultiplier) {
         super(cost);
         this.threshold = threshold;
         this.damageMultiplier = damageMultiplier;
     }
-
+    
     public float getThreshold() {
         return this.threshold;
     }
-
+    
     public float getDamageMultiplier() {
         return this.damageMultiplier;
     }
-
+    
     @SubscribeEvent
     public static void onPlayerTick(final TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END || !(event.player instanceof ServerPlayerEntity)) {
             return;
         }
-        final ServerPlayerEntity sPlayer = (ServerPlayerEntity) event.player;
-        final TalentTree talents = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity) sPlayer);
+        final ServerPlayerEntity sPlayer = (ServerPlayerEntity)event.player;
+        final TalentTree talents = PlayerTalentsData.get(sPlayer.getLevel()).getTalents((PlayerEntity)sPlayer);
         final float healthPart = sPlayer.getHealth() / sPlayer.getMaxHealth();
         boolean fulfillsFrenzyConditions = false;
         float damageMultiplier = 1.0f;
@@ -56,33 +60,34 @@ public class FrenzyTalent extends ArchetypeTalent {
                 break;
             }
         }
-        if (fulfillsFrenzyConditions && ArchetypeTalent.isEnabled((World) sPlayer.getLevel())) {
+        if (fulfillsFrenzyConditions && ArchetypeTalent.isEnabled((World)sPlayer.getLevel())) {
             PlayerDamageHelper.DamageMultiplier existing = FrenzyTalent.multiplierMap.get(sPlayer.getUUID());
             if (existing != null) {
                 if (existing.getMultiplier() == damageMultiplier) {
                     existing.refreshDuration(sPlayer.getServer());
-                } else {
+                }
+                else {
                     PlayerDamageHelper.removeMultiplier(sPlayer, existing);
                     existing = null;
                 }
             }
             if (existing == null) {
-                existing = PlayerDamageHelper.applyMultiplier(sPlayer, damageMultiplier,
-                        PlayerDamageHelper.Operation.ADDITIVE_MULTIPLY);
+                existing = PlayerDamageHelper.applyMultiplier(sPlayer, damageMultiplier, PlayerDamageHelper.Operation.ADDITIVE_MULTIPLY);
                 FrenzyTalent.multiplierMap.put(sPlayer.getUUID(), existing);
             }
-        } else {
+        }
+        else {
             removeExistingDamageBuff(sPlayer);
         }
     }
-
+    
     private static void removeExistingDamageBuff(final ServerPlayerEntity player) {
         final PlayerDamageHelper.DamageMultiplier existing = FrenzyTalent.multiplierMap.get(player.getUUID());
         if (existing != null) {
             PlayerDamageHelper.removeMultiplier(player, existing);
         }
     }
-
+    
     static {
         multiplierMap = new HashMap<UUID, PlayerDamageHelper.DamageMultiplier>();
     }

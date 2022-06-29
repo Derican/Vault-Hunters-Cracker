@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.item;
 
@@ -19,19 +22,20 @@ import iskallia.vault.init.ModItems;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.Item;
 
-public class ItemVaultCrystalSeal extends Item {
+public class ItemVaultCrystalSeal extends Item
+{
     private final ResourceLocation objectiveId;
-
+    
     public ItemVaultCrystalSeal(final ResourceLocation id, final ResourceLocation objectiveId) {
         super(new Item.Properties().tab(ModItems.VAULT_MOD_GROUP).stacksTo(1));
         this.setRegistryName(id);
         this.objectiveId = objectiveId;
     }
-
+    
     public ResourceLocation getObjectiveId() {
         return this.objectiveId;
     }
-
+    
     @Nullable
     public static String getEventKey(final ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof ItemVaultCrystalSeal)) {
@@ -43,16 +47,15 @@ public class ItemVaultCrystalSeal extends Item {
         }
         return tag.getString("eventKey");
     }
-
+    
     public static void setEventKey(final ItemStack stack, final String eventKey) {
         if (stack.isEmpty() || !(stack.getItem() instanceof ItemVaultCrystalSeal)) {
             return;
         }
         stack.getOrCreateTag().putString("eventKey", eventKey);
     }
-
-    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot,
-            final boolean isSelected) {
+    
+    public void inventoryTick(final ItemStack stack, final World world, final Entity entity, final int itemSlot, final boolean isSelected) {
         if (world.isClientSide()) {
             return;
         }
@@ -65,25 +68,21 @@ public class ItemVaultCrystalSeal extends Item {
             stack.setCount(0);
         }
     }
-
+    
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(final ItemStack stack, @Nullable final World world, final List<ITextComponent> tooltip,
-            final ITooltipFlag flag) {
+    public void appendHoverText(final ItemStack stack, @Nullable final World world, final List<ITextComponent> tooltip, final ITooltipFlag flag) {
         final VaultObjective objective = VaultObjective.getObjective(this.objectiveId);
         if (objective != null) {
-            tooltip.add((ITextComponent) new StringTextComponent("Sets a vault crystal's objective")
-                    .withStyle(TextFormatting.GRAY));
-            tooltip.add((ITextComponent) new StringTextComponent("to: ").withStyle(TextFormatting.GRAY)
-                    .append(objective.getObjectiveDisplayName()));
+            tooltip.add((ITextComponent)new StringTextComponent("Sets a vault crystal's objective").withStyle(TextFormatting.GRAY));
+            tooltip.add((ITextComponent)new StringTextComponent("to: ").withStyle(TextFormatting.GRAY).append(objective.getObjectiveDisplayName()));
         }
         final String eventKey = getEventKey(stack);
         if (eventKey != null) {
             if (objective != null) {
                 tooltip.add(StringTextComponent.EMPTY);
             }
-            tooltip.add((ITextComponent) new StringTextComponent("Event Item").withStyle(TextFormatting.AQUA));
-            tooltip.add((ITextComponent) new StringTextComponent("Expires after the event finishes.")
-                    .withStyle(TextFormatting.GRAY));
+            tooltip.add((ITextComponent)new StringTextComponent("Event Item").withStyle(TextFormatting.AQUA));
+            tooltip.add((ITextComponent)new StringTextComponent("Expires after the event finishes.").withStyle(TextFormatting.GRAY));
         }
     }
 }

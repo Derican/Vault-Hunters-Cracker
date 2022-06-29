@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block;
 
@@ -37,56 +40,40 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.block.ContainerBlock;
 
-public class ScavengerTreasureBlock extends ContainerBlock {
+public class ScavengerTreasureBlock extends ContainerBlock
+{
     private static final VoxelShape BOX;
-
+    
     public ScavengerTreasureBlock() {
-        super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD)
-                .harvestLevel(0).harvestTool(ToolType.PICKAXE).strength(10.0f, 1.0f)
-                .sound((SoundType) ModSounds.VAULT_GEM));
+        super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD).harvestLevel(0).harvestTool(ToolType.PICKAXE).strength(10.0f, 1.0f).sound((SoundType)ModSounds.VAULT_GEM));
     }
-
-    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos,
-            final ISelectionContext context) {
+    
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context) {
         return ScavengerTreasureBlock.BOX;
     }
-
+    
     @Nullable
     public TileEntity newBlockEntity(final IBlockReader worldIn) {
         return ModBlocks.SCAVENGER_TREASURE_TILE_ENTITY.create();
     }
-
+    
     public BlockRenderType getRenderShape(final BlockState state) {
         return BlockRenderType.MODEL;
     }
-
+    
     public List<ItemStack> getDrops(final BlockState state, final LootContext.Builder builder) {
         final ServerWorld world = builder.getLevel();
-        final BlockPos pos = new BlockPos((Vector3d) builder.getOptionalParameter(LootParameters.ORIGIN));
+        final BlockPos pos = new BlockPos((Vector3d)builder.getOptionalParameter(LootParameters.ORIGIN));
         final VaultRaid vault = VaultRaidData.get(world).getAt(world, pos);
         final List<ItemStack> drops = new ArrayList<ItemStack>(super.getDrops(state, builder));
         if (vault == null) {
             return drops;
         }
-        vault.getActiveObjective(ScavengerHuntObjective.class)
-                .ifPresent(objective -> ModConfigs.SCAVENGER_HUNT
-                        .generateTreasureLoot(objective.getGenerationDropFilter()).stream()
-                        .map((Function<? super Object, ?>) ScavengerHuntConfig.ItemEntry::createItemStack)
-                        .filter(stack -> !stack.isEmpty())
-                        .peek(stack -> vault.getProperties().getBase(VaultRaid.IDENTIFIER)
-                                .ifPresent(identifier -> BasicScavengerItem.setVaultIdentifier(stack, identifier)))
-                        .forEach(drops::add));
-        vault.getActiveObjective(TreasureHuntObjective.class)
-                .ifPresent(objective -> ModConfigs.TREASURE_HUNT
-                        .generateTreasureLoot(objective.getGenerationDropFilter()).stream()
-                        .map((Function<? super Object, ?>) ScavengerHuntConfig.ItemEntry::createItemStack)
-                        .filter(stack -> !stack.isEmpty())
-                        .peek(stack -> vault.getProperties().getBase(VaultRaid.IDENTIFIER)
-                                .ifPresent(identifier -> BasicScavengerItem.setVaultIdentifier(stack, identifier)))
-                        .forEach(drops::add));
+        vault.getActiveObjective(ScavengerHuntObjective.class).ifPresent(objective -> ModConfigs.SCAVENGER_HUNT.generateTreasureLoot(objective.getGenerationDropFilter()).stream().map((Function<? super Object, ?>)ScavengerHuntConfig.ItemEntry::createItemStack).filter(stack -> !stack.isEmpty()).peek(stack -> vault.getProperties().getBase(VaultRaid.IDENTIFIER).ifPresent(identifier -> BasicScavengerItem.setVaultIdentifier(stack, identifier))).forEach(drops::add));
+        vault.getActiveObjective(TreasureHuntObjective.class).ifPresent(objective -> ModConfigs.TREASURE_HUNT.generateTreasureLoot(objective.getGenerationDropFilter()).stream().map((Function<? super Object, ?>)ScavengerHuntConfig.ItemEntry::createItemStack).filter(stack -> !stack.isEmpty()).peek(stack -> vault.getProperties().getBase(VaultRaid.IDENTIFIER).ifPresent(identifier -> BasicScavengerItem.setVaultIdentifier(stack, identifier))).forEach(drops::add));
         return drops;
     }
-
+    
     static {
         BOX = Block.box(0.0, 0.0, 0.0, 16.0, 5.0, 16.0);
     }

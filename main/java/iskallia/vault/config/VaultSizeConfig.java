@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.config;
 
@@ -11,23 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 
-public class VaultSizeConfig extends Config {
+public class VaultSizeConfig extends Config
+{
     @Expose
     private SizeLayout defaultLayout;
     @Expose
     private SizeLayout raffleLayout;
     @Expose
     private final List<Level> levels;
-
+    
     public VaultSizeConfig() {
         this.levels = new ArrayList<Level>();
     }
-
+    
     @Override
     public String getName() {
         return "vault_size";
     }
-
+    
     @Override
     protected void reset() {
         this.raffleLayout = new SizeLayout(11, 6.0f, DiamondRoomLayout.ID);
@@ -52,7 +56,7 @@ public class VaultSizeConfig extends Config {
         final SizeLayout l11 = new SizeLayout(17, 14.5f, SquareRoomLayout.ID);
         this.levels.add(new Level(150, new WeightedList<SizeLayout>().add(l10, 2).add(l11, 1)));
     }
-
+    
     @Nonnull
     public SizeLayout getLayout(final int vaultLevel, final boolean isRaffle) {
         if (isRaffle) {
@@ -68,7 +72,7 @@ public class VaultSizeConfig extends Config {
         }
         return layout;
     }
-
+    
     @Nullable
     public Level getForLevel(final List<Level> levels, final int level) {
         int i = 0;
@@ -78,7 +82,8 @@ public class VaultSizeConfig extends Config {
                     break;
                 }
                 return levels.get(i - 1);
-            } else {
+            }
+            else {
                 if (i == levels.size() - 1) {
                     return levels.get(i);
                 }
@@ -87,45 +92,47 @@ public class VaultSizeConfig extends Config {
         }
         return null;
     }
-
-    public static class Level {
+    
+    public static class Level
+    {
         @Expose
         private final int level;
         @Expose
         private final WeightedList<SizeLayout> outcomes;
-
+        
         public Level(final int level, final WeightedList<SizeLayout> outcomes) {
             this.level = level;
             this.outcomes = outcomes;
         }
     }
-
-    public static class SizeLayout {
+    
+    public static class SizeLayout
+    {
         @Expose
         private final int size;
         @Expose
         private final float objectiveRoomRatio;
         @Expose
         private final String layout;
-
+        
         public SizeLayout(final int size, final float objectiveRoomRatio, final ResourceLocation layout) {
             this(size, objectiveRoomRatio, layout.toString());
         }
-
+        
         public SizeLayout(final int size, final float objectiveRoomRatio, final String layout) {
             this.size = size;
             this.objectiveRoomRatio = objectiveRoomRatio;
             this.layout = layout;
         }
-
+        
         public int getSize() {
             return this.size;
         }
-
+        
         public float getObjectiveRoomRatio() {
             return this.objectiveRoomRatio;
         }
-
+        
         public ResourceLocation getLayout() {
             return new ResourceLocation(this.layout);
         }

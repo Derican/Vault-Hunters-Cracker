@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.client.vault.goal;
 
@@ -11,24 +14,24 @@ import java.util.ArrayList;
 import iskallia.vault.world.vault.logic.objective.ScavengerHuntObjective;
 import java.util.List;
 
-public class VaultScavengerData extends VaultGoalData {
+public class VaultScavengerData extends VaultGoalData
+{
     private final List<ScavengerHuntObjective.ItemSubmission> itemSubmissions;
-
+    
     public VaultScavengerData() {
         this.itemSubmissions = new ArrayList<ScavengerHuntObjective.ItemSubmission>();
     }
-
+    
     public List<ScavengerHuntObjective.ItemSubmission> getRequiredItemSubmissions() {
-        return Collections
-                .unmodifiableList((List<? extends ScavengerHuntObjective.ItemSubmission>) this.itemSubmissions);
+        return Collections.unmodifiableList((List<? extends ScavengerHuntObjective.ItemSubmission>)this.itemSubmissions);
     }
-
+    
     @Nullable
     @Override
     public BossBarOverlay getBossBarOverlay() {
         return new ScavengerBarOverlay(this);
     }
-
+    
     @Override
     public void receive(final VaultGoalMessage pkt) {
         this.itemSubmissions.clear();

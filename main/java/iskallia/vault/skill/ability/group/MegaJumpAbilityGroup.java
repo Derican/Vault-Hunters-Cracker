@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -12,21 +15,22 @@ import iskallia.vault.skill.ability.effect.MegaJumpAbility;
 import iskallia.vault.skill.ability.config.MegaJumpConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class MegaJumpAbilityGroup extends AbilityGroup<MegaJumpConfig, MegaJumpAbility<MegaJumpConfig>> {
+public class MegaJumpAbilityGroup extends AbilityGroup<MegaJumpConfig, MegaJumpAbility<MegaJumpConfig>>
+{
     @Expose
     private final List<MegaJumpKnockbackConfig> knockbackLevelConfiguration;
     @Expose
     private final List<MegaJumpDamageConfig> damageLevelConfiguration;
     @Expose
     private final List<MegaJumpBreakConfig> breakLevelConfiguration;
-
+    
     private MegaJumpAbilityGroup() {
         super("Mega Jump");
         this.knockbackLevelConfiguration = new ArrayList<MegaJumpKnockbackConfig>();
         this.damageLevelConfiguration = new ArrayList<MegaJumpDamageConfig>();
         this.breakLevelConfiguration = new ArrayList<MegaJumpBreakConfig>();
     }
-
+    
     @Override
     protected MegaJumpConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -44,7 +48,7 @@ public class MegaJumpAbilityGroup extends AbilityGroup<MegaJumpConfig, MegaJumpA
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -62,12 +66,12 @@ public class MegaJumpAbilityGroup extends AbilityGroup<MegaJumpConfig, MegaJumpA
             }
         }
     }
-
+    
     public static MegaJumpAbilityGroup defaultConfig() {
         final MegaJumpAbilityGroup group = new MegaJumpAbilityGroup();
-        ((AbilityGroup<MegaJumpConfig, E>) group).addLevel(new MegaJumpConfig(1, 10));
-        ((AbilityGroup<MegaJumpConfig, E>) group).addLevel(new MegaJumpConfig(1, 12));
-        ((AbilityGroup<MegaJumpConfig, E>) group).addLevel(new MegaJumpConfig(1, 13));
+        ((AbilityGroup<MegaJumpConfig, E>)group).addLevel(new MegaJumpConfig(1, 10));
+        ((AbilityGroup<MegaJumpConfig, E>)group).addLevel(new MegaJumpConfig(1, 12));
+        ((AbilityGroup<MegaJumpConfig, E>)group).addLevel(new MegaJumpConfig(1, 13));
         group.knockbackLevelConfiguration.add(new MegaJumpKnockbackConfig(1, 10, 5.0f, 3.0f));
         group.knockbackLevelConfiguration.add(new MegaJumpKnockbackConfig(1, 12, 6.0f, 5.0f));
         group.knockbackLevelConfiguration.add(new MegaJumpKnockbackConfig(1, 13, 7.0f, 7.0f));

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.mixin;
 
@@ -15,12 +18,12 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({ ModifiableAttributeInstance.class })
-public abstract class MixinAttributeInstance {
+public abstract class MixinAttributeInstance
+{
     @Shadow
     protected abstract Collection<AttributeModifier> getModifiersOrEmpty(final AttributeModifier.Operation p0);
-
-    @Redirect(method = {
-            "computeValue" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/Attribute;clampValue(D)D"))
+    
+    @Redirect(method = { "computeValue" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/Attribute;clampValue(D)D"))
     private double computeValue(final Attribute attribute, double value) {
         if (attribute == Attributes.ARMOR) {
             return MathHelper.clamp(value, 0.0, 100.0);

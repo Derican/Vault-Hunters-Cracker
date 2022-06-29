@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.entity;
 
@@ -23,23 +26,24 @@ import iskallia.vault.block.VaultLootableBlock;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-public class VaultLootableTileEntity extends TileEntity implements ITickableTileEntity {
+public class VaultLootableTileEntity extends TileEntity implements ITickableTileEntity
+{
     private VaultLootableBlock.Type type;
-
+    
     public VaultLootableTileEntity() {
-        super((TileEntityType) ModBlocks.VAULT_LOOTABLE_TILE_ENTITY);
+        super((TileEntityType)ModBlocks.VAULT_LOOTABLE_TILE_ENTITY);
     }
-
+    
     public VaultLootableTileEntity setType(final VaultLootableBlock.Type type) {
         this.type = type;
         return this;
     }
-
+    
     public void tick() {
         if (this.type == null || this.getLevel() == null || this.getLevel().isClientSide()) {
             return;
         }
-        final ServerWorld world = (ServerWorld) this.getLevel();
+        final ServerWorld world = (ServerWorld)this.getLevel();
         final BlockState state = world.getBlockState(this.getBlockPos());
         if (state.getBlock() instanceof VaultLootableBlock) {
             final VaultRaid vault = VaultRaidData.get(world).getAt(world, this.getBlockPos());
@@ -48,27 +52,24 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
             }
             VaultLootableBlock.GeneratedBlockState placingState;
             if (this.type == VaultLootableBlock.Type.VAULT_OBJECTIVE) {
-                placingState = this.type.generateBlock(world, this.getBlockPos(), world.getRandom(),
-                        vault.getProperties().getBase(VaultRaid.HOST).orElse(null));
-            } else {
-                placingState = vault.getProperties().getBase(VaultRaid.HOST)
-                        .map(hostUUID -> this.type.generateBlock(world, this.getBlockPos(), world.getRandom(),
-                                hostUUID))
-                        .orElse(new VaultLootableBlock.GeneratedBlockState(Blocks.AIR.defaultBlockState()));
+                placingState = this.type.generateBlock(world, this.getBlockPos(), world.getRandom(), vault.getProperties().getBase(VaultRaid.HOST).orElse(null));
+            }
+            else {
+                placingState = vault.getProperties().getBase(VaultRaid.HOST).map(hostUUID -> this.type.generateBlock(world, this.getBlockPos(), world.getRandom(), hostUUID)).orElse(new VaultLootableBlock.GeneratedBlockState(Blocks.AIR.defaultBlockState()));
             }
             if (world.setBlock(this.getBlockPos(), placingState.getState(), 19)) {
                 placingState.getPostProcessor().accept(world, this.getBlockPos());
             }
         }
     }
-
+    
     public void load(final BlockState state, final CompoundNBT nbt) {
         super.load(state, nbt);
         if (nbt.contains("Type", 3)) {
             this.type = VaultLootableBlock.Type.values()[nbt.getInt("Type")];
         }
     }
-
+    
     public CompoundNBT save(final CompoundNBT compound) {
         final CompoundNBT nbt = super.save(compound);
         if (this.type != null) {
@@ -76,12 +77,12 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
         }
         return nbt;
     }
-
-    public static class VaultResourceBlockGenerator implements Generator {
+    
+    public static class VaultResourceBlockGenerator implements Generator
+    {
         @Nonnull
         @Override
-        public BlockState generate(final ServerWorld world, final BlockPos pos, final Random random,
-                final String poolName, final UUID playerUUID) {
+        public BlockState generate(final ServerWorld world, final BlockPos pos, final Random random, final String poolName, final UUID playerUUID) {
             final VaultRaid vault = VaultRaidData.get(world).getAt(world, pos);
             if (vault == null) {
                 return Blocks.AIR.defaultBlockState();
@@ -92,9 +93,8 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
             }
             return ModConfigs.VAULT_LOOTABLES.RESOURCE.get(world, pos, random, poolName, playerUUID);
         }
-
-        private BlockState getRandomNonMinecraftBlock(final ServerWorld world, final BlockPos pos, final Random random,
-                final String poolName, final UUID playerUUID) {
+        
+        private BlockState getRandomNonMinecraftBlock(final ServerWorld world, final BlockPos pos, final Random random, final String poolName, final UUID playerUUID) {
             BlockState generatedBlock;
             do {
                 generatedBlock = ModConfigs.VAULT_LOOTABLES.RESOURCE.get(world, pos, random, poolName, playerUUID);
@@ -102,12 +102,12 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
             return generatedBlock;
         }
     }
-
-    public static class VaultOreBlockGenerator implements Generator {
+    
+    public static class VaultOreBlockGenerator implements Generator
+    {
         @Nonnull
         @Override
-        public BlockState generate(final ServerWorld world, final BlockPos pos, final Random random,
-                final String poolName, final UUID playerUUID) {
+        public BlockState generate(final ServerWorld world, final BlockPos pos, final Random random, final String poolName, final UUID playerUUID) {
             final VaultRaid vault = VaultRaidData.get(world).getAt(world, pos);
             if (vault == null) {
                 return Blocks.AIR.defaultBlockState();
@@ -121,9 +121,8 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
             }
             return ModConfigs.VAULT_LOOTABLES.ORE.get(world, pos, random, poolName, playerUUID);
         }
-
-        private BlockState getRandomVaultOreBlock(final ServerWorld world, final BlockPos pos, final Random random,
-                final String poolName, final UUID playerUUID) {
+        
+        private BlockState getRandomVaultOreBlock(final ServerWorld world, final BlockPos pos, final Random random, final String poolName, final UUID playerUUID) {
             BlockState generatedBlock;
             do {
                 generatedBlock = ModConfigs.VAULT_LOOTABLES.ORE.get(world, pos, random, poolName, playerUUID);
@@ -131,13 +130,15 @@ public class VaultLootableTileEntity extends TileEntity implements ITickableTile
             return generatedBlock;
         }
     }
-
-    public interface Generator {
+    
+    public interface Generator
+    {
         @Nonnull
         BlockState generate(final ServerWorld p0, final BlockPos p1, final Random p2, final String p3, final UUID p4);
     }
-
-    public interface ExtendedGenerator extends Generator {
+    
+    public interface ExtendedGenerator extends Generator
+    {
         void postProcess(final ServerWorld p0, final BlockPos p1);
     }
 }

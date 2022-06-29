@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.block.entity;
 
@@ -20,34 +23,35 @@ import iskallia.vault.init.ModBlocks;
 import java.util.UUID;
 import net.minecraft.tileentity.TileEntity;
 
-public class HourglassTileEntity extends TileEntity {
+public class HourglassTileEntity extends TileEntity
+{
     private UUID ownerUUID;
     private String ownerPlayerName;
     private int currentSand;
     private int totalSand;
-
+    
     public HourglassTileEntity() {
-        super((TileEntityType) ModBlocks.HOURGLASS_TILE_ENTITY);
+        super((TileEntityType)ModBlocks.HOURGLASS_TILE_ENTITY);
         this.ownerPlayerName = "Unknown";
         this.currentSand = 0;
         this.totalSand = -1;
     }
-
+    
     public void setOwner(@Nonnull final UUID ownerUUID, @Nonnull final String playerName) {
         this.ownerUUID = ownerUUID;
         this.ownerPlayerName = playerName;
     }
-
+    
     @Nonnull
     public UUID getOwnerUUID() {
         return this.ownerUUID;
     }
-
+    
     @Nonnull
     public String getOwnerPlayerName() {
         return this.ownerPlayerName;
     }
-
+    
     public void setTotalSand(final int totalSand) {
         final int totalSand2 = this.totalSand;
         this.totalSand = totalSand;
@@ -55,7 +59,7 @@ public class HourglassTileEntity extends TileEntity {
             this.markForUpdate();
         }
     }
-
+    
     public boolean addSand(final PlayerEntity player, final int amount) {
         final int total = (this.totalSand <= 0) ? ModConfigs.SAND_EVENT.getTotalSandRequired(player) : this.totalSand;
         if (this.currentSand >= total) {
@@ -65,20 +69,18 @@ public class HourglassTileEntity extends TileEntity {
             return false;
         }
         this.currentSand += amount;
-        final VaultRaid vault = VaultRaidData.get((ServerWorld) player.level)
-                .getActiveFor(player.getUUID());
+        final VaultRaid vault = VaultRaidData.get((ServerWorld)player.level).getActiveFor(player.getUUID());
         if (vault != null) {
-            vault.getActiveObjective(TreasureHuntObjective.class)
-                    .ifPresent(treasureHunt -> treasureHunt.depositSand(vault, (ServerPlayerEntity) player, amount));
+            vault.getActiveObjective(TreasureHuntObjective.class).ifPresent(treasureHunt -> treasureHunt.depositSand(vault, (ServerPlayerEntity)player, amount));
         }
         this.markForUpdate();
         return true;
     }
-
+    
     public float getFilledPercentage() {
-        return MathHelper.clamp(this.currentSand / (float) this.totalSand, 0.0f, 1.0f);
+        return MathHelper.clamp(this.currentSand / (float)this.totalSand, 0.0f, 1.0f);
     }
-
+    
     public CompoundNBT save(final CompoundNBT nbt) {
         super.save(nbt);
         if (this.ownerUUID != null) {
@@ -89,7 +91,7 @@ public class HourglassTileEntity extends TileEntity {
         nbt.putInt("totalSand", this.totalSand);
         return nbt;
     }
-
+    
     public void load(final BlockState state, final CompoundNBT nbt) {
         super.load(state, nbt);
         this.ownerUUID = (nbt.contains("ownerUUID", 11) ? nbt.getUUID("ownerUUID") : null);
@@ -97,23 +99,23 @@ public class HourglassTileEntity extends TileEntity {
         this.currentSand = nbt.getInt("currentSand");
         this.totalSand = nbt.getInt("totalSand");
     }
-
+    
     public CompoundNBT getUpdateTag() {
         final CompoundNBT nbt = super.getUpdateTag();
         this.save(nbt);
         return nbt;
     }
-
+    
     @Nullable
     public SUpdateTileEntityPacket getUpdatePacket() {
         return new SUpdateTileEntityPacket(this.worldPosition, 1, this.getUpdateTag());
     }
-
+    
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
         final CompoundNBT nbt = pkt.getTag();
         this.handleUpdateTag(this.getBlockState(), nbt);
     }
-
+    
     public void markForUpdate() {
         if (this.level != null) {
             this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);

@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.data.generated;
 
@@ -16,30 +19,29 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.item.ItemStack;
 import java.util.List;
 
-public class ChallengeCrystalArchive {
+public class ChallengeCrystalArchive
+{
     private static final List<ItemStack> generatedCrystals;
-
+    
     public static ItemStack get(final int index) {
         if (ChallengeCrystalArchive.generatedCrystals.isEmpty()) {
             initialize();
         }
-        return ChallengeCrystalArchive.generatedCrystals
-                .get(MathHelper.clamp(index, 0, ChallengeCrystalArchive.generatedCrystals.size() - 1))
-                .copy();
+        return ChallengeCrystalArchive.generatedCrystals.get(MathHelper.clamp(index, 0, ChallengeCrystalArchive.generatedCrystals.size() - 1)).copy();
     }
-
+    
     public static ItemStack getRandom() {
         final ItemStack stack = getRandom(new Random());
         return (stack == null) ? null : stack.copy();
     }
-
+    
     public static ItemStack getRandom(final Random rand) {
         if (ChallengeCrystalArchive.generatedCrystals.isEmpty()) {
             initialize();
         }
         return MiscUtils.getRandomEntry(ChallengeCrystalArchive.generatedCrystals, rand);
     }
-
+    
     private static void initialize() {
         final CrystalData grail = baseData();
         grail.setType(CrystalData.Type.CLASSIC);
@@ -178,13 +180,13 @@ public class ChallengeCrystalArchive {
         frenzied.addModifier("Locked");
         ChallengeCrystalArchive.generatedCrystals.add(make(frenzied));
     }
-
+    
     private static ItemStack make(final CrystalData data) {
-        final ItemStack crystal = new ItemStack((IItemProvider) ModItems.VAULT_CRYSTAL);
-        crystal.getOrCreateTag().put("CrystalData", (INBT) data.serializeNBT());
+        final ItemStack crystal = new ItemStack((IItemProvider)ModItems.VAULT_CRYSTAL);
+        crystal.getOrCreateTag().put("CrystalData", (INBT)data.serializeNBT());
         return crystal;
     }
-
+    
     private static CrystalData baseData() {
         final CrystalData data = new CrystalData();
         data.setModifiable(false);
@@ -194,7 +196,7 @@ public class ChallengeCrystalArchive {
         data.setChallenge(true);
         return data;
     }
-
+    
     static {
         generatedCrystals = new ArrayList<ItemStack>();
     }

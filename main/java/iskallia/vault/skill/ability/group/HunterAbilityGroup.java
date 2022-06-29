@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.ability.group;
 
@@ -14,7 +17,8 @@ import iskallia.vault.skill.ability.effect.HunterAbility;
 import iskallia.vault.skill.ability.config.HunterConfig;
 import iskallia.vault.skill.ability.AbilityGroup;
 
-public class HunterAbilityGroup extends AbilityGroup<HunterConfig, HunterAbility<HunterConfig>> {
+public class HunterAbilityGroup extends AbilityGroup<HunterConfig, HunterAbility<HunterConfig>>
+{
     private static final Color HUNTER_ENTITY_COLOR;
     private static final Color HUNTER_SPAWNER_COLOR;
     private static final Color HUNTER_CHEST_COLOR;
@@ -25,14 +29,14 @@ public class HunterAbilityGroup extends AbilityGroup<HunterConfig, HunterAbility
     private final List<HunterChestsConfig> chestsLevelConfiguration;
     @Expose
     private final List<HunterObjectiveConfig> blocksLevelConfiguration;
-
+    
     private HunterAbilityGroup() {
         super("Hunter");
         this.spawnerLevelConfiguration = new ArrayList<HunterSpawnerConfig>();
         this.chestsLevelConfiguration = new ArrayList<HunterChestsConfig>();
         this.blocksLevelConfiguration = new ArrayList<HunterObjectiveConfig>();
     }
-
+    
     @Override
     protected HunterConfig getSubConfig(final String specialization, final int level) {
         switch (specialization) {
@@ -50,7 +54,7 @@ public class HunterAbilityGroup extends AbilityGroup<HunterConfig, HunterAbility
             }
         }
     }
-
+    
     @Override
     public String getSpecializationName(final String specialization) {
         switch (specialization) {
@@ -68,29 +72,19 @@ public class HunterAbilityGroup extends AbilityGroup<HunterConfig, HunterAbility
             }
         }
     }
-
+    
     public static HunterAbilityGroup defaultConfig() {
-        final List<String> spawnerKeys = Arrays.asList("minecraft:mob_spawner", "ispawner:spawner",
-                "ispawner:survival_spawner");
-        final List<String> chestKeys = Arrays.asList("minecraft:chest", "minecraft:trapped_chest",
-                "the_vault:vault_chest_tile_entity");
-        final List<String> objectiveKeys = Arrays.asList("the_vault:obelisk_tile_entity",
-                "the_vault:scavenger_chest_tile_entity", "the_vault:stabilizer_tile_entity",
-                "the_vault:xp_altar_tile_entity", "the_vault:blood_altar_tile_entity",
-                "the_vault:time_altar_tile_entity", "the_vault:soul_altar_tile_entity",
-                "the_vault:vault_treasure_chest_tile_entity");
+        final List<String> spawnerKeys = Arrays.asList("minecraft:mob_spawner", "ispawner:spawner", "ispawner:survival_spawner");
+        final List<String> chestKeys = Arrays.asList("minecraft:chest", "minecraft:trapped_chest", "the_vault:vault_chest_tile_entity");
+        final List<String> objectiveKeys = Arrays.asList("the_vault:obelisk_tile_entity", "the_vault:scavenger_chest_tile_entity", "the_vault:stabilizer_tile_entity", "the_vault:xp_altar_tile_entity", "the_vault:blood_altar_tile_entity", "the_vault:time_altar_tile_entity", "the_vault:soul_altar_tile_entity", "the_vault:vault_treasure_chest_tile_entity");
         final HunterAbilityGroup group = new HunterAbilityGroup();
-        ((AbilityGroup<HunterConfig, E>) group)
-                .addLevel(new HunterConfig(1, 48.0, HunterAbilityGroup.HUNTER_ENTITY_COLOR.getRGB(), 100));
-        group.spawnerLevelConfiguration.add(
-                new HunterSpawnerConfig(1, 48.0, HunterAbilityGroup.HUNTER_SPAWNER_COLOR.getRGB(), 100, spawnerKeys));
-        group.chestsLevelConfiguration
-                .add(new HunterChestsConfig(1, 48.0, HunterAbilityGroup.HUNTER_CHEST_COLOR.getRGB(), 100, chestKeys));
-        group.blocksLevelConfiguration.add(new HunterObjectiveConfig(1, 144.0,
-                HunterAbilityGroup.HUNTER_BLOCK_COLOR.getRGB(), 100, objectiveKeys));
+        ((AbilityGroup<HunterConfig, E>)group).addLevel(new HunterConfig(1, 48.0, HunterAbilityGroup.HUNTER_ENTITY_COLOR.getRGB(), 100));
+        group.spawnerLevelConfiguration.add(new HunterSpawnerConfig(1, 48.0, HunterAbilityGroup.HUNTER_SPAWNER_COLOR.getRGB(), 100, spawnerKeys));
+        group.chestsLevelConfiguration.add(new HunterChestsConfig(1, 48.0, HunterAbilityGroup.HUNTER_CHEST_COLOR.getRGB(), 100, chestKeys));
+        group.blocksLevelConfiguration.add(new HunterObjectiveConfig(1, 144.0, HunterAbilityGroup.HUNTER_BLOCK_COLOR.getRGB(), 100, objectiveKeys));
         return group;
     }
-
+    
     static {
         HUNTER_ENTITY_COLOR = new Color(9633792);
         HUNTER_SPAWNER_COLOR = new Color(4653195);

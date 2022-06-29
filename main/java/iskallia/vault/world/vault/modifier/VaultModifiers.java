@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.world.vault.modifier;
 
@@ -34,64 +37,68 @@ import java.util.List;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<VaultModifier> {
+public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<VaultModifier>
+{
     private final List<ActiveModifier> modifiers;
     protected boolean initialized;
-
+    
     public VaultModifiers() {
         this.modifiers = new ArrayList<ActiveModifier>();
     }
-
+    
     public boolean isInitialized() {
         return this.initialized;
     }
-
+    
     public void setInitialized() {
         this.initialized = true;
     }
-
+    
     public void generateGlobal(final VaultRaid vault, final ServerWorld world, final Random random) {
         final int level = vault.getProperties().getValue(VaultRaid.LEVEL);
         VaultModifiersConfig.ModifierPoolType type = VaultModifiersConfig.ModifierPoolType.DEFAULT;
         final CrystalData data = vault.getProperties().getBase(VaultRaid.CRYSTAL_DATA).orElse(null);
         if (vault.getProperties().getBase(VaultRaid.IS_RAFFLE).orElse(false)) {
             type = VaultModifiersConfig.ModifierPoolType.RAFFLE;
-        } else if (data != null && data.getType() == CrystalData.Type.FINAL_VELARA) {
+        }
+        else if (data != null && data.getType() == CrystalData.Type.FINAL_VELARA) {
             type = VaultModifiersConfig.ModifierPoolType.FINAL_VELARA;
-        } else if (data != null && data.getType() == CrystalData.Type.FINAL_TENOS) {
+        }
+        else if (data != null && data.getType() == CrystalData.Type.FINAL_TENOS) {
             type = VaultModifiersConfig.ModifierPoolType.FINAL_TENOS;
-        } else if (data != null && data.getType() == CrystalData.Type.FINAL_WENDARR) {
+        }
+        else if (data != null && data.getType() == CrystalData.Type.FINAL_WENDARR) {
             type = VaultModifiersConfig.ModifierPoolType.FINAL_WENDARR;
-        } else if (data != null && data.getType() == CrystalData.Type.FINAL_IDONA) {
+        }
+        else if (data != null && data.getType() == CrystalData.Type.FINAL_IDONA) {
             type = VaultModifiersConfig.ModifierPoolType.FINAL_IDONA;
-        } else if (vault.getActiveObjective(RaidChallengeObjective.class).isPresent()) {
+        }
+        else if (vault.getActiveObjective(RaidChallengeObjective.class).isPresent()) {
             type = VaultModifiersConfig.ModifierPoolType.RAID;
         }
-        final ResourceLocation objectiveKey = vault.getAllObjectives().stream().findFirst()
-                .map((Function<? super Object, ? extends ResourceLocation>) VaultObjective::getId).orElse(null);
+        final ResourceLocation objectiveKey = vault.getAllObjectives().stream().findFirst().map((Function<? super Object, ? extends ResourceLocation>)VaultObjective::getId).orElse(null);
         ModConfigs.VAULT_MODIFIERS.getRandom(random, level, type, objectiveKey).forEach(this::addPermanentModifier);
     }
-
+    
     @Deprecated
-    public void generatePlayer(final VaultRaid vault, final VaultPlayer player, final ServerWorld world,
-            final Random random) {
+    public void generatePlayer(final VaultRaid vault, final VaultPlayer player, final ServerWorld world, final Random random) {
         final int level = player.getProperties().getValue(VaultRaid.LEVEL);
         VaultModifiersConfig.ModifierPoolType type = VaultModifiersConfig.ModifierPoolType.DEFAULT;
         if (vault.getProperties().getBase(VaultRaid.IS_RAFFLE).orElse(false)) {
             type = VaultModifiersConfig.ModifierPoolType.RAFFLE;
-        } else if (vault.getActiveObjective(RaidChallengeObjective.class).isPresent()) {
+        }
+        else if (vault.getActiveObjective(RaidChallengeObjective.class).isPresent()) {
             type = VaultModifiersConfig.ModifierPoolType.RAID;
         }
-        final ResourceLocation objectiveKey = vault.getAllObjectives().stream().findFirst()
-                .map((Function<? super Object, ? extends ResourceLocation>) VaultObjective::getId).orElse(null);
+        final ResourceLocation objectiveKey = vault.getAllObjectives().stream().findFirst().map((Function<? super Object, ? extends ResourceLocation>)VaultObjective::getId).orElse(null);
         ModConfigs.VAULT_MODIFIERS.getRandom(random, level, type, objectiveKey).forEach(this::addPermanentModifier);
         this.setInitialized();
     }
-
+    
     public void apply(final VaultRaid vault, final VaultPlayer player, final ServerWorld world, final Random random) {
         this.modifiers.forEach(modifier -> modifier.getModifier().apply(vault, player, world, random));
     }
-
+    
     public void tick(final VaultRaid vault, final ServerWorld world, final PlayerFilter applyFilter) {
         this.modifiers.removeIf(activeModifier -> {
             final VaultModifier modifier = activeModifier.getModifier();
@@ -102,34 +109,31 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
                 return;
             });
             if (activeModifier.tick()) {
-                final ITextComponent removalMsg = (ITextComponent) new StringTextComponent("Modifier ")
-                        .withStyle(TextFormatting.GRAY).append(modifier.getNameComponent())
-                        .append((ITextComponent) new StringTextComponent(" expired.")
-                                .withStyle(TextFormatting.GRAY));
+                final ITextComponent removalMsg = (ITextComponent)new StringTextComponent("Modifier ").withStyle(TextFormatting.GRAY).append(modifier.getNameComponent()).append((ITextComponent)new StringTextComponent(" expired.").withStyle(TextFormatting.GRAY));
                 vault.getPlayers().forEach(vPlayer -> {
                     if (applyFilter.test(vPlayer.getPlayerId())) {
                         modifier.remove(vault, vPlayer, world, world.getRandom());
-                        vPlayer.runIfPresent(world.getServer(),
-                                sPlayer -> sPlayer.sendMessage(removalMsg, Util.NIL_UUID));
+                        vPlayer.runIfPresent(world.getServer(), sPlayer -> sPlayer.sendMessage(removalMsg, Util.NIL_UUID));
                     }
                     return;
                 });
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
         });
     }
-
+    
     public CompoundNBT serializeNBT() {
         final CompoundNBT nbt = new CompoundNBT();
         final ListNBT modifiersList = new ListNBT();
-        this.modifiers.forEach(modifier -> modifiersList.add((Object) modifier.serialize()));
-        nbt.put("modifiers", (INBT) modifiersList);
+        this.modifiers.forEach(modifier -> modifiersList.add((Object)modifier.serialize()));
+        nbt.put("modifiers", (INBT)modifiersList);
         nbt.putBoolean("Initialized", this.isInitialized());
         return nbt;
     }
-
+    
     public void deserializeNBT(final CompoundNBT nbt) {
         this.modifiers.clear();
         final ListNBT modifierList = nbt.getList("modifiers", 10);
@@ -149,12 +153,12 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
         }
         this.initialized = nbt.getBoolean("Initialized");
     }
-
+    
     public void encode(final PacketBuffer buffer) {
         buffer.writeInt(this.modifiers.size());
         this.modifiers.forEach(modifier -> modifier.encode(buffer));
     }
-
+    
     public static VaultModifiers decode(final PacketBuffer buffer) {
         final VaultModifiers result = new VaultModifiers();
         for (int size = buffer.readInt(), i = 0; i < size; ++i) {
@@ -165,18 +169,17 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
         }
         return result;
     }
-
+    
     public Stream<VaultModifier> stream() {
-        return this.modifiers.stream().map(rec$ -> ((ActiveModifier) rec$).getModifier());
+        return this.modifiers.stream().map(rec$ -> ((ActiveModifier)rec$).getModifier());
     }
-
+    
     @Nonnull
     public Iterator<VaultModifier> iterator() {
-        final List<VaultModifier> modifiers = this.stream()
-                .collect((Collector<? super VaultModifier, ?, List<VaultModifier>>) Collectors.toList());
+        final List<VaultModifier> modifiers = this.stream().collect((Collector<? super VaultModifier, ?, List<VaultModifier>>)Collectors.toList());
         return modifiers.iterator();
     }
-
+    
     public void forEach(final BiConsumer<Integer, VaultModifier> consumer) {
         int index = 0;
         for (final ActiveModifier modifier : this.modifiers) {
@@ -184,31 +187,31 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
             ++index;
         }
     }
-
+    
     public int size() {
         return this.modifiers.size();
     }
-
+    
     public boolean isEmpty() {
         return this.size() <= 0;
     }
-
+    
     public void addPermanentModifier(final String name) {
         this.addPermanentModifier(ModConfigs.VAULT_MODIFIERS.getByName(name));
     }
-
+    
     public void addPermanentModifier(final VaultModifier modifier) {
         this.putModifier(modifier, -1);
     }
-
+    
     public void addTemporaryModifier(final VaultModifier modifier, final int timeout) {
         this.putModifier(modifier, Math.max(0, timeout));
     }
-
+    
     private void putModifier(final VaultModifier modifier, final int timeout) {
         this.modifiers.add(new ActiveModifier(modifier, timeout));
     }
-
+    
     public boolean removePermanentModifier(final String name) {
         for (final ActiveModifier activeModifier : this.modifiers) {
             if (activeModifier.getModifier().getName().equals(name) && activeModifier.tick == -1) {
@@ -218,16 +221,17 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
         }
         return false;
     }
-
-    private static class ActiveModifier {
+    
+    private static class ActiveModifier
+    {
         private final VaultModifier modifier;
         private int tick;
-
+        
         private ActiveModifier(final VaultModifier modifier, final int tick) {
             this.modifier = modifier;
             this.tick = tick;
         }
-
+        
         @Nullable
         private static ActiveModifier deserialize(final CompoundNBT tag) {
             final VaultModifier modifier = ModConfigs.VAULT_MODIFIERS.getByName(tag.getString("key"));
@@ -237,7 +241,7 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
             }
             return new ActiveModifier(modifier, timeout);
         }
-
+        
         @Nullable
         private static ActiveModifier decode(final PacketBuffer buffer) {
             final String modifierName = buffer.readUtf(32767);
@@ -248,11 +252,11 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
             }
             return new ActiveModifier(modifier, timeout);
         }
-
+        
         private VaultModifier getModifier() {
             return this.modifier;
         }
-
+        
         private boolean tick() {
             if (this.tick == -1) {
                 return false;
@@ -260,12 +264,12 @@ public class VaultModifiers implements INBTSerializable<CompoundNBT>, Iterable<V
             --this.tick;
             return this.tick == 0;
         }
-
+        
         private void encode(final PacketBuffer buffer) {
             buffer.writeUtf(this.modifier.getName());
             buffer.writeInt(this.tick);
         }
-
+        
         private CompoundNBT serialize() {
             final CompoundNBT tag = new CompoundNBT();
             tag.putString("key", this.modifier.getName());

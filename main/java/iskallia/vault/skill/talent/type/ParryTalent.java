@@ -1,3 +1,6 @@
+// 
+// Decompiled by Procyon v0.6.0
+// 
 
 package iskallia.vault.skill.talent.type;
 
@@ -14,19 +17,20 @@ import com.google.gson.annotations.Expose;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class ParryTalent extends PlayerTalent {
+public class ParryTalent extends PlayerTalent
+{
     @Expose
     protected float additionalParryLimit;
-
+    
     public ParryTalent(final int cost, final float additionalParryLimit) {
         super(cost);
         this.additionalParryLimit = additionalParryLimit;
     }
-
+    
     public float getAdditionalParryLimit() {
         return this.additionalParryLimit;
     }
-
+    
     @SubscribeEvent
     public static void onPlayerDamage(final LivingAttackEvent event) {
         final LivingEntity entity = event.getEntityLiving();
@@ -39,13 +43,13 @@ public class ParryTalent extends PlayerTalent {
         }
         float parryChance;
         if (entity instanceof ServerPlayerEntity) {
-            parryChance = ParryHelper.getPlayerParryChance((ServerPlayerEntity) entity);
-        } else {
+            parryChance = ParryHelper.getPlayerParryChance((ServerPlayerEntity)entity);
+        }
+        else {
             parryChance = ParryHelper.getParryChance(entity);
         }
         if (ParryTalent.rand.nextFloat() <= parryChance) {
-            world.playSound((PlayerEntity) null, entity.getX(), entity.getY(),
-                    entity.getZ(), SoundEvents.SHIELD_BLOCK, SoundCategory.MASTER, 0.5f, 1.0f);
+            world.playSound((PlayerEntity)null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SHIELD_BLOCK, SoundCategory.MASTER, 0.5f, 1.0f);
             event.setCanceled(true);
         }
     }
